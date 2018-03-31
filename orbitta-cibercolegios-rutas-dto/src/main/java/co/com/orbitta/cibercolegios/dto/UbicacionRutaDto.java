@@ -21,19 +21,20 @@ public class UbicacionRutaDto implements EntityDto<Integer> {
 
 	private Integer id;
 
-	private LocalDateTime fecha;
+	private int rutaId;
+
+	private int sentido;
+
+	private LocalDateTime fechaHora;
+
+	private int estadoId;
+
+	@NotNull
+	private BigDecimal ubicacionLon;
 
 	@NotNull
 	private BigDecimal ubicacionLat;
-	
-	@NotNull
-	private BigDecimal ubicacionLon;
-	
+
 	private BigDecimal ubicacionGeo;
 	
-	private int sentido;
-	
-	private int rutaId;
-	
-	private int estadoId;
 }

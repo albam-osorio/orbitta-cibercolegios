@@ -17,12 +17,14 @@ public class LogUsuarioDto implements EntityDto<Integer> {
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
-	
-	private LocalDateTime fecha;
-	
-	private int logId;
-	
+
 	private int usuarioRutaId;
-	
+
+	private int sentido;
+
+	private LocalDateTime fechaHora;
+
 	private int estadoId;
+
+	private int logId;
 }

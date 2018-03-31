@@ -1,6 +1,6 @@
 package co.com.orbitta.cibercolegios.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import co.com.orbitta.cibercolegios.core.dto.EntityDto;
 import lombok.AllArgsConstructor;
@@ -18,11 +18,11 @@ public class UsuarioRutaDto implements EntityDto<Integer> {
 
 	private Integer id;
 
-	private LocalDateTime fecha;
-	
 	private int usuarioId;
 	
 	private int rutaId;
+
+	private LocalDate fecha;
 	
 	private int direccionUsuarioId;
 }

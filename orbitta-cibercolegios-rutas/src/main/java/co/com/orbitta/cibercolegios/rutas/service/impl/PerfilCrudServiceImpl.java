@@ -13,8 +13,7 @@ import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
-public class PerfilCrudServiceImpl extends CrudServiceImpl<Perfil, PerfilDto, PerfilDto, Integer>
-		implements PerfilCrudService {
+public class PerfilCrudServiceImpl extends CrudServiceImpl<Perfil, PerfilDto, Integer> implements PerfilCrudService {
 
 	@Autowired
 	private PerfilRepository repository;
@@ -31,7 +30,7 @@ public class PerfilCrudServiceImpl extends CrudServiceImpl<Perfil, PerfilDto, Pe
 	}
 
 	@Override
-	protected PerfilDto getModelFromEntity(Perfil entity) {
+	public PerfilDto asModel(Perfil entity) {
 
 		// @formatter:off
 		val result = PerfilDto
@@ -48,12 +47,7 @@ public class PerfilCrudServiceImpl extends CrudServiceImpl<Perfil, PerfilDto, Pe
 	}
 
 	@Override
-	protected PerfilDto getItemModelFromEntity(Perfil entity) {
-		return getModelFromEntity(entity);
-	}
-
-	@Override
-	protected Perfil mapModelToEntity(PerfilDto model, Perfil entity) {
+	protected Perfil asEntity(PerfilDto model, Perfil entity) {
 		val tipoPerfil = tipoPerfilRepository.findById(model.getTipoPerfilId());
 		val usuario = usuarioRepository.findById(model.getUsuarioId());
 
@@ -66,7 +60,7 @@ public class PerfilCrudServiceImpl extends CrudServiceImpl<Perfil, PerfilDto, Pe
 	}
 
 	@Override
-	protected Perfil getNewEntity() {
+	protected Perfil newEntity() {
 		return new Perfil();
 	}
 }

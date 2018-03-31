@@ -12,7 +12,7 @@ import co.com.orbitta.core.web.api.controllers.RestCrudController;
 
 @RestController
 @RequestMapping(value = RestConstants.log, produces = MediaType.APPLICATION_JSON_VALUE)
-public class LogRestCrudController extends RestCrudController<LogDto, LogDto, Integer> {
+public class LogRestCrudController extends RestCrudController<LogDto, Integer> {
 
 	@Autowired
 	private LogCrudService service;

@@ -11,12 +11,11 @@ import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
-public class InstitucionCrudServiceImpl extends CrudServiceImpl<Institucion, InstitucionDto, InstitucionDto, Integer>
+public class InstitucionCrudServiceImpl extends CrudServiceImpl<Institucion, InstitucionDto, Integer>
 		implements InstitucionCrudService {
 
 	@Autowired
 	private InstitucionRepository repository;
-
 
 	@Override
 	protected InstitucionRepository getRepository() {
@@ -24,7 +23,7 @@ public class InstitucionCrudServiceImpl extends CrudServiceImpl<Institucion, Ins
 	}
 
 	@Override
-	protected InstitucionDto getModelFromEntity(Institucion entity) {
+	public InstitucionDto asModel(Institucion entity) {
 		// @formatter:off
 		val result = InstitucionDto
 				.builder()
@@ -37,12 +36,7 @@ public class InstitucionCrudServiceImpl extends CrudServiceImpl<Institucion, Ins
 	}
 
 	@Override
-	protected InstitucionDto getItemModelFromEntity(Institucion entity) {
-		return getModelFromEntity(entity);
-	}
-
-	@Override
-	protected Institucion mapModelToEntity(InstitucionDto model, Institucion entity) {
+	protected Institucion asEntity(InstitucionDto model, Institucion entity) {
 
 		entity.setDescripcion(model.getDescripcion());
 
@@ -50,7 +44,7 @@ public class InstitucionCrudServiceImpl extends CrudServiceImpl<Institucion, Ins
 	}
 
 	@Override
-	protected Institucion getNewEntity() {
+	protected Institucion newEntity() {
 		return new Institucion();
 	}
 }

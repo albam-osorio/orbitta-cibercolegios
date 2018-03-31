@@ -12,7 +12,7 @@ import co.com.orbitta.core.web.api.controllers.RestCrudController;
 
 @RestController
 @RequestMapping(value = RestConstants.estado, produces = MediaType.APPLICATION_JSON_VALUE)
-public class EstadoRestCrudController extends RestCrudController<EstadoDto, EstadoDto, Integer> {
+public class EstadoRestCrudController extends RestCrudController<EstadoDto, Integer> {
 
 	@Autowired
 	private EstadoCrudService service;

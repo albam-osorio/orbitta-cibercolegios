@@ -14,7 +14,7 @@ import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
-public class LogUsuarioCrudServiceImpl extends CrudServiceImpl<LogUsuario, LogUsuarioDto, LogUsuarioDto, Integer>
+public class LogUsuarioCrudServiceImpl extends CrudServiceImpl<LogUsuario, LogUsuarioDto, Integer>
 		implements LogUsuarioCrudService {
 
 	@Autowired
@@ -35,16 +35,17 @@ public class LogUsuarioCrudServiceImpl extends CrudServiceImpl<LogUsuario, LogUs
 	}
 
 	@Override
-	protected LogUsuarioDto getModelFromEntity(LogUsuario entity) {
+	public LogUsuarioDto asModel(LogUsuario entity) {
 
 		// @formatter:off
 		val result = LogUsuarioDto
 				.builder()
 				.id(entity.getId())
-				.fecha(entity.getFecha())
-				.logId(entity.getLog().getId())
 				.usuarioRutaId(entity.getUsuarioRuta().getId())
+				.sentido(entity.getSentido())
+				.fechaHora(entity.getFechaHora())
 				.estadoId(entity.getEstado().getId())
+				.logId(entity.getLog().getId())
 
 				.build();
 		// @formatter:on
@@ -52,27 +53,23 @@ public class LogUsuarioCrudServiceImpl extends CrudServiceImpl<LogUsuario, LogUs
 	}
 
 	@Override
-	protected LogUsuarioDto getItemModelFromEntity(LogUsuario entity) {
-		return getModelFromEntity(entity);
-	}
-
-	@Override
-	protected LogUsuario mapModelToEntity(LogUsuarioDto model, LogUsuario entity) {
+	protected LogUsuario asEntity(LogUsuarioDto model, LogUsuario entity) {
 		val log = logRepository.findById(model.getLogId());
 		val usuarioRuta = usuarioRutaRepository.findById(model.getUsuarioRutaId());
 		val estado = estadoRepository.findById(model.getEstadoId());
 
 		
-		entity.setFecha(model.getFecha());
-		entity.setLog(log.get());
 		entity.setUsuarioRuta(usuarioRuta.get());
+		entity.setSentido(entity.getSentido());
+		entity.setFechaHora(model.getFechaHora());
 		entity.setEstado(estado.get());
+		entity.setLog(log.get());
 
 		return entity;
 	}
 
 	@Override
-	protected LogUsuario getNewEntity() {
+	protected LogUsuario newEntity() {
 		return new LogUsuario();
 	}
 }

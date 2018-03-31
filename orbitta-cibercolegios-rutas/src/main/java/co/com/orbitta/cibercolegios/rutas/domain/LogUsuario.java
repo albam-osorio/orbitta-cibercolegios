@@ -27,19 +27,21 @@ public class LogUsuario extends BaseEntity<Integer> {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "fecha")
-	private LocalDateTime fecha;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "logId")
-	private Log log;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "usuarioRutaId")
 	private UsuarioRuta usuarioRuta;
+
+	@Column(name = "sentido", nullable = false)
+	private int sentido;
+	
+	@Column(name = "fecha")
+	private LocalDateTime fechaHora;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "estadoId")
 	private Estado estado;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "logId")
+	private Log log;
 }

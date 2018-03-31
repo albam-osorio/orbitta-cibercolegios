@@ -1,5 +1,7 @@
 package co.com.orbitta.cibercolegios.rutas.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +15,7 @@ import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
-public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, RutaDto, Integer>
-		implements RutaCrudService {
+public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer> implements RutaCrudService {
 
 	@Autowired
 	private RutaRepository repository;
@@ -31,7 +32,7 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, RutaDto,
 	}
 
 	@Override
-	protected RutaDto getModelFromEntity(Ruta entity) {
+	public RutaDto asModel(Ruta entity) {
 
 		// @formatter:off
 		val result = RutaDto
@@ -54,12 +55,7 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, RutaDto,
 	}
 
 	@Override
-	protected RutaDto getItemModelFromEntity(Ruta entity) {
-		return getModelFromEntity(entity);
-	}
-
-	@Override
-	protected Ruta mapModelToEntity(RutaDto model, Ruta entity) {
+	protected Ruta asEntity(RutaDto model, Ruta entity) {
 		val institucion = institucionRepository.findById(model.getInstitucionId());
 		val monitor = usuarioRepository.findById(model.getMonitorId());
 		val conductor = usuarioRepository.findById(model.getConductorId());
@@ -79,7 +75,15 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, RutaDto,
 	}
 
 	@Override
-	protected Ruta getNewEntity() {
+	protected Ruta newEntity() {
 		return new Ruta();
+	}
+
+	@Override
+	public Optional<RutaDto> findByMonitorId(int monitorId) {
+		val optional = getRepository().findByMonitorId(monitorId);
+
+		val result = asModel(optional);
+		return result;
 	}
 }

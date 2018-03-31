@@ -12,7 +12,7 @@ import co.com.orbitta.core.web.api.controllers.RestCrudController;
 
 @RestController
 @RequestMapping(value = RestConstants.perfil, produces = MediaType.APPLICATION_JSON_VALUE)
-public class PerfilRestCrudController extends RestCrudController<PerfilDto, PerfilDto, Integer> {
+public class PerfilRestCrudController extends RestCrudController<PerfilDto, Integer> {
 
 	@Autowired
 	private PerfilCrudService service;

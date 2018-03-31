@@ -1,5 +1,8 @@
 package co.com.orbitta.cibercolegios.rutas.service.impl;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +17,7 @@ import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
-public class UsuarioRutaCrudServiceImpl extends CrudServiceImpl<UsuarioRuta, UsuarioRutaDto, UsuarioRutaDto, Integer>
+public class UsuarioRutaCrudServiceImpl extends CrudServiceImpl<UsuarioRuta, UsuarioRutaDto, Integer>
 		implements UsuarioRutaCrudService {
 
 	@Autowired
@@ -28,22 +31,21 @@ public class UsuarioRutaCrudServiceImpl extends CrudServiceImpl<UsuarioRuta, Usu
 	@Autowired
 	private DireccionUsuarioRepository direccionUsuarioRepository;
 
-
 	@Override
 	protected UsuarioRutaRepository getRepository() {
 		return repository;
 	}
 
 	@Override
-	protected UsuarioRutaDto getModelFromEntity(UsuarioRuta entity) {
+	public UsuarioRutaDto asModel(UsuarioRuta entity) {
 
 		// @formatter:off
 		val result = UsuarioRutaDto
 				.builder()
 				.id(entity.getId())
-				.fecha(entity.getFecha())
 				.usuarioId(entity.getUsuario().getId())
 				.rutaId(entity.getRuta().getId())
+				.fecha(entity.getFecha())
 				.direccionUsuarioId(entity.getDireccionUsuario().getId())
 
 				.build();
@@ -52,26 +54,28 @@ public class UsuarioRutaCrudServiceImpl extends CrudServiceImpl<UsuarioRuta, Usu
 	}
 
 	@Override
-	protected UsuarioRutaDto getItemModelFromEntity(UsuarioRuta entity) {
-		return getModelFromEntity(entity);
-	}
-
-	@Override
-	protected UsuarioRuta mapModelToEntity(UsuarioRutaDto model, UsuarioRuta entity) {
+	protected UsuarioRuta asEntity(UsuarioRutaDto model, UsuarioRuta entity) {
 		val usuario = usuarioRepository.findById(model.getUsuarioId());
 		val ruta = rutaRepository.findById(model.getRutaId());
 		val direccionUsuario = direccionUsuarioRepository.findById(model.getDireccionUsuarioId());
 
-		entity.setFecha(model.getFecha());
 		entity.setUsuario(usuario.get());
 		entity.setRuta(ruta.get());
+		entity.setFecha(model.getFecha());
 		entity.setDireccionUsuario(direccionUsuario.get());
 
 		return entity;
 	}
 
 	@Override
-	protected UsuarioRuta getNewEntity() {
+	protected UsuarioRuta newEntity() {
 		return new UsuarioRuta();
+	}
+
+	@Override
+	public List<UsuarioRutaDto> findAllByRutaIdAndFecha(Integer id, LocalDate fecha) {
+		List<UsuarioRuta> entities = getRepository().findAllByRutaIdAndFecha(id, fecha);
+		val result = asModels(entities);
+		return result;
 	}
 }

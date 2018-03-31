@@ -11,7 +11,7 @@ import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
-public class UsuarioCrudServiceImpl extends CrudServiceImpl<Usuario, UsuarioDto, UsuarioDto, Integer>
+public class UsuarioCrudServiceImpl extends CrudServiceImpl<Usuario, UsuarioDto, Integer>
 		implements UsuarioCrudService {
 
 	@Autowired
@@ -23,7 +23,7 @@ public class UsuarioCrudServiceImpl extends CrudServiceImpl<Usuario, UsuarioDto,
 	}
 
 	@Override
-	protected UsuarioDto getModelFromEntity(Usuario entity) {
+	public UsuarioDto asModel(Usuario entity) {
 
 		// @formatter:off
 		val result = UsuarioDto
@@ -43,12 +43,7 @@ public class UsuarioCrudServiceImpl extends CrudServiceImpl<Usuario, UsuarioDto,
 	}
 
 	@Override
-	protected UsuarioDto getItemModelFromEntity(Usuario entity) {
-		return getModelFromEntity(entity);
-	}
-
-	@Override
-	protected Usuario mapModelToEntity(UsuarioDto model, Usuario entity) {
+	protected Usuario asEntity(UsuarioDto model, Usuario entity) {
 
 		entity.setNombre1(model.getNombre1());
 		entity.setNombre2(model.getNombre2());
@@ -61,7 +56,7 @@ public class UsuarioCrudServiceImpl extends CrudServiceImpl<Usuario, UsuarioDto,
 	}
 
 	@Override
-	protected Usuario getNewEntity() {
+	protected Usuario newEntity() {
 		return new Usuario();
 	}
 }

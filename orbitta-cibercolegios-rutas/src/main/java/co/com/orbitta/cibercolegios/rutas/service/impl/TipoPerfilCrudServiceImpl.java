@@ -11,7 +11,7 @@ import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
-public class TipoPerfilCrudServiceImpl extends CrudServiceImpl<TipoPerfil, TipoPerfilDto, TipoPerfilDto, Integer>
+public class TipoPerfilCrudServiceImpl extends CrudServiceImpl<TipoPerfil, TipoPerfilDto, Integer>
 		implements TipoPerfilCrudService {
 
 	@Autowired
@@ -23,7 +23,7 @@ public class TipoPerfilCrudServiceImpl extends CrudServiceImpl<TipoPerfil, TipoP
 	}
 
 	@Override
-	protected TipoPerfilDto getModelFromEntity(TipoPerfil entity) {
+	public TipoPerfilDto asModel(TipoPerfil entity) {
 		// @formatter:off
 		val result = TipoPerfilDto
 				.builder()
@@ -36,12 +36,7 @@ public class TipoPerfilCrudServiceImpl extends CrudServiceImpl<TipoPerfil, TipoP
 	}
 
 	@Override
-	protected TipoPerfilDto getItemModelFromEntity(TipoPerfil entity) {
-		return getModelFromEntity(entity);
-	}
-
-	@Override
-	protected TipoPerfil mapModelToEntity(TipoPerfilDto model, TipoPerfil entity) {
+	protected TipoPerfil asEntity(TipoPerfilDto model, TipoPerfil entity) {
 
 		entity.setDescripcion(model.getDescripcion());
 
@@ -49,7 +44,7 @@ public class TipoPerfilCrudServiceImpl extends CrudServiceImpl<TipoPerfil, TipoP
 	}
 
 	@Override
-	protected TipoPerfil getNewEntity() {
+	protected TipoPerfil newEntity() {
 		return new TipoPerfil();
 	}
 }

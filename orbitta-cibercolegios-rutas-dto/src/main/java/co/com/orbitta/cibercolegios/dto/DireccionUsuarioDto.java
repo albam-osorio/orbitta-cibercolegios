@@ -21,17 +21,17 @@ public class DireccionUsuarioDto implements EntityDto<Integer> {
 
 	private Integer id;
 
+	private int usuarioId;
+
 	@NotNull
 	@Size(max = 100)
 	private String descripcion;
 
 	@NotNull
-	private BigDecimal ubicacionLat;
-
-	@NotNull
 	private BigDecimal ubicacionLon;
 
-	private BigDecimal ubicacionGeo;
+	@NotNull
+	private BigDecimal ubicacionLat;
 
-	private int usuarioId;
+	private BigDecimal ubicacionGeo;
 }

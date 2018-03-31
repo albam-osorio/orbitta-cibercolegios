@@ -29,23 +29,23 @@ public class DireccionUsuario extends BaseEntity<Integer> {
 
 	private static final long serialVersionUID = 1L;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "usuarioId")
+	private Usuario usuario;
+	
 	@Column(name = "descripcion", length = 100, nullable = false)
 	@NotNull
 	@Size(max = 100)
 	private String descripcion;
 
-	@Column(name = "ubicacionLat", nullable = false)
-	@NotNull
-	private BigDecimal ubicacionLat;
-
 	@Column(name = "ubicacionLon", nullable = false)
 	@NotNull
 	private BigDecimal ubicacionLon;
 
+	@Column(name = "ubicacionLat", nullable = false)
+	@NotNull
+	private BigDecimal ubicacionLat;
+
 	@Column(name = "ubicacionGeo")
 	private BigDecimal ubicacionGeo;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "usuarioId")
-	private Usuario usuario;
 }

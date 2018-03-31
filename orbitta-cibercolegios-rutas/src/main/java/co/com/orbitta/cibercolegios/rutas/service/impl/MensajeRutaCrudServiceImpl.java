@@ -14,7 +14,7 @@ import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
-public class MensajeRutaCrudServiceImpl extends CrudServiceImpl<MensajeRuta, MensajeRutaDto, MensajeRutaDto, Integer>
+public class MensajeRutaCrudServiceImpl extends CrudServiceImpl<MensajeRuta, MensajeRutaDto, Integer>
 		implements MensajeRutaCrudService {
 
 	@Autowired
@@ -35,7 +35,7 @@ public class MensajeRutaCrudServiceImpl extends CrudServiceImpl<MensajeRuta, Men
 	}
 
 	@Override
-	protected MensajeRutaDto getModelFromEntity(MensajeRuta entity) {
+	public MensajeRutaDto asModel(MensajeRuta entity) {
 
 		// @formatter:off
 		val result = MensajeRutaDto
@@ -55,18 +55,12 @@ public class MensajeRutaCrudServiceImpl extends CrudServiceImpl<MensajeRuta, Men
 	}
 
 	@Override
-	protected MensajeRutaDto getItemModelFromEntity(MensajeRuta entity) {
-		return getModelFromEntity(entity);
-	}
-
-	@Override
-	protected MensajeRuta mapModelToEntity(MensajeRutaDto model, MensajeRuta entity) {
+	protected MensajeRuta asEntity(MensajeRutaDto model, MensajeRuta entity) {
 		val padre = usuarioRepository.findById(model.getPadreId());
 		val monitor = usuarioRepository.findById(model.getMonitorId());
 		val ruta = rutaRepository.findById(model.getRutaId());
 		val estado = estadoRepository.findById(model.getEstadoId());
 
-		
 		entity.setFecha(entity.getFecha());
 		entity.setMensaje(entity.getMensaje());
 		entity.setOrigenMensaje(entity.getOrigenMensaje());
@@ -79,7 +73,7 @@ public class MensajeRutaCrudServiceImpl extends CrudServiceImpl<MensajeRuta, Men
 	}
 
 	@Override
-	protected MensajeRuta getNewEntity() {
+	protected MensajeRuta newEntity() {
 		return new MensajeRuta();
 	}
 }

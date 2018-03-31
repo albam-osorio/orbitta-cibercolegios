@@ -11,8 +11,7 @@ import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
-public class LogCrudServiceImpl extends CrudServiceImpl<Log, LogDto, LogDto, Integer>
-		implements LogCrudService {
+public class LogCrudServiceImpl extends CrudServiceImpl<Log, LogDto, Integer> implements LogCrudService {
 
 	@Autowired
 	private LogRepository repository;
@@ -23,7 +22,7 @@ public class LogCrudServiceImpl extends CrudServiceImpl<Log, LogDto, LogDto, Int
 	}
 
 	@Override
-	protected LogDto getModelFromEntity(Log entity) {
+	public LogDto asModel(Log entity) {
 
 		// @formatter:off
 		val result = LogDto
@@ -37,12 +36,7 @@ public class LogCrudServiceImpl extends CrudServiceImpl<Log, LogDto, LogDto, Int
 	}
 
 	@Override
-	protected LogDto getItemModelFromEntity(Log entity) {
-		return getModelFromEntity(entity);
-	}
-
-	@Override
-	protected Log mapModelToEntity(LogDto model, Log entity) {
+	protected Log asEntity(LogDto model, Log entity) {
 
 		entity.setDescripcion(model.getDescripcion());
 
@@ -50,7 +44,7 @@ public class LogCrudServiceImpl extends CrudServiceImpl<Log, LogDto, LogDto, Int
 	}
 
 	@Override
-	protected Log getNewEntity() {
+	protected Log newEntity() {
 		return new Log();
 	}
 }
