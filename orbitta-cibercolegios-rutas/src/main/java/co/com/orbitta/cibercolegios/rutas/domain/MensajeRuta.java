@@ -54,6 +54,6 @@ public class MensajeRuta extends BaseEntity<Integer> {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "estadoId")
-	private Estado estado;
+	private EstadoRuta estado;
 
 }

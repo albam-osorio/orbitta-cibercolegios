@@ -1,5 +1,7 @@
 package co.com.orbitta.cibercolegios.dto;
 
+import java.math.BigDecimal;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -21,7 +23,7 @@ public class RutaDto implements EntityDto<Integer> {
 
 	@NotNull
 	@Size(max = 2)
-	private String codRuta;
+	private String codigo;
 
 	@NotNull
 	@Size(max = 100)
@@ -41,11 +43,15 @@ public class RutaDto implements EntityDto<Integer> {
 
 	private int capacidad;
 
-	private int estudiante;
-
 	private int institucionId;
 
 	private int monitorId;
 
 	private int conductorId;
+
+	@NotNull
+	private BigDecimal x;
+
+	@NotNull
+	private BigDecimal y;
 }

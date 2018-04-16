@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import co.com.orbitta.cibercolegios.enums.TipoEventoEnum;
+import co.com.orbitta.cibercolegios.enums.TipoEstadoRutaEnum;
 import co.com.orbitta.core.data.jpa.domain.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,20 +17,20 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "estado")
+@Table(name = "estadoRuta")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Estado extends BaseEntity<Integer> {
+public class EstadoRuta extends BaseEntity<Integer> {
 
 	private static final long serialVersionUID = 1L;
 
     @Enumerated(EnumType.STRING)
-	@Column(name = "tipoEvento", length = 50, nullable = false)
+	@Column(name = "tipo", length = 50, nullable = false)
 	@NotNull
-	private TipoEventoEnum tipoEvento;
+	private TipoEstadoRutaEnum tipo;
     
     
 	@Column(name = "descripcion", length = 100, nullable = false)

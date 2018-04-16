@@ -29,8 +29,9 @@ public class Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+
 		System.out.println("");
-		val result = service.iniciarRecorrido(75, 1, BigDecimal.valueOf(0.0), BigDecimal.valueOf(0.0));
-		System.out.println(result);
+		//val result = service.iniciarRecorrido(75, 1, BigDecimal.valueOf(0.0), BigDecimal.valueOf(0.0));
+		//System.out.println(result);
 	}
 }

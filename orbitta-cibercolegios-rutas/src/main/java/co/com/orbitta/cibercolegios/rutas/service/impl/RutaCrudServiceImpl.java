@@ -1,6 +1,6 @@
 package co.com.orbitta.cibercolegios.rutas.service.impl;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,16 +38,17 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 		val result = RutaDto
 				.builder()
 				.id(entity.getId())
-				.codRuta(entity.getCodRuta())
+				.codigo(entity.getCodigo())
 				.descripcion(entity.getDescripcion())
 				.marca(entity.getMarca())
 				.placa(entity.getPlaca())
 				.movil(entity.getMovil())
 				.capacidad(entity.getCapacidad())
-				.estudiante(entity.getEstudiante())
 				.institucionId(entity.getInstitucion().getId())
 				.monitorId(entity.getMonitor().getId())
 				.conductorId(entity.getConductor().getId())
+				.x(entity.getX())
+				.y(entity.getY())
 
 				.build();
 		// @formatter:on
@@ -60,16 +61,17 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 		val monitor = usuarioRepository.findById(model.getMonitorId());
 		val conductor = usuarioRepository.findById(model.getConductorId());
 
-		entity.setCodRuta(model.getCodRuta());
+		entity.setCodigo(model.getCodigo());
 		entity.setDescripcion(model.getDescripcion());
 		entity.setMarca(model.getMarca());
 		entity.setPlaca(model.getPlaca());
 		entity.setMovil(model.getMovil());
 		entity.setCapacidad(model.getCapacidad());
-		entity.setEstudiante(model.getEstudiante());
 		entity.setInstitucion(institucion.get());
 		entity.setMonitor(monitor.get());
 		entity.setConductor(conductor.get());
+		entity.setX(model.getX());
+		entity.setY(model.getY());
 
 		return entity;
 	}
@@ -80,10 +82,10 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 	}
 
 	@Override
-	public Optional<RutaDto> findByMonitorId(int monitorId) {
-		val optional = getRepository().findByMonitorId(monitorId);
-
-		val result = asModel(optional);
+	public List<RutaDto> findAllByMonitorId(int monitorId) {
+		val entities = getRepository().findAllByMonitorId(monitorId);
+		
+		val result = asModels(entities);
 		return result;
 	}
 }

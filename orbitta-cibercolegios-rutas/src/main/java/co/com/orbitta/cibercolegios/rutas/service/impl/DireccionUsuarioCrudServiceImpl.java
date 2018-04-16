@@ -35,9 +35,8 @@ public class DireccionUsuarioCrudServiceImpl extends CrudServiceImpl<DireccionUs
 				.id(entity.getId())
 				.usuarioId(entity.getUsuario().getId())
 				.descripcion(entity.getDescripcion())
-				.ubicacionLat(entity.getUbicacionLat())
-				.ubicacionLon(entity.getUbicacionLon())
-				.ubicacionGeo(entity.getUbicacionGeo())
+				.x(entity.getX())
+				.y(entity.getY())
 
 				.build();
 		// @formatter:on
@@ -50,9 +49,8 @@ public class DireccionUsuarioCrudServiceImpl extends CrudServiceImpl<DireccionUs
 
 		entity.setUsuario(usuario.get());
 		entity.setDescripcion(model.getDescripcion());
-		entity.setUbicacionLat(model.getUbicacionLat());
-		entity.setUbicacionLon(model.getUbicacionLon());
-		entity.setUbicacionGeo(model.getUbicacionGeo());
+		entity.setX(model.getX());
+		entity.setY(model.getY());
 
 		return entity;
 	}

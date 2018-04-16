@@ -1,8 +1,10 @@
 package co.com.orbitta.cibercolegios.dto;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import co.com.orbitta.cibercolegios.core.dto.EntityDto;
+import co.com.orbitta.cibercolegios.enums.TipoEstadoRutaEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,17 +14,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UsuarioRutaDto implements EntityDto<Integer> {
+public class EstadoRutaDto implements EntityDto<Integer> {
 
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
 
-	private int usuarioId;
-	
-	private int rutaId;
+	@NotNull
+	private TipoEstadoRutaEnum tipo;
 
-	private LocalDateTime fechaHora;
-	
-	private int direccionUsuarioId;
+	@NotNull
+	@Size(max = 100)
+	private String descripcion;
 }

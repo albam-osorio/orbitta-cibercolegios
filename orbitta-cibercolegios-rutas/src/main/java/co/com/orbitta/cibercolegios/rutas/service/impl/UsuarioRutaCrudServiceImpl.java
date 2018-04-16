@@ -1,6 +1,6 @@
 package co.com.orbitta.cibercolegios.rutas.service.impl;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class UsuarioRutaCrudServiceImpl extends CrudServiceImpl<UsuarioRuta, Usu
 				.id(entity.getId())
 				.usuarioId(entity.getUsuario().getId())
 				.rutaId(entity.getRuta().getId())
-				.fecha(entity.getFecha())
+				.fechaHora(entity.getFechaHora())
 				.direccionUsuarioId(entity.getDireccionUsuario().getId())
 
 				.build();
@@ -61,7 +61,7 @@ public class UsuarioRutaCrudServiceImpl extends CrudServiceImpl<UsuarioRuta, Usu
 
 		entity.setUsuario(usuario.get());
 		entity.setRuta(ruta.get());
-		entity.setFecha(model.getFecha());
+		entity.setFechaHora(model.getFechaHora());
 		entity.setDireccionUsuario(direccionUsuario.get());
 
 		return entity;
@@ -73,9 +73,11 @@ public class UsuarioRutaCrudServiceImpl extends CrudServiceImpl<UsuarioRuta, Usu
 	}
 
 	@Override
-	public List<UsuarioRutaDto> findAllByRutaIdAndFecha(Integer id, LocalDate fecha) {
-		List<UsuarioRuta> entities = getRepository().findAllByRutaIdAndFecha(id, fecha);
-		val result = asModels(entities);
-		return result;
+	public List<UsuarioRutaDto> findAllByRutaId(int rutaId) {
+		// List<UsuarioRuta> entities =
+		// getRepository().findAllByRutaIdAndFechaHora(rutaId);
+		// val result = asModels(entities);
+		// return result;
+		return null;
 	}
 }

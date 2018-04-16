@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import co.com.orbitta.cibercolegios.dto.MensajeRutaDto;
 import co.com.orbitta.cibercolegios.rutas.domain.MensajeRuta;
-import co.com.orbitta.cibercolegios.rutas.repository.EstadoRepository;
+import co.com.orbitta.cibercolegios.rutas.repository.EstadoRutaRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.MensajeRutaRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.RutaRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.UsuarioRepository;
@@ -27,7 +27,7 @@ public class MensajeRutaCrudServiceImpl extends CrudServiceImpl<MensajeRuta, Men
 	private RutaRepository rutaRepository;
 
 	@Autowired
-	private EstadoRepository estadoRepository;
+	private EstadoRutaRepository estadoRepository;
 
 	@Override
 	protected MensajeRutaRepository getRepository() {

@@ -5,13 +5,13 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.com.orbitta.cibercolegios.constants.RestConstants;
+import co.com.orbitta.cibercolegios.constants.RutasRestConstants;
 import co.com.orbitta.cibercolegios.dto.RutaDto;
 import co.com.orbitta.cibercolegios.rutas.service.api.RutaCrudService;
 import co.com.orbitta.core.web.api.controllers.RestCrudController;
 
 @RestController
-@RequestMapping(value = RestConstants.ruta, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = RutasRestConstants.ruta, produces = MediaType.APPLICATION_JSON_VALUE)
 public class RutaRestCrudController extends RestCrudController<RutaDto, Integer> {
 
 	@Autowired

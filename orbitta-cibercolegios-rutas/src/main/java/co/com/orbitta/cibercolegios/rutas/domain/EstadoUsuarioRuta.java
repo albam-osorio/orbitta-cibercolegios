@@ -14,13 +14,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "log")
+@Table(name = "estadoUsuarioRuta")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Log extends BaseEntity<Integer> {
+public class EstadoUsuarioRuta extends BaseEntity<Integer> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -28,4 +28,10 @@ public class Log extends BaseEntity<Integer> {
 	@NotNull
 	@Size(max = 100)
 	private String descripcion;
+
+	@Column(name = "aplica_ida", nullable = false)
+	private boolean aplicaIda;
+
+	@Column(name = "aplica_retorno", nullable = false)
+	private boolean aplicaRetorno;
 }

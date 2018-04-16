@@ -1,6 +1,6 @@
 package co.com.orbitta.cibercolegios.rutas.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,7 +36,7 @@ public class UsuarioRuta extends BaseEntity<Integer> {
 	private Ruta ruta;
 
 	@Column(name = "fecha")
-	private LocalDate fecha;
+	private LocalDateTime fechaHora;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "direccionUsuarioId")

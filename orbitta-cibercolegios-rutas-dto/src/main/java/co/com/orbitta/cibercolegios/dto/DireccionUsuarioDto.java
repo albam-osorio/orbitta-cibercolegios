@@ -28,10 +28,8 @@ public class DireccionUsuarioDto implements EntityDto<Integer> {
 	private String descripcion;
 
 	@NotNull
-	private BigDecimal ubicacionLon;
+	private BigDecimal x;
 
 	@NotNull
-	private BigDecimal ubicacionLat;
-
-	private BigDecimal ubicacionGeo;
+	private BigDecimal y;
 }

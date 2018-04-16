@@ -17,13 +17,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "logUsuario")
+@Table(name = "logUsuarioRuta")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class LogUsuario extends BaseEntity<Integer> {
+public class LogUsuarioRuta extends BaseEntity<Integer> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,14 +34,10 @@ public class LogUsuario extends BaseEntity<Integer> {
 	@Column(name = "sentido", nullable = false)
 	private int sentido;
 	
-	@Column(name = "fecha")
+	@Column(name = "fechaHora")
 	private LocalDateTime fechaHora;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "estadoId")
-	private Estado estado;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "logId")
-	private Log log;
+	@JoinColumn(name = "estadoUsuarioRutaId")
+	private EstadoUsuarioRuta estadoUsuarioRuta;
 }

@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PasajeroRutaDto {
+public class DatosUsuarioRutaDto {
 	private Integer usuarioRutaId;
-	
+
 	private Integer usuarioId;
 
 	private String nombre1;
@@ -23,14 +23,16 @@ public class PasajeroRutaDto {
 	private String apellido1;
 
 	private String apellido2;
-	
+
 	private int secuencia;
-	
+
 	private String direccion;
 
-	private BigDecimal ubicacionLat;
+	private BigDecimal x;
 
-	private BigDecimal ubicacionLon;
+	private BigDecimal y;
 
-	private BigDecimal ubicacionGeo;
+	private int estadoId;
+
+	private int estadoDescripcion;
 }

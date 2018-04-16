@@ -1,6 +1,6 @@
 package co.com.orbitta.cibercolegios.constants;
 
-public class RestConstants {
+public class RutasRestConstants {
 	
 	final public static String configurationPropertiesPrefix = "co.com.orbitta.cibercolegios.rutas.rest";
 	
@@ -30,6 +30,8 @@ public class RestConstants {
 	
 	final public static String usuarioRuta = base + "usuarios-ruta";
 
+	
+	final public static String tracking = base + "tracking";
 
 	//final public static String serviciosByCliente = "{id}/servicios";
 	

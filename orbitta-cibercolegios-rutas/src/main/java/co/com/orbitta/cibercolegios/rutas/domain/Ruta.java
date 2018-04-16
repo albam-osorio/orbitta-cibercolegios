@@ -1,5 +1,7 @@
 package co.com.orbitta.cibercolegios.rutas.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +32,7 @@ public class Ruta extends BaseEntity<Integer> {
 	@Column(name = "codRuta", length = 2, nullable = false)
 	@NotNull
 	@Size(max = 2)
-	private String codRuta;
+	private String codigo;
 
 	@Column(name = "descripcion", length = 100, nullable = false)
 	@NotNull
@@ -55,9 +57,6 @@ public class Ruta extends BaseEntity<Integer> {
 	@Column(name = "capacidad", nullable = false)
 	private int capacidad;
 	
-	@Column(name = "estudiante", nullable = false)
-	private int estudiante;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "institucionId")
 	private Institucion institucion;
@@ -69,4 +68,13 @@ public class Ruta extends BaseEntity<Integer> {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "conductorId")
 	private Usuario conductor;
+	
+	@Column(name = "x", nullable = false)
+	@NotNull
+	private BigDecimal x;
+
+	@Column(name = "y", nullable = false)
+	@NotNull
+	private BigDecimal y;
+	
 }

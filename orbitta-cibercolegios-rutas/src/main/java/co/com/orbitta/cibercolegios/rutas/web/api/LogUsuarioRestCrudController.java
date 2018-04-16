@@ -5,20 +5,20 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.com.orbitta.cibercolegios.constants.RestConstants;
-import co.com.orbitta.cibercolegios.dto.LogUsuarioDto;
-import co.com.orbitta.cibercolegios.rutas.service.api.LogUsuarioCrudService;
+import co.com.orbitta.cibercolegios.constants.RutasRestConstants;
+import co.com.orbitta.cibercolegios.dto.LogUsuarioRutaDto;
+import co.com.orbitta.cibercolegios.rutas.service.api.LogUsuarioRutaCrudService;
 import co.com.orbitta.core.web.api.controllers.RestCrudController;
 
 @RestController
-@RequestMapping(value = RestConstants.logUsuario, produces = MediaType.APPLICATION_JSON_VALUE)
-public class LogUsuarioRestCrudController extends RestCrudController<LogUsuarioDto, Integer> {
+@RequestMapping(value = RutasRestConstants.logUsuario, produces = MediaType.APPLICATION_JSON_VALUE)
+public class LogUsuarioRestCrudController extends RestCrudController<LogUsuarioRutaDto, Integer> {
 
 	@Autowired
-	private LogUsuarioCrudService service;
+	private LogUsuarioRutaCrudService service;
 
 	@Override
-	protected LogUsuarioCrudService getService() {
+	protected LogUsuarioRutaCrudService getService() {
 		return service;
 	}
 }

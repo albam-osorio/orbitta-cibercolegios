@@ -40,12 +40,9 @@ public class DireccionUsuario extends BaseEntity<Integer> {
 
 	@Column(name = "ubicacionLon", nullable = false)
 	@NotNull
-	private BigDecimal ubicacionLon;
+	private BigDecimal x;
 
 	@Column(name = "ubicacionLat", nullable = false)
 	@NotNull
-	private BigDecimal ubicacionLat;
-
-	@Column(name = "ubicacionGeo")
-	private BigDecimal ubicacionGeo;
+	private BigDecimal y;
 }

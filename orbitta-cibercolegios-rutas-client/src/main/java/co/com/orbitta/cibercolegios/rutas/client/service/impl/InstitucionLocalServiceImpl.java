@@ -3,7 +3,7 @@ package co.com.orbitta.cibercolegios.rutas.client.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.com.orbitta.cibercolegios.constants.RestConstants;
+import co.com.orbitta.cibercolegios.constants.RutasRestConstants;
 import co.com.orbitta.cibercolegios.dto.InstitucionDto;
 import co.com.orbitta.cibercolegios.rutas.client.components.RutasRestProperties;
 import co.com.orbitta.cibercolegios.rutas.client.service.api.InstitucionLocalService;
@@ -22,7 +22,7 @@ public class InstitucionLocalServiceImpl extends LocalServiceImpl<InstitucionDto
 
 	@Override
 	protected String getResourceName() {
-		return RestConstants.direccionUsuario;
+		return RutasRestConstants.direccionUsuario;
 	}
 
 	@Override
