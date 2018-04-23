@@ -11,6 +11,5 @@ public interface EstadoRutaRepository extends BaseEntityRepository<EstadoRuta, I
 
 	List<EstadoRuta> findAllByTipoOrderByDescripcion(TipoEstadoRutaEnum tipoEvento);
 
-	Optional<EstadoRuta> findByDescripcionIgnoreCase(String descripcion);
-
+	Optional<EstadoRuta> findFirstByTipoAndPredeterminado(TipoEstadoRutaEnum tipo, boolean predeterminado);
 }

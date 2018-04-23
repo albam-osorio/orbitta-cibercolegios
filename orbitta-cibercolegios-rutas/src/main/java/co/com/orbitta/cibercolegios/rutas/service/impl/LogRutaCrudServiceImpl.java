@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import co.com.orbitta.cibercolegios.dto.LogRutaDto;
 import co.com.orbitta.cibercolegios.rutas.domain.LogRuta;
 import co.com.orbitta.cibercolegios.rutas.repository.EstadoRutaRepository;
-import co.com.orbitta.cibercolegios.rutas.repository.RutaRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.LogRutaRepository;
+import co.com.orbitta.cibercolegios.rutas.repository.readonly.RutaRepository;
 import co.com.orbitta.cibercolegios.rutas.service.api.LogRutaCrudService;
 import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
@@ -73,20 +73,11 @@ public class LogRutaCrudServiceImpl extends CrudServiceImpl<LogRuta, LogRutaDto,
 	}
 
 	@Override
-	public Optional<LogRutaDto> findSiguienteUbicacion(int rutaId, int id) {
-		val optional = getRepository().findFirstByRutaIdAndIdGreaterThanOrderById(rutaId, id);
+	public Optional<LogRutaDto> findUltimoLogRutaByRutaId(int rutaId) {
+		val fecha = LocalDate.now().atStartOfDay();
+		val optional = getRepository().findFirstByRutaIdAndFechaHoraGreaterThanOrderByIdDesc(rutaId, fecha);
 
 		val result = asModel(optional);
 		return result;
-	}
-
-	@Override
-	public Optional<Integer> findIdUltimoLogRutaDelDiaByRutaId(int rutaId) {
-//		val fechaHora = fecha.atStartOfDay();
-//		val optional = getRepository().findFirstByRutaIdAndFechaHoraGreaterThanOrderByIdDesc(rutaId, fechaHora);
-//
-//		val result = asModel(optional);
-//		return result;
-		return null;
 	}
 }

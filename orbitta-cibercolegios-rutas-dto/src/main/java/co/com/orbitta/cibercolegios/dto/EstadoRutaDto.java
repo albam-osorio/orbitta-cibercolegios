@@ -22,8 +22,10 @@ public class EstadoRutaDto implements EntityDto<Integer> {
 
 	@NotNull
 	private TipoEstadoRutaEnum tipo;
+	
+	private boolean predeterminado;
 
 	@NotNull
-	@Size(max = 100)
+	@Size(max = 50)
 	private String descripcion;
 }

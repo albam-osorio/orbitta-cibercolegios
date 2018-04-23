@@ -16,8 +16,11 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.web.util.UriComponents;
 
 import co.com.orbitta.cibercolegios.constants.RutasRestConstants;
-import co.com.orbitta.cibercolegios.dto.tracking.DatosRutaDto;
-import co.com.orbitta.cibercolegios.rutas.service.api.tracking.TrackingService;
+import co.com.orbitta.cibercolegios.dto.tracking.acudiente.DatosEstadoParadaDto;
+import co.com.orbitta.cibercolegios.dto.tracking.acudiente.DatosParadaDto;
+import co.com.orbitta.cibercolegios.dto.tracking.monitor.DatosRutaDto;
+import co.com.orbitta.cibercolegios.rutas.service.api.tracking.AcudienteTrackingService;
+import co.com.orbitta.cibercolegios.rutas.service.api.tracking.MonitorTrackingService;
 import lombok.val;
 
 @RestController
@@ -25,63 +28,80 @@ import lombok.val;
 public class TrackingRestController {
 
 	@Autowired
-	private TrackingService service;
+	private MonitorTrackingService monitorTrackingService;
 
-	private TrackingService getService() {
-		return service;
-	}
+	@Autowired
+	private AcudienteTrackingService acudienteTrackingService;
 
-	@GetMapping("/rutas/{monitorId}")
+	@GetMapping("/monitor/{monitorId}/rutas")
 	public ResponseEntity<List<DatosRutaDto>> getRutasByMonitorId(@PathVariable Integer monitorId) {
 
-		val result = getService().getRutasByMonitorId(monitorId);
+		val result = monitorTrackingService.findRutasByMonitorId(monitorId);
 
 		return ResponseEntity.ok(result);
 	}
 
-	@PostMapping(path = "/track/{monitor}", params = { "type=start", "sentido", "cx", "cy" })
-	public ResponseEntity<?> iniciarRecorrido(@PathVariable int monitor, @RequestParam int sentido,
-			@RequestParam BigDecimal cx, @RequestParam BigDecimal cy) {
+	@PostMapping(path = "/monitor/{monitorId}/rutas/{rutaId}/track/start", params = { "x", "y", "sentido" })
+	public ResponseEntity<?> iniciarRecorrido(@PathVariable int monitorId, @PathVariable int rutaId,
+			@RequestParam BigDecimal x, @RequestParam BigDecimal y, @RequestParam int sentido) {
 
-		val result = getService().iniciarRecorrido(monitor, sentido, cx, cy);
+		val result = monitorTrackingService.iniciarRecorrido(monitorId, rutaId, x, y, sentido);
 
 		return ResponseEntity.created(showURI(result).toUri()).body(result);
 	}
 
-	@PostMapping(path = "/track/{ubicacion}", params = { "type=pos", "cx", "cy" })
-	public ResponseEntity<?> registrarPosicion(@PathVariable int ubicacion, @RequestParam BigDecimal cx,
-			@RequestParam BigDecimal cy) {
+	@PostMapping(path = "/track/{logRutaId}", params = { "type=pos", "x", "y" })
+	public ResponseEntity<?> registrarPosicion(@PathVariable int logRutaId, @RequestParam BigDecimal x,
+			@RequestParam BigDecimal y) {
 
-		val result = getService().registrarPosicion(ubicacion, cx, cy);
-
-		return ResponseEntity.ok(result);
-	}
-
-	@PostMapping(path = "/track/{ubicacion}", params = { "type=event", "cx", "cy", "estado" })
-	public ResponseEntity<?> registrarEventoEnRecorrido(@PathVariable int ubicacion, @RequestParam BigDecimal cx,
-			@RequestParam BigDecimal cy, @RequestParam int estado) {
-
-		val result = getService().registrarEvento(ubicacion, cx, cy, estado);
+		val result = monitorTrackingService.registrarPosicion(logRutaId, x, y);
 
 		return ResponseEntity.ok(result);
 	}
 
-	@PostMapping(path = "/track/{ubicacion}", params = { "type=stop", "cx", "cy", "estado", "usuario-ruta", "log" })
-	public ResponseEntity<?> registrarParadaPasajero(@PathVariable int ubicacion, @RequestParam BigDecimal cx,
-			@RequestParam BigDecimal cy, @RequestParam int estado, @RequestParam("usuario-ruta") int usuarioRutaId) {
-		val result = getService().registrarParadaPasajero(ubicacion, cx, cy, usuarioRutaId, estado);
+	@PostMapping(path = "/track/{logRutaId}", params = { "type=event", "x", "y", "estado" })
+	public ResponseEntity<?> registrarEventoEnRecorrido(@PathVariable int logRutaId, @RequestParam BigDecimal x,
+			@RequestParam BigDecimal y, @RequestParam int estado) {
+
+		val result = monitorTrackingService.registrarEvento(logRutaId, x, y, estado);
 
 		return ResponseEntity.ok(result);
 	}
 
-	@PostMapping(path = "/track/{ubicacion}", params = { "type=end", "cx", "cy", "estado" })
-	public ResponseEntity<?> finalizarRecorrido(@PathVariable int ubicacion, @RequestParam BigDecimal cx,
-			@RequestParam BigDecimal cy, @RequestParam int estado) {
-		val result = getService().finalizarRecorrido(ubicacion, cx, cy, estado);
+	@PostMapping(path = "/track/{logRutaId}", params = { "type=stop", "x", "y", "usuario-ruta", "estado" })
+	public ResponseEntity<?> registrarParadaPasajero(@PathVariable int logRutaId, @RequestParam BigDecimal x,
+			@RequestParam BigDecimal y, @RequestParam("usuario-ruta") int usuarioRutaId, @RequestParam int estado) {
+
+		val result = monitorTrackingService.registrarParadaPasajero(logRutaId, x, y, usuarioRutaId, estado);
 
 		return ResponseEntity.ok(result);
 	}
 
+	@PostMapping(path = "/track/{logRutaId}", params = { "type=end", "x", "y" })
+	public ResponseEntity<?> finalizarRecorrido(@PathVariable int logRutaId, @RequestParam BigDecimal x,
+			@RequestParam BigDecimal y) {
+
+		val result = monitorTrackingService.finalizarRecorrido(logRutaId, x, y);
+
+		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping("/estudiante/{estudianteId}/parada")
+	public ResponseEntity<DatosParadaDto> getParadaByEstudianteId(@PathVariable Integer estudianteId) {
+
+		val result = acudienteTrackingService.findParadaByEstudianteId(estudianteId);
+
+		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping("/estudiante/{estudianteId}/parada/status")
+	public ResponseEntity<DatosEstadoParadaDto> getEstadoParadaByEstudianteId(@PathVariable Integer estudianteId) {
+
+		val result = acudienteTrackingService.findEstadoParadaByEstudianteId(estudianteId);
+
+		return ResponseEntity.ok(result);
+	}
+	
 	protected UriComponents showURI(DatosRutaDto model) {
 		// @formatter:off
 		val result = MvcUriComponentsBuilder

@@ -23,9 +23,9 @@ public class LogRutaDto implements EntityDto<Integer> {
 
 	private int rutaId;
 
-	private int sentido;
-
 	private LocalDateTime fechaHora;
+
+	private int sentido;
 
 	private int estadoId;
 

@@ -8,7 +8,5 @@ import co.com.orbitta.core.data.jpa.repository.BaseEntityRepository;
 
 public interface LogRutaRepository extends BaseEntityRepository<LogRuta, Integer> {
 	
-	Optional<LogRuta> findFirstByRutaIdAndIdGreaterThanOrderById(int rutaId, int id);
-	
 	Optional<LogRuta> findFirstByRutaIdAndFechaHoraGreaterThanOrderByIdDesc(int rutaId, LocalDateTime fechaHora);
 }
