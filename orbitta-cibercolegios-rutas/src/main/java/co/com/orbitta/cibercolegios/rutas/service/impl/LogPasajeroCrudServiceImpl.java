@@ -3,15 +3,16 @@ package co.com.orbitta.cibercolegios.rutas.service.impl;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.com.orbitta.cibercolegios.dto.LogPasajeroDto;
 import co.com.orbitta.cibercolegios.rutas.domain.LogPasajero;
+import co.com.orbitta.cibercolegios.rutas.dto.LogPasajeroDto;
 import co.com.orbitta.cibercolegios.rutas.repository.EstadoPasajeroRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.LogPasajeroRepository;
-import co.com.orbitta.cibercolegios.rutas.repository.readonly.PasajeroRepository;
+import co.com.orbitta.cibercolegios.rutas.repository.PasajeroRepository;
 import co.com.orbitta.cibercolegios.rutas.service.api.LogPasajeroCrudService;
 import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
@@ -52,7 +53,7 @@ public class LogPasajeroCrudServiceImpl extends CrudServiceImpl<LogPasajero, Log
 	}
 
 	@Override
-	protected LogPasajero asEntity(LogPasajeroDto model, LogPasajero entity) {
+	protected LogPasajero mergeEntity(LogPasajeroDto model, LogPasajero entity) {
 		val pasajero = pasajeroRepository.findById(model.getPasajeroId());
 		val estado = estadoPasajeroRepository.findById(model.getEstadoId());
 
@@ -70,13 +71,11 @@ public class LogPasajeroCrudServiceImpl extends CrudServiceImpl<LogPasajero, Log
 	}
 
 	@Override
-	public List<LogPasajeroDto> findUltimosLogPasajerosByRutaId(int rutaId, int sentido) {
+	public List<LogPasajeroDto> findUltimosLogPasajerosByRutaId(int rutaId) {
 		val fecha = LocalDate.now().atStartOfDay();
 
-		val ids = getRepository().findAllCurrentByRutaId(rutaId, fecha);
-		val entities = getRepository().findAllById(ids);
-
-		val result = asModels(entities);
+		val ids = getRepository().findAllMaxIdByRutaIdAndFechaHoraGreaterThan(rutaId, fecha);
+		val result = findAllById(ids.stream().map(a -> a.intValue()).collect(Collectors.toList()));
 		return result;
 	}
 
@@ -84,10 +83,9 @@ public class LogPasajeroCrudServiceImpl extends CrudServiceImpl<LogPasajero, Log
 	public Optional<LogPasajeroDto> findUltimoLogPasajerosByRutaIdAndPasajeroId(int rutaId, int pasajeroId) {
 		val fecha = LocalDate.now().atStartOfDay();
 
-		val optional = getRepository().findCurrentByRutaIdAndPasajeroId(rutaId, pasajeroId, fecha);
+		val optional = getRepository().findAllMaxIdByRutaIdAndFechaGreaterThanAndPasajeroId(rutaId, pasajeroId, fecha);
 		if (optional.isPresent()) {
-			val entity = getRepository().findById(optional.get());
-			val result = asModel(entity);
+			val result = findById(optional.get().intValue());
 			return result;
 		} else {
 			return Optional.empty();

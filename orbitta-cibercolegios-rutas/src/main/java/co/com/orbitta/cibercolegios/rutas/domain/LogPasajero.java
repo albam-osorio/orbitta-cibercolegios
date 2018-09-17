@@ -2,37 +2,41 @@ package co.com.orbitta.cibercolegios.rutas.domain;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import co.com.orbitta.cibercolegios.rutas.domain.readonly.Pasajero;
-import co.com.orbitta.core.data.jpa.domain.BaseEntity;
-import lombok.AllArgsConstructor;
+import co.com.orbitta.commons.domain.BaseEntity;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "RUTA_LOG_PASAJERO")
-@SequenceGenerator(name = "ruta_log_pasajero_sequence", allocationSize = 1, sequenceName = "SEQ_RUTA_LOG_PASAJERO")
-@AttributeOverride(name = "id", column = @Column(name = "ID_RUTA_LOG_PASAJERO"))
+@Table(name = "LOGS_X_PASAJERO")
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
 public class LogPasajero extends BaseEntity<Integer> {
 
-	private static final long serialVersionUID = 1L;
-
+	@Id
+	@GeneratedValue(generator = "logs_x_pasajero_gen", strategy = GenerationType.SEQUENCE)
+	@SequenceGenerator(name = "logs_x_pasajero_gen", sequenceName = "LOGS_X_PASAJERO_SEQ", allocationSize = 1)
+	@Column(name = "ID_LOG_PASAJERO")
+	@Setter(value = AccessLevel.PROTECTED)
+	private Integer id;
+	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "ID_USUARIO_RUTA", nullable = false)
 	@NotNull
@@ -50,4 +54,15 @@ public class LogPasajero extends BaseEntity<Integer> {
 	@JoinColumn(name = "ID_ESTADO_PASAJERO", nullable = false)
 	@NotNull
 	private EstadoPasajero estado;
+
+	@Builder
+	public LogPasajero(Integer id, @NotNull Pasajero pasajero, @NotNull LocalDateTime fechaHora, @NotNull int sentido,
+			@NotNull EstadoPasajero estado) {
+		super();
+		this.id = id;
+		this.pasajero = pasajero;
+		this.fechaHora = fechaHora;
+		this.sentido = sentido;
+		this.estado = estado;
+	}
 }

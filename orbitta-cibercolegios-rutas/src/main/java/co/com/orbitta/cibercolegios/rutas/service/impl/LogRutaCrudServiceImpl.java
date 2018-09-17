@@ -6,11 +6,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.com.orbitta.cibercolegios.dto.LogRutaDto;
 import co.com.orbitta.cibercolegios.rutas.domain.LogRuta;
+import co.com.orbitta.cibercolegios.rutas.dto.LogRutaDto;
 import co.com.orbitta.cibercolegios.rutas.repository.EstadoRutaRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.LogRutaRepository;
-import co.com.orbitta.cibercolegios.rutas.repository.readonly.RutaRepository;
+import co.com.orbitta.cibercolegios.rutas.repository.RutaRepository;
 import co.com.orbitta.cibercolegios.rutas.service.api.LogRutaCrudService;
 import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
@@ -41,9 +41,9 @@ public class LogRutaCrudServiceImpl extends CrudServiceImpl<LogRuta, LogRutaDto,
 				.builder()
 				.id(entity.getId())
 				.rutaId(entity.getRuta().getId())
-				.sentido(entity.getSentido())
 				.fechaHora(entity.getFechaHora())
-				.estadoId(entity.getEstadoRuta().getId())
+				.sentido(entity.getSentido())
+				.estadoId(entity.getEstado().getId())
 				.x(entity.getX())
 				.y(entity.getY())
 
@@ -53,14 +53,14 @@ public class LogRutaCrudServiceImpl extends CrudServiceImpl<LogRuta, LogRutaDto,
 	}
 
 	@Override
-	protected LogRuta asEntity(LogRutaDto model, LogRuta entity) {
+	protected LogRuta mergeEntity(LogRutaDto model, LogRuta entity) {
 		val ruta = rutaRepository.findById(model.getRutaId());
 		val estadoRuta = estadoRepository.findById(model.getEstadoId());
 
 		entity.setRuta(ruta.get());
-		entity.setSentido(model.getSentido());
 		entity.setFechaHora(model.getFechaHora());
-		entity.setEstadoRuta(estadoRuta.get());
+		entity.setSentido(model.getSentido());
+		entity.setEstado(estadoRuta.get());
 		entity.setX(model.getX());
 		entity.setY(model.getY());
 

@@ -8,24 +8,24 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.com.orbitta.cibercolegios.dto.ConversacionDto;
-import co.com.orbitta.cibercolegios.dto.MensajeDto;
-import co.com.orbitta.cibercolegios.dto.tracking.chat.DatosConversacionDto;
-import co.com.orbitta.cibercolegios.dto.tracking.chat.DatosMensajeDto;
-import co.com.orbitta.cibercolegios.enums.EmisorMensajeEnum;
-import co.com.orbitta.cibercolegios.rutas.service.api.ConversacionCrudService;
-import co.com.orbitta.cibercolegios.rutas.service.api.MensajeCrudService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.PasajeroQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.RutaQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.UsuarioQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.tracking.ChatTrackingService;
+import co.com.orbitta.cibercolegios.ciber.client.service.api.UsuarioLocalService;
+import co.com.orbitta.cibercolegios.rutas.dto.chat.ConversacionDto;
+import co.com.orbitta.cibercolegios.rutas.dto.chat.DatosConversacionDto;
+import co.com.orbitta.cibercolegios.rutas.dto.chat.DatosMensajeDto;
+import co.com.orbitta.cibercolegios.rutas.dto.chat.MensajeDto;
+import co.com.orbitta.cibercolegios.rutas.enums.EmisorMensajeEnum;
+import co.com.orbitta.cibercolegios.rutas.service.api.PasajeroQueryService;
+import co.com.orbitta.cibercolegios.rutas.service.api.RutaQueryService;
+import co.com.orbitta.cibercolegios.rutas.service.api.chat.ChatService;
+import co.com.orbitta.cibercolegios.rutas.service.api.chat.ConversacionCrudService;
+import co.com.orbitta.cibercolegios.rutas.service.api.chat.MensajeCrudService;
 import lombok.val;
 
 @Service
-public class ChatTrackingServiceImpl implements ChatTrackingService {
+public class ChatTrackingServiceImpl implements ChatService {
 
 	@Autowired
-	private UsuarioQueryService usuarioService;
+	private UsuarioLocalService usuarioService;
 
 	@Autowired
 	private PasajeroQueryService pasajeroService;

@@ -3,14 +3,14 @@ package co.com.orbitta.cibercolegios.rutas.client.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.com.orbitta.cibercolegios.constants.RutasRestConstants;
-import co.com.orbitta.cibercolegios.dto.MensajeDto;
 import co.com.orbitta.cibercolegios.rutas.client.components.RutasRestProperties;
 import co.com.orbitta.cibercolegios.rutas.client.service.api.MensajeLocalService;
-import co.com.orbitta.core.web.client.service.impl.LocalServiceImpl;
+import co.com.orbitta.cibercolegios.rutas.constants.RutasRestConstants;
+import co.com.orbitta.cibercolegios.rutas.dto.chat.MensajeDto;
+import co.com.orbitta.core.web.client.service.impl.LocalCrudServiceImpl;
 
 @Service
-public class MensajeLocalServiceImpl extends LocalServiceImpl<MensajeDto, Integer>
+public class MensajeLocalServiceImpl extends LocalCrudServiceImpl<MensajeDto, Integer>
 		implements MensajeLocalService {
 
 	@Autowired

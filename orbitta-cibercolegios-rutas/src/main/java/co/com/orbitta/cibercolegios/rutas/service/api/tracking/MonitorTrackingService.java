@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import co.com.orbitta.cibercolegios.dto.tracking.monitor.DatosRutaDto;
+import co.com.orbitta.cibercolegios.rutas.dto.tracking.monitor.DatosRutaDto;
+
+
 
 @Transactional(readOnly = true)
 public interface MonitorTrackingService {

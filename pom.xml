@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.0.RELEASE</version>
+		<version>2.0.4.RELEASE</version>
 		<relativePath />
 		<!-- lookup parent from repository -->
 	</parent>
@@ -31,12 +31,12 @@
 		<dependencies>
 			<dependency>
 				<groupId>co.com.orbitta</groupId>
-				<artifactId>orbitta-core-dto</artifactId>
+				<artifactId>orbitta-core-domain</artifactId>
 				<version>${orbitta.core.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>co.com.orbitta</groupId>
-				<artifactId>orbitta-core-jpa</artifactId>
+				<artifactId>orbitta-core-data-jpa</artifactId>
 				<version>${orbitta.core.version}</version>
 			</dependency>
 			<dependency>
@@ -55,14 +55,22 @@
 				<version>${orbitta.core.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.microsoft.sqlserver</groupId>
-				<artifactId>mssql-jdbc</artifactId>
-				<version>6.2.2.jre8</version>
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc7</artifactId>
+				<version>12.1.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<description>Funcionalidad para los proyectos de Ciber Colegios</description>
 	<modules>
+		<module>orbitta-cibercolegios-commons-domain</module>
+		<module>orbitta-cibercolegios-commons-dto</module>
+
+
+
+		<module>orbitta-cibercolegios-ciber</module>
+		<module>orbitta-cibercolegios-ciber-client</module>
+		<module>orbitta-cibercolegios-ciber-dto</module>
 		<module>orbitta-cibercolegios-rutas</module>
 		<module>orbitta-cibercolegios-rutas-client</module>
 		<module>orbitta-cibercolegios-rutas-dto</module>

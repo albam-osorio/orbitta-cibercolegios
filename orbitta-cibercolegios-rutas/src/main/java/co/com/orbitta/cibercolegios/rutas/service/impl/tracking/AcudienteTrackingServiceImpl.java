@@ -5,21 +5,21 @@ import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.com.orbitta.cibercolegios.dto.EstadoPasajeroDto;
-import co.com.orbitta.cibercolegios.dto.EstadoRutaDto;
-import co.com.orbitta.cibercolegios.dto.LogRutaDto;
-import co.com.orbitta.cibercolegios.dto.tracking.acudiente.DatosEstadoParadaDto;
-import co.com.orbitta.cibercolegios.dto.tracking.acudiente.DatosParadaDto;
-import co.com.orbitta.cibercolegios.enums.TipoEstadoRutaEnum;
+import co.com.orbitta.cibercolegios.ciber.client.service.api.InstitucionLocalService;
+import co.com.orbitta.cibercolegios.ciber.client.service.api.UsuarioLocalService;
+import co.com.orbitta.cibercolegios.rutas.dto.EstadoPasajeroDto;
+import co.com.orbitta.cibercolegios.rutas.dto.EstadoRutaDto;
+import co.com.orbitta.cibercolegios.rutas.dto.LogRutaDto;
+import co.com.orbitta.cibercolegios.rutas.dto.tracking.acudiente.DatosEstadoParadaDto;
+import co.com.orbitta.cibercolegios.rutas.dto.tracking.acudiente.DatosParadaDto;
+import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoRutaEnum;
+import co.com.orbitta.cibercolegios.rutas.service.api.DireccionQueryService;
 import co.com.orbitta.cibercolegios.rutas.service.api.EstadoPasajeroCrudService;
 import co.com.orbitta.cibercolegios.rutas.service.api.EstadoRutaCrudService;
 import co.com.orbitta.cibercolegios.rutas.service.api.LogPasajeroCrudService;
 import co.com.orbitta.cibercolegios.rutas.service.api.LogRutaCrudService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.DireccionQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.InstitucionQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.PasajeroQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.RutaQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.UsuarioQueryService;
+import co.com.orbitta.cibercolegios.rutas.service.api.PasajeroQueryService;
+import co.com.orbitta.cibercolegios.rutas.service.api.RutaQueryService;
 import co.com.orbitta.cibercolegios.rutas.service.api.tracking.AcudienteTrackingService;
 import lombok.val;
 
@@ -27,13 +27,13 @@ import lombok.val;
 public class AcudienteTrackingServiceImpl implements AcudienteTrackingService {
 
 	@Autowired
-	private InstitucionQueryService institucionService;
+	private InstitucionLocalService institucionService;
 
 	@Autowired
 	private RutaQueryService rutaService;
 
 	@Autowired
-	private UsuarioQueryService usuarioService;
+	private UsuarioLocalService usuarioService;
 
 	@Autowired
 	private DireccionQueryService direccionService;
@@ -84,7 +84,7 @@ public class AcudienteTrackingServiceImpl implements AcudienteTrackingService {
 				.movil(ruta.getMovil())
 				.capacidad(ruta.getCapacidad())
 				.institucionId(institucion.getId())
-				.institucionNombre(institucion.getDescripcion())
+				.institucionNombre(institucion.getNombre())
 				.institucionX(ruta.getX())
 				.institucionY(ruta.getY())
 				.monitorId(monitor.getId())

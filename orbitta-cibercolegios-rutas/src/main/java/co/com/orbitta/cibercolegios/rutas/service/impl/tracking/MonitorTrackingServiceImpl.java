@@ -9,23 +9,23 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.com.orbitta.cibercolegios.dto.LogPasajeroDto;
-import co.com.orbitta.cibercolegios.dto.LogRutaDto;
-import co.com.orbitta.cibercolegios.dto.readonly.PasajeroDto;
-import co.com.orbitta.cibercolegios.dto.readonly.RutaDto;
-import co.com.orbitta.cibercolegios.dto.tracking.monitor.DatosPasajeroDto;
-import co.com.orbitta.cibercolegios.dto.tracking.monitor.DatosRutaDto;
-import co.com.orbitta.cibercolegios.enums.TipoEstadoPasajeroEnum;
-import co.com.orbitta.cibercolegios.enums.TipoEstadoRutaEnum;
+import co.com.orbitta.cibercolegios.ciber.client.service.api.InstitucionLocalService;
+import co.com.orbitta.cibercolegios.ciber.client.service.api.UsuarioLocalService;
+import co.com.orbitta.cibercolegios.rutas.dto.LogPasajeroDto;
+import co.com.orbitta.cibercolegios.rutas.dto.LogRutaDto;
+import co.com.orbitta.cibercolegios.rutas.dto.PasajeroDto;
+import co.com.orbitta.cibercolegios.rutas.dto.RutaDto;
+import co.com.orbitta.cibercolegios.rutas.dto.tracking.monitor.DatosPasajeroDto;
+import co.com.orbitta.cibercolegios.rutas.dto.tracking.monitor.DatosRutaDto;
+import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoPasajeroEnum;
+import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoRutaEnum;
+import co.com.orbitta.cibercolegios.rutas.service.api.DireccionQueryService;
 import co.com.orbitta.cibercolegios.rutas.service.api.EstadoPasajeroCrudService;
 import co.com.orbitta.cibercolegios.rutas.service.api.EstadoRutaCrudService;
 import co.com.orbitta.cibercolegios.rutas.service.api.LogPasajeroCrudService;
 import co.com.orbitta.cibercolegios.rutas.service.api.LogRutaCrudService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.DireccionQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.InstitucionQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.PasajeroQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.RutaQueryService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.UsuarioQueryService;
+import co.com.orbitta.cibercolegios.rutas.service.api.PasajeroQueryService;
+import co.com.orbitta.cibercolegios.rutas.service.api.RutaQueryService;
 import co.com.orbitta.cibercolegios.rutas.service.api.tracking.MonitorTrackingService;
 import lombok.val;
 
@@ -35,13 +35,13 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	private static final int SENTIDO_HACIA_EL_COLEGIO = 1;
 
 	@Autowired
-	private InstitucionQueryService institucionService;
+	private InstitucionLocalService institucionService;
 
 	@Autowired
 	private RutaQueryService rutaService;
 
 	@Autowired
-	private UsuarioQueryService usuarioService;
+	private UsuarioLocalService usuarioService;
 
 	@Autowired
 	private DireccionQueryService direccionService;
@@ -81,7 +81,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	public DatosRutaDto iniciarRecorrido(int monitorId, int rutaId, BigDecimal x, BigDecimal y, int sentido) {
 		val optional = rutaService.findById(rutaId);
 
-		if (!optional.isPresent()) {
+		if (optional.isPresent()) {
 			val ruta = optional.get();
 			if (ruta.getMonitorId() != monitorId) {
 				throw new RuntimeException("La ruta no esta asignada a este monitor.");
@@ -173,7 +173,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	}
 
 	private void checkTodosLosPasajerosTienenUnEstadoFinal(LogRutaDto logRuta) {
-		val logs = logPasajeroService.findUltimosLogPasajerosByRutaId(logRuta.getRutaId(), logRuta.getSentido());
+		val logs = logPasajeroService.findUltimosLogPasajerosByRutaId(logRuta.getRutaId());
 
 		for (val log : logs) {
 			val estado = estadoPasajeroService.findOneById(log.getEstadoId());
@@ -262,7 +262,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 				.movil(ruta.getMovil())
 				.capacidad(ruta.getCapacidad())
 				.institucionId(institucion.getId())
-				.institucionNombre(institucion.getDescripcion())
+				.institucionNombre(institucion.getNombre())
 				.institucionX(ruta.getX())
 				.institucionY(ruta.getY())
 				.monitorId(monitor.getId())
@@ -283,7 +283,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	private List<DatosPasajeroDto> getPasajeros(int rutaId, int sentido) {
 		val list = new ArrayList<DatosPasajeroDto>();
 
-		val logs = logPasajeroService.findUltimosLogPasajerosByRutaId(rutaId, sentido);
+		val logs = logPasajeroService.findUltimosLogPasajerosByRutaId(rutaId);
 
 		for (val log : logs) {
 			val pasajero = pasajeroService.findOneById(log.getPasajeroId());
@@ -362,9 +362,10 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 		val siguiente = logRutaService.findUltimoLogRutaByRutaId(result.getRutaId());
 
 		if (siguiente.isPresent()) {
-			if (siguiente.get().getId().equals(result.getId())) {
-				throw new RuntimeException(
-						"El consecutivo " + logRutaId + " no es el ultimo registro en log de la ruta");
+			if (!siguiente.get().getId().equals(result.getId())) {
+				throw new RuntimeException("El consecutivo " + logRutaId
+						+ " no es el ultimo registro en log de la ruta. EL ultimo log tiene de la ruta tiene id ="
+						+ siguiente.get().getId());
 			}
 		}
 

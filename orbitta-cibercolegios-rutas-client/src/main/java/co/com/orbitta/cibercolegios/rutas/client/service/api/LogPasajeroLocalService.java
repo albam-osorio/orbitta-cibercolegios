@@ -1,8 +1,8 @@
 package co.com.orbitta.cibercolegios.rutas.client.service.api;
 
-import co.com.orbitta.cibercolegios.dto.LogPasajeroDto;
-import co.com.orbitta.core.web.client.service.api.LocalService;
+import co.com.orbitta.cibercolegios.rutas.dto.LogPasajeroDto;
+import co.com.orbitta.core.web.client.service.api.LocalCrudService;
 
-public interface LogPasajeroLocalService extends LocalService<LogPasajeroDto, Integer> {
+public interface LogPasajeroLocalService extends LocalCrudService<LogPasajeroDto, Integer> {
 
 }

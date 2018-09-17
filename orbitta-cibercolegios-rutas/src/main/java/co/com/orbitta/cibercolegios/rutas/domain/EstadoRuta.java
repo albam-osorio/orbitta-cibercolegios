@@ -1,46 +1,61 @@
 package co.com.orbitta.cibercolegios.rutas.domain;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import co.com.orbitta.cibercolegios.enums.TipoEstadoRutaEnum;
-import co.com.orbitta.core.data.jpa.domain.BaseEntity;
-import lombok.AllArgsConstructor;
+import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoRutaEnum;
+import co.com.orbitta.commons.domain.BaseEntity;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "ESTADO_RUTA")
-@SequenceGenerator(name = "estado_ruta_sequence", allocationSize = 1, sequenceName = "SEQ_ESTADO_RUTA")
-@AttributeOverride(name = "id", column = @Column(name = "ID_ESTADO_RUTA"))
+@Table(name = "ESTADOS_RUTA")
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
 public class EstadoRuta extends BaseEntity<Integer> {
 
-	private static final long serialVersionUID = 1L;
+	@Id
+    @GeneratedValue(generator="estado_ruta_gen", strategy=GenerationType.SEQUENCE)
+	@SequenceGenerator(name = "estado_ruta_gen", sequenceName = "ESTADOS_RUTA_SEQ", allocationSize = 1)
+	@Column(name = "ID_ESTADO_RUTA")
+	@Setter(value = AccessLevel.PROTECTED)
+	private Integer id;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO", length = 50, nullable = false)
 	@NotNull
 	private TipoEstadoRutaEnum tipo;
 
-	@Column(name = "PREDETERMINADO", nullable = false)
-	private boolean predeterminado;
-
 	@Column(name = "DESCRIPCION", length = 50, nullable = false)
 	@NotNull
 	@Size(max = 50)
 	private String descripcion;
+
+	@Column(name = "PREDETERMINADO", nullable = false)
+	private boolean predeterminado;
+
+	@Builder
+	public EstadoRuta(Integer id, @NotNull TipoEstadoRutaEnum tipo, @NotNull @Size(max = 50) String descripcion,
+			boolean predeterminado) {
+		super();
+		this.id = id;
+		this.tipo = tipo;
+		this.descripcion = descripcion;
+		this.predeterminado = predeterminado;
+	}
 }

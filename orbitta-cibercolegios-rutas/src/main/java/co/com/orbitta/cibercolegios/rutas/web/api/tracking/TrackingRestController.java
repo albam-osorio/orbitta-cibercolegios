@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 
-import co.com.orbitta.cibercolegios.constants.RutasRestConstants;
-import co.com.orbitta.cibercolegios.dto.tracking.acudiente.DatosEstadoParadaDto;
-import co.com.orbitta.cibercolegios.dto.tracking.acudiente.DatosParadaDto;
-import co.com.orbitta.cibercolegios.dto.tracking.monitor.DatosRutaDto;
+import co.com.orbitta.cibercolegios.rutas.constants.RutasRestConstants;
+import co.com.orbitta.cibercolegios.rutas.dto.tracking.acudiente.DatosEstadoParadaDto;
+import co.com.orbitta.cibercolegios.rutas.dto.tracking.acudiente.DatosParadaDto;
+import co.com.orbitta.cibercolegios.rutas.dto.tracking.monitor.DatosRutaDto;
 import co.com.orbitta.cibercolegios.rutas.service.api.tracking.AcudienteTrackingService;
 import co.com.orbitta.cibercolegios.rutas.service.api.tracking.MonitorTrackingService;
 import lombok.val;

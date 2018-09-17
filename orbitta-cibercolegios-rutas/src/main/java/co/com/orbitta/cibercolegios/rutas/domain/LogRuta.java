@@ -3,36 +3,40 @@ package co.com.orbitta.cibercolegios.rutas.domain;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import co.com.orbitta.cibercolegios.rutas.domain.readonly.Ruta;
-import co.com.orbitta.core.data.jpa.domain.BaseEntity;
-import lombok.AllArgsConstructor;
+import co.com.orbitta.commons.domain.BaseEntity;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "RUTA_LOG")
-@SequenceGenerator(name = "ruta_log_sequence", allocationSize = 1, sequenceName = "SEQ_RUTA_LOG")
-@AttributeOverride(name = "id", column = @Column(name = "ID_RUTA_LOG"))
+@Table(name = "LOGS_X_RUTA")
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
 public class LogRuta extends BaseEntity<Integer> {
 
-	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(generator = "logs_x_ruta_gen", strategy = GenerationType.SEQUENCE)
+	@SequenceGenerator(name = "logs_x_ruta_gen", sequenceName = "LOGS_X_RUTA_SEQ", allocationSize = 1)
+	@Column(name = "ID_LOG_RUTA")
+	@Setter(value = AccessLevel.PROTECTED)
+	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "ID_RUTA", nullable = false)
@@ -50,7 +54,7 @@ public class LogRuta extends BaseEntity<Integer> {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "ID_ESTADO_RUTA", nullable = false)
 	@NotNull
-	private EstadoRuta estadoRuta;
+	private EstadoRuta estado;
 
 	@Column(name = "x", nullable = false, precision = 9, scale = 6)
 	@NotNull
@@ -59,4 +63,17 @@ public class LogRuta extends BaseEntity<Integer> {
 	@Column(name = "y", nullable = false, precision = 9, scale = 6)
 	@NotNull
 	private BigDecimal y;
+
+	@Builder
+	public LogRuta(Integer id, @NotNull Ruta ruta, @NotNull LocalDateTime fechaHora, @NotNull int sentido,
+			@NotNull EstadoRuta estado, @NotNull BigDecimal x, @NotNull BigDecimal y) {
+		super();
+		this.id = id;
+		this.ruta = ruta;
+		this.fechaHora = fechaHora;
+		this.sentido = sentido;
+		this.estado = estado;
+		this.x = x;
+		this.y = y;
+	}
 }

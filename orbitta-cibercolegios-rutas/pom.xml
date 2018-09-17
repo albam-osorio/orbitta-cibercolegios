@@ -29,21 +29,29 @@
 		</dependency>
 		<dependency>
 			<groupId>co.com.orbitta.cibercolegios</groupId>
+			<artifactId>
+				orbitta-cibercolegios-commons-domain
+			</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>co.com.orbitta.cibercolegios</groupId>
 			<artifactId>orbitta-cibercolegios-rutas-dto</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>co.com.orbitta</groupId>
-			<artifactId>orbitta-core-jpa</artifactId>
+			<groupId>co.com.orbitta.cibercolegios</groupId>
+			<artifactId>orbitta-cibercolegios-ciber-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc7</artifactId>
-			<version>12.1.0.2</version>
 		</dependency>
 		<dependency>
-			<groupId>com.microsoft.sqlserver</groupId>
-			<artifactId>mssql-jdbc</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 </project>
