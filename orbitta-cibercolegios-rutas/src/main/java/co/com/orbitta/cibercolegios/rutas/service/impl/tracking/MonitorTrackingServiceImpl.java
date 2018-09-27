@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,22 +188,32 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 		}
 	}
 
+	@Override
+	public Optional<DatosRutaDto> findEstadoRutaByRutaId(int rutaId) {
+		val optional = rutaService.findById(rutaId);
+		if (optional.isPresent()) {
+			val ruta = optional.get();
+			val result = asDatosRuta(ruta);
+			return Optional.of(result);
+		} else {
+			return Optional.empty();
+		}
+	}
+
 	// -----------------------------------------------------------------------------------------------------------------
 	// -- Builders
 	// -----------------------------------------------------------------------------------------------------------------
 	private LogRutaDto createLogRuta(int rutaId, int sentido, int estadoId, BigDecimal x, BigDecimal y) {
 		val fechaHora = LocalDateTime.now();
-		// @formatter:off
-		val model = LogRutaDto
-				.builder()
-				.rutaId(rutaId)
-				.sentido(sentido)
-				.fechaHora(fechaHora)
-				.estadoId(estadoId)
-				.x(x)
-				.y(y)
-				.build();
-		// @formatter:on
+
+		val model = new LogRutaDto();
+
+		model.setRutaId(rutaId);
+		model.setFechaHora(fechaHora);
+		model.setSentido(sentido);
+		model.setEstadoId(estadoId);
+		model.setX(x);
+		model.setY(y);
 
 		val result = logRutaService.create(model);
 		return result;
@@ -210,15 +221,13 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 
 	private LogPasajeroDto createLogPasajero(int pasajeroId, int sentido, int estadoId) {
 		val fechaHora = LocalDateTime.now();
-		// @formatter:off
-		val model = LogPasajeroDto
-				.builder()
-				.pasajeroId(pasajeroId)
-				.sentido(sentido)
-				.fechaHora(fechaHora)
-				.estadoId(estadoId)
-				.build();
-		// @formatter:on
+
+		val model = new LogPasajeroDto();
+
+		model.setPasajeroId(pasajeroId);
+		model.setSentido(sentido);
+		model.setFechaHora(fechaHora);
+		model.setEstadoId(estadoId);
 
 		val result = logPasajeroService.create(model);
 		return result;
@@ -251,31 +260,28 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 			pasajeros.addAll(getPasajeros(ruta.getId(), sentido));
 		}
 
-		// @formatter:off
-		val result = DatosRutaDto
-				.builder()
-				.rutaId(ruta.getId())
-				.codigo(ruta.getCodigo())
-				.descripcion(ruta.getDescripcion())
-				.marca(ruta.getMarca())
-				.placa(ruta.getPlaca())
-				.movil(ruta.getMovil())
-				.capacidad(ruta.getCapacidad())
-				.institucionId(institucion.getId())
-				.institucionNombre(institucion.getNombre())
-				.institucionX(ruta.getX())
-				.institucionY(ruta.getY())
-				.monitorId(monitor.getId())
-				.monitorNombres(monitor.getNombre())
-				.monitorApellidos(monitor.getApellido())
-				.conductorId(conductor.getId())
-				.conductorNombres(conductor.getNombre())
-				.conductorApellidos(conductor.getApellido())
-				.activa(activa)
-				.logRuta(logRuta)
-				.pasajeros(pasajeros)
-				.build();
-		// @formatter:on
+		val result = new DatosRutaDto();
+
+		result.setRutaId(ruta.getId());
+		result.setCodigo(ruta.getCodigo());
+		result.setDescripcion(ruta.getDescripcion());
+		result.setMarca(ruta.getMarca());
+		result.setPlaca(ruta.getPlaca());
+		result.setMovil(ruta.getMovil());
+		result.setCapacidad(ruta.getCapacidad());
+		result.setInstitucionId(institucion.getId());
+		result.setInstitucionNombre(institucion.getNombre());
+		result.setInstitucionX(ruta.getX());
+		result.setInstitucionY(ruta.getY());
+		result.setMonitorId(monitor.getId());
+		result.setMonitorNombres(monitor.getNombre());
+		result.setMonitorApellidos(monitor.getApellido());
+		result.setConductorId(conductor.getId());
+		result.setConductorNombres(conductor.getNombre());
+		result.setConductorApellidos(conductor.getApellido());
+		result.setActiva(activa);
+		result.setLogRuta(logRuta);
+		result.setPasajeros(pasajeros);
 
 		return result;
 	}
@@ -291,21 +297,18 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 			val direccion = direccionService.findOneById(pasajero.getDireccionId());
 			val estado = estadoPasajeroService.findOneById(log.getEstadoId());
 
-			// @formatter:off
-			val model = DatosPasajeroDto
-					.builder()
-					.usuarioRutaId(pasajero.getId())
-					.usuarioId(usuario.getId())
-					.nombres(usuario.getNombre())
-					.apellidos(usuario.getApellido())
-					.secuencia(pasajero.getSecuencia())
-					.direccion(direccion.getDescripcion())
-					.x(direccion.getX())
-					.y(direccion.getY())
-					.estadoId(estado.getId())
-					.estadoDescripcion(estado.getDescripcion())
-					.build();
-			// @formatter:on
+			val model = new DatosPasajeroDto();
+
+			model.setUsuarioId(usuario.getId());
+			model.setSecuencia(pasajero.getSecuencia());
+			model.setNombres(usuario.getNombre());
+			model.setApellidos(usuario.getApellido());
+			model.setEstadoId(estado.getId());
+			model.setEstadoDescripcion(estado.getDescripcion());
+			model.setTipoEstado(estado.getTipo());
+			model.setDireccion(direccion.getDescripcion());
+			model.setX(direccion.getX());
+			model.setY(direccion.getY());
 
 			list.add(model);
 		}

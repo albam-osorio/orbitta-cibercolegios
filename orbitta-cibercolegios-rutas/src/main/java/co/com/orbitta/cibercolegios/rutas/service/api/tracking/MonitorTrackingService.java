@@ -2,6 +2,7 @@ package co.com.orbitta.cibercolegios.rutas.service.api.tracking;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,4 +29,6 @@ public interface MonitorTrackingService {
 
 	@Transactional(readOnly = false)
 	int finalizarRecorrido(int logRutaId, BigDecimal x, BigDecimal y);
+
+	Optional<DatosRutaDto> findEstadoRutaByRutaId(int rutaId);
 }

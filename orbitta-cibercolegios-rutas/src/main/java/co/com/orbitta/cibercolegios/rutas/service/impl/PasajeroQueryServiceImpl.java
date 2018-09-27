@@ -1,6 +1,7 @@
 package co.com.orbitta.cibercolegios.rutas.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,8 +51,13 @@ public class PasajeroQueryServiceImpl extends QueryServiceImpl<Pasajero, Pasajer
 	}
 
 	@Override
-	public int numeroParadas(int rutaId) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Optional<PasajeroDto> findByUsuarioId(int usuarioId) {
+		val entities = getRepository().findAllByUsuarioId(usuarioId);
+
+		if (entities.size() > 0) {
+			return Optional.of(asModel(entities.get(0)));
+		} else {
+			return Optional.empty();
+		}
 	}
 }

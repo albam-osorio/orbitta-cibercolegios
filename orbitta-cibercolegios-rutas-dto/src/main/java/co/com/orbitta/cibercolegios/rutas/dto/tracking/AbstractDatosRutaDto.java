@@ -1,6 +1,5 @@
 package co.com.orbitta.cibercolegios.rutas.dto.tracking;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
@@ -10,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class AbstractDatosRutaDto implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public abstract class AbstractDatosRutaDto {
 
 	private int rutaId;
 
@@ -49,5 +46,4 @@ public abstract class AbstractDatosRutaDto implements Serializable {
 	private String conductorApellidos;
 
 	private boolean activa;
-
 }

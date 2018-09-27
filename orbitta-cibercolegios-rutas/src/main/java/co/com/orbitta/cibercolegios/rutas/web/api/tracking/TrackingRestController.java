@@ -86,20 +86,37 @@ public class TrackingRestController {
 		return ResponseEntity.ok(result);
 	}
 
-	@GetMapping("/estudiante/{estudianteId}/parada")
-	public ResponseEntity<DatosParadaDto> getParadaByEstudianteId(@PathVariable Integer estudianteId) {
+	@GetMapping("/estudiante/{usuarioId}/parada")
+	public ResponseEntity<DatosParadaDto> getParadaByEstudianteId(@PathVariable Integer usuarioId) {
+		val optional = acudienteTrackingService.findParadaByUsuarioId(usuarioId);
 
-		val result = acudienteTrackingService.findParadaByEstudianteId(estudianteId);
-
-		return ResponseEntity.ok(result);
+		if (optional.isPresent()) {
+			return ResponseEntity.ok(optional.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
-	@GetMapping("/estudiante/{estudianteId}/parada/status")
-	public ResponseEntity<DatosEstadoParadaDto> getEstadoParadaByEstudianteId(@PathVariable Integer estudianteId) {
+	@GetMapping("/estudiante/{usuarioId}/parada/status")
+	public ResponseEntity<DatosEstadoParadaDto> getEstadoParadaByEstudianteId(@PathVariable Integer usuarioId) {
+		val optional = acudienteTrackingService.findEstadoParadaByUsuarioId(usuarioId);
 
-		val result = acudienteTrackingService.findEstadoParadaByEstudianteId(estudianteId);
+		if (optional.isPresent()) {
+			return ResponseEntity.ok(optional.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
-		return ResponseEntity.ok(result);
+	@GetMapping("/ruta/{rutaId}/status")
+	public ResponseEntity<DatosRutaDto> getEstadoByRutaId(@PathVariable Integer rutaId) {
+		val optional = monitorTrackingService.findEstadoRutaByRutaId(rutaId);
+
+		if (optional.isPresent()) {
+			return ResponseEntity.ok(optional.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 	
 	protected UriComponents showURI(DatosRutaDto model) {

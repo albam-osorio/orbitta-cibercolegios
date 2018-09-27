@@ -8,5 +8,7 @@ import co.com.orbitta.cibercolegios.rutas.domain.Pasajero;
 
 public interface PasajeroRepository extends JpaRepository<Pasajero, Integer> {
 
+	List<Pasajero> findAllByUsuarioId(Integer usuarioId);
+	
 	List<Pasajero> findAllByRutaId(Integer rutaId);
 }

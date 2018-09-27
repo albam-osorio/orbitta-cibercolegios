@@ -2,8 +2,11 @@ package co.com.orbitta.cibercolegios.rutas.dto;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoPasajeroEnum;
 import co.com.orbitta.commons.dto.EntityDto;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,13 +25,11 @@ public class LogPasajeroDto extends EntityDto<Integer> {
 	private int sentido;
 
 	private int estadoId;
-
-	@Builder
-	public LogPasajeroDto(Integer id, int pasajeroId, LocalDateTime fechaHora, int sentido, int estadoId) {
-		super(id);
-		this.pasajeroId = pasajeroId;
-		this.fechaHora = fechaHora;
-		this.sentido = sentido;
-		this.estadoId = estadoId;
-	}
+	
+	@NotNull
+	@Size(max = 50)
+	private String estadoNombre;
+	
+	@NotNull
+	private TipoEstadoPasajeroEnum tipoEstado;
 }

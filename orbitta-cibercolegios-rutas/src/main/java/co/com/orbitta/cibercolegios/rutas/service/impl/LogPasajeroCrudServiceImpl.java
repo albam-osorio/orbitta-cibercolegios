@@ -38,17 +38,17 @@ public class LogPasajeroCrudServiceImpl extends CrudServiceImpl<LogPasajero, Log
 	@Override
 	public LogPasajeroDto asModel(LogPasajero entity) {
 
-		// @formatter:off
-		val result = LogPasajeroDto
-				.builder()
-				.id(entity.getId())
-				.pasajeroId(entity.getPasajero().getId())
-				.fechaHora(entity.getFechaHora())
-				.sentido(entity.getSentido())
-				.estadoId(entity.getEstado().getId())
+		val result = new LogPasajeroDto();
 
-				.build();
-		// @formatter:on
+		result.setId(entity.getId());
+		result.setPasajeroId(entity.getPasajero().getId());
+		result.setFechaHora(entity.getFechaHora());
+		result.setSentido(entity.getSentido());
+
+		result.setEstadoId(entity.getEstado().getId());
+		result.setEstadoNombre(entity.getEstado().getDescripcion());
+		result.setTipoEstado(entity.getEstado().getTipo());
+
 		return result;
 	}
 

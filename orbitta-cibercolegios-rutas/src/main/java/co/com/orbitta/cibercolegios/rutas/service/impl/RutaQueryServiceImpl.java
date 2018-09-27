@@ -12,6 +12,8 @@ import co.com.orbitta.cibercolegios.rutas.service.api.RutaQueryService;
 import co.com.orbitta.core.services.crud.impl.QueryServiceImpl;
 import lombok.val;
 
+
+
 @Service
 public class RutaQueryServiceImpl extends QueryServiceImpl<Ruta, RutaDto, Integer> implements RutaQueryService {
 
@@ -54,4 +56,5 @@ public class RutaQueryServiceImpl extends QueryServiceImpl<Ruta, RutaDto, Intege
 		val result = asModels(optional);
 		return result;
 	}
+
 }

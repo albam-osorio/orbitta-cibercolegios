@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoRutaEnum;
 import co.com.orbitta.commons.dto.EntityDto;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,13 @@ public class LogRutaDto extends EntityDto<Integer> {
 	private int sentido;
 
 	private int estadoId;
+	
+	@NotNull
+	@Size(max = 50)
+	private String estadoNombre;
+	
+	@NotNull
+	private TipoEstadoRutaEnum tipoEstado;
 
 	@NotNull
 	private BigDecimal x;
@@ -32,15 +40,4 @@ public class LogRutaDto extends EntityDto<Integer> {
 	@NotNull
 	private BigDecimal y;
 
-	@Builder
-	public LogRutaDto(Integer id, int rutaId, LocalDateTime fechaHora, int sentido, int estadoId, @NotNull BigDecimal x,
-			@NotNull BigDecimal y) {
-		super(id);
-		this.rutaId = rutaId;
-		this.fechaHora = fechaHora;
-		this.sentido = sentido;
-		this.estadoId = estadoId;
-		this.x = x;
-		this.y = y;
-	}
 }

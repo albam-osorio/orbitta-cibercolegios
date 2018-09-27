@@ -35,20 +35,20 @@ public class LogRutaCrudServiceImpl extends CrudServiceImpl<LogRuta, LogRutaDto,
 
 	@Override
 	public LogRutaDto asModel(LogRuta entity) {
+		val result = new LogRutaDto();
+		
+		result.setId(entity.getId());
+		result.setRutaId(entity.getRuta().getId());
+		result.setFechaHora(entity.getFechaHora());
+		result.setSentido(entity.getSentido());
+		
+		result.setEstadoId(entity.getEstado().getId());
+		result.setEstadoNombre(entity.getEstado().getDescripcion());
+		result.setTipoEstado(entity.getEstado().getTipo());
 
-		// @formatter:off
-		val result = LogRutaDto
-				.builder()
-				.id(entity.getId())
-				.rutaId(entity.getRuta().getId())
-				.fechaHora(entity.getFechaHora())
-				.sentido(entity.getSentido())
-				.estadoId(entity.getEstado().getId())
-				.x(entity.getX())
-				.y(entity.getY())
+		result.setX(entity.getX());
+		result.setY(entity.getY());
 
-				.build();
-		// @formatter:on
 		return result;
 	}
 

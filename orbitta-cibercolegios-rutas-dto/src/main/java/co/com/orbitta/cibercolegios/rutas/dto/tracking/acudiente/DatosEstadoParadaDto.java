@@ -1,8 +1,9 @@
 package co.com.orbitta.cibercolegios.rutas.dto.tracking.acudiente;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
+import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoPasajeroEnum;
+import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoRutaEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,19 +13,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DatosEstadoParadaDto implements Serializable {
+public class DatosEstadoParadaDto {
 
-	private static final long serialVersionUID = 1L;
+	private Integer estadoEstudianteId;
 
-	private int estadoRutaId;
+	private String estadoEstudianteNombre;
+
+	private TipoEstadoPasajeroEnum tipoEstadoEstudiante;
+
+	private BigDecimal paradaX;
+
+	private BigDecimal paradaY;
+	
+	
+
+	private Integer estadoRutaId;
 
 	private String estadoRutaNombre;
 
-	private int estadoPasajeroId;
+	private TipoEstadoRutaEnum tipoEstadoRuta;
 
-	private String estadoPasajeroNombre;
+	private BigDecimal rutaX;
 
-	private BigDecimal x;
-
-	private BigDecimal y;
+	private BigDecimal rutaY;
 }

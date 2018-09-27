@@ -27,6 +27,10 @@ public class EstadoPasajeroDto extends EntityDto<Integer> {
 	private boolean aplicaSentidoIda;
 
 	private boolean aplicaSentidoRetorno;
+	
+	public boolean isFinalizado() {
+		return TipoEstadoPasajeroEnum.FIN.equals(tipo);
+	}
 
 	@Builder
 	public EstadoPasajeroDto(Integer id, @NotNull TipoEstadoPasajeroEnum tipo,

@@ -5,8 +5,8 @@ import java.util.List;
 
 import co.com.orbitta.cibercolegios.rutas.dto.LogRutaDto;
 import co.com.orbitta.cibercolegios.rutas.dto.tracking.AbstractDatosRutaDto;
+import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoRutaEnum;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,36 +15,73 @@ import lombok.val;
 
 @Getter
 @Setter
-@ToString 
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class DatosRutaDto extends AbstractDatosRutaDto {
-
-	private static final long serialVersionUID = 1L;
-
-	private LogRutaDto logRuta;
-
-	private List<DatosPasajeroDto> pasajeros;
 
 	public Integer getUltimoSentido() {
 		val result = (this.getLogRuta() == null) ? null : this.getLogRuta().getSentido();
 		return result;
 	}
 
-	public int getNumeroPasajeros() {
-		return this.pasajeros.size();
+	public Integer getEstadoId() {
+		val result = (this.getLogRuta() == null) ? null : this.getLogRuta().getEstadoId();
+		return result;
 	}
 
-	@Builder
-	public DatosRutaDto(int rutaId, String codigo, String descripcion, String marca, String placa, String movil,
-			int capacidad, int institucionId, String institucionNombre, BigDecimal institucionX,
-			BigDecimal institucionY, int monitorId, String monitorNombres, String monitorApellidos, int conductorId,
-			String conductorNombres, String conductorApellidos, boolean activa, LogRutaDto logRuta,
-			List<DatosPasajeroDto> pasajeros) {
-		super(rutaId, codigo, descripcion, marca, placa, movil, capacidad, institucionId, institucionNombre,
-				institucionX, institucionY, monitorId, monitorNombres, monitorApellidos, conductorId, conductorNombres,
-				conductorApellidos, activa);
-		this.logRuta = logRuta;
-		this.pasajeros = pasajeros;
+	public String getEstadoNombre() {
+		val result = (this.getLogRuta() == null) ? null : this.getLogRuta().getEstadoNombre();
+		return result;
 	}
+
+	public TipoEstadoRutaEnum getTipoEstado() {
+		val result = (this.getLogRuta() == null) ? null : this.getLogRuta().getTipoEstado();
+		return result;
+	}
+	
+	public BigDecimal getX() {
+		val result = (this.getLogRuta() == null) ? null : this.getLogRuta().getX();
+		return result;
+	}
+
+	public BigDecimal getY() {
+		val result = (this.getLogRuta() == null) ? null : this.getLogRuta().getY();
+		return result;
+	}
+
+	public int getTotalParadas() {
+		int result = 0;
+		if (this.pasajeros != null) {
+			result = this.pasajeros.size();
+		}
+		return result;
+	}
+
+	public int getParadaActual() {
+		int result = 0;
+		if (this.pasajeros != null) {
+			// @formatter:off
+			val optional = this.pasajeros
+					.stream()
+					.sorted((a, b) -> Integer.compare(a.getSecuencia(), b.getSecuencia()))
+					.filter(a -> !a.isFinalizado())
+					.findFirst();
+			// @formatter:on
+
+			if ((optional.isPresent())) {
+				result = optional.get().getSecuencia();
+			} else {
+				result = this.pasajeros.size();
+			}
+		}
+		return result;
+	}
+	
+	
+
+	private LogRutaDto logRuta;
+
+	private List<DatosPasajeroDto> pasajeros;
+
 }
