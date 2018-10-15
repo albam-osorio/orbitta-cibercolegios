@@ -11,13 +11,13 @@ import co.com.orbitta.cibercolegios.rutas.domain.EstadoPasajero;
 import co.com.orbitta.cibercolegios.rutas.dto.EstadoPasajeroDto;
 import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoPasajeroEnum;
 import co.com.orbitta.cibercolegios.rutas.repository.EstadoPasajeroRepository;
-import co.com.orbitta.cibercolegios.rutas.service.api.EstadoPasajeroCrudService;
+import co.com.orbitta.cibercolegios.rutas.service.api.EstadoPasajeroService;
 import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
 public class EstadoPasajeroCrudServiceImpl extends CrudServiceImpl<EstadoPasajero, EstadoPasajeroDto, Integer>
-		implements EstadoPasajeroCrudService {
+		implements EstadoPasajeroService {
 
 	@Autowired
 	private EstadoPasajeroRepository repository;
@@ -29,29 +29,33 @@ public class EstadoPasajeroCrudServiceImpl extends CrudServiceImpl<EstadoPasajer
 
 	@Override
 	public EstadoPasajeroDto asModel(EstadoPasajero entity) {
+		val result = new EstadoPasajeroDto();
 
-		// @formatter:off
-		val result = EstadoPasajeroDto
-				.builder()
-				.id(entity.getId())
-				.tipo(entity.getTipo())
-				.descripcion(entity.getDescripcion())
-				.aplicaSentidoIda(entity.isAplicaSentidoIda())
-				.aplicaSentidoRetorno(entity.isAplicaSentidoRetorno())
+		result.setId(entity.getId());
 
-				.build();
-		// @formatter:on
+		result.setDescripcion(entity.getDescripcion());
+		result.setTipo(entity.getTipo());
+		result.setAplicaSentidoIda(entity.isAplicaSentidoIda());
+		result.setAplicaSentidoRetorno(entity.isAplicaSentidoRetorno());
+
+		result.setVersion(entity.getVersion());
+		result.setFechaCreacion(entity.getFechaCreacion());
+		result.setCreadoPor(entity.getCreadoPor());
+		result.setFechaModificacion(entity.getFechaModificacion());
+		result.setModificadoPor(entity.getModificadoPor());
+
 		return result;
 	}
 
 	@Override
 	protected EstadoPasajero mergeEntity(EstadoPasajeroDto model, EstadoPasajero entity) {
 
-		entity.setTipo(model.getTipo());
 		entity.setDescripcion(model.getDescripcion());
+		entity.setTipo(model.getTipo());
 		entity.setAplicaSentidoIda(model.isAplicaSentidoIda());
 		entity.setAplicaSentidoRetorno(model.isAplicaSentidoRetorno());
 
+		entity.setVersion(model.getVersion());
 		return entity;
 	}
 

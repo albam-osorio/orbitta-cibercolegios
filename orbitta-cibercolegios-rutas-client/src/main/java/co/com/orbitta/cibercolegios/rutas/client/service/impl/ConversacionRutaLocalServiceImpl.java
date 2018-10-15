@@ -22,7 +22,7 @@ public class ConversacionRutaLocalServiceImpl extends LocalCrudServiceImpl<Conve
 
 	@Override
 	protected String getResourceName() {
-		return RutasRestConstants.conversacion;
+		return RutasRestConstants.conversaciones;
 	}
 
 	@Override

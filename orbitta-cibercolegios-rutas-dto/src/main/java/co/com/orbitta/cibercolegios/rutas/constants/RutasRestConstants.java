@@ -18,7 +18,8 @@ public class RutasRestConstants {
 
 	final public static String chat = base + "/chat";
 
-	final public static String conversacion = chat + "/conversacion";
+	final public static String conversaciones = chat + "/conversaciones";
 
-	final public static String mensaje = chat + "/mensaje";
+	final public static String mensajes = "/{conversacionId}/mensajes";
+
 }

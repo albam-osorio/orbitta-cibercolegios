@@ -1,8 +1,7 @@
 package co.com.orbitta.cibercolegios.rutas.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import co.com.orbitta.cibercolegios.rutas.domain.Direccion;
+import co.com.orbitta.core.data.jpa.repository.IdentifiedDomainObjectRepository;
 
-public interface DireccionRepository extends JpaRepository<Direccion, Integer> {
+public interface DireccionRepository extends IdentifiedDomainObjectRepository<Direccion, Integer> {
 }

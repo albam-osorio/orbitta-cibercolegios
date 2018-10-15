@@ -12,10 +12,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoPasajeroEnum;
-import co.com.orbitta.commons.domain.BaseEntity;
+import co.com.orbitta.commons.domain.AuditableEntity;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,28 +24,29 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "ESTADOS_PASAJERO")
+@DynamicUpdate
 @Getter
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class EstadoPasajero extends BaseEntity<Integer> {
+public class EstadoPasajero extends AuditableEntity<Integer> {
 
 	@Id
-	@GeneratedValue(generator = "estado_pasajero_gen", strategy = GenerationType.SEQUENCE)
-	@SequenceGenerator(name = "estado_pasajero_gen", sequenceName = "ESTADOS_PASAJERO_SEQ", allocationSize = 1)
+	@GeneratedValue(generator = "default_gen", strategy = GenerationType.SEQUENCE)
+	@SequenceGenerator(name = "default_gen", sequenceName = "DEFAULT_SEQ", allocationSize = 1)
 	@Column(name = "ID_ESTADO_PASAJERO")
 	@Setter(value = AccessLevel.PROTECTED)
 	private Integer id;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO", length = 50, nullable = false)
-	@NotNull
-	private TipoEstadoPasajeroEnum tipo;
 
 	@Column(name = "DESCRIPCION", length = 50, nullable = false)
 	@NotNull
 	@Size(max = 50)
 	private String descripcion;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO", length = 50, nullable = false)
+	@NotNull
+	private TipoEstadoPasajeroEnum tipo;
 
 	@Column(name = "APLICA_SENTIDO_IDA", nullable = false)
 	private boolean aplicaSentidoIda;
@@ -52,14 +54,4 @@ public class EstadoPasajero extends BaseEntity<Integer> {
 	@Column(name = "APLICA_SENTIDO_RETORNO", nullable = false)
 	private boolean aplicaSentidoRetorno;
 
-	@Builder
-	public EstadoPasajero(Integer id, @NotNull TipoEstadoPasajeroEnum tipo, @NotNull @Size(max = 50) String descripcion,
-			boolean aplicaSentidoIda, boolean aplicaSentidoRetorno) {
-		super();
-		this.id = id;
-		this.tipo = tipo;
-		this.descripcion = descripcion;
-		this.aplicaSentidoIda = aplicaSentidoIda;
-		this.aplicaSentidoRetorno = aplicaSentidoRetorno;
-	}
 }

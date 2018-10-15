@@ -42,12 +42,8 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>co.com.orbitta</groupId>
-			<artifactId>orbitta-core-domain</artifactId>
+			<artifactId>orbitta-core-data-jpa</artifactId>
 		</dependency>
 	</dependencies>
 </project>

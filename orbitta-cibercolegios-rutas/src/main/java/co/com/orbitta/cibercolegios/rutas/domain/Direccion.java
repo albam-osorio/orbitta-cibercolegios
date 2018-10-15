@@ -2,51 +2,65 @@ package co.com.orbitta.cibercolegios.rutas.domain;
 
 import java.math.BigDecimal;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import co.com.orbitta.core.data.jpa.domain.ReadOnlyEntity;
-import lombok.Builder;
+import org.hibernate.annotations.DynamicUpdate;
+
+import co.com.orbitta.commons.domain.AuditableEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "DIRECCIONES_X_USUARIO")
-@AttributeOverride(name = "id", column = @Column(name = "ID_DIRECCIONES_X_USUARIO"))
+@Table(name = "DIRECCIONES")
+@DynamicUpdate
 @Getter
+@Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class Direccion extends ReadOnlyEntity<Integer> {
+public class Direccion extends AuditableEntity<Integer> {
 
-	@Column(name = "ID_USUARIO", nullable = false)
+	@Id
+	@GeneratedValue(generator = "default_gen", strategy = GenerationType.SEQUENCE)
+	@SequenceGenerator(name = "default_gen", sequenceName = "DEFAULT_SEQ", allocationSize = 1)
+	@Column(name = "ID_DIRECCION")
+	@Setter(value = AccessLevel.PROTECTED)
+	private Integer id;
+
+	@Column(name = "ID_INSTITUCION", nullable = false)
 	@NotNull
-	private int usuarioId;
+	private int institucionId;
 
-	@Column(name = "DESCRIPCION", length = 100, nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "ID_ESTADO_DIRECCION", nullable = false)
+	@NotNull
+	private EstadoDireccion estado;
+
+	@Column(name = "ID_CIUDAD", nullable = false)
+	@NotNull
+	private int ciudadId;
+
+	@Column(name = "DIRECCION", length = 100, nullable = false)
 	@NotNull
 	@Size(max = 100)
-	private String descripcion;
+	private String direccion;
 
-	@Column(name = "UBICACIONLON", nullable = false, precision = 9, scale = 6)
-	@NotNull
+	@Column(name = "X", nullable = true, precision = 9, scale = 6)
 	private BigDecimal x;
 
-	@Column(name = "UBICACIONLAT", nullable = false, precision = 9, scale = 6)
-	@NotNull
+	@Column(name = "Y", nullable = true, precision = 9, scale = 6)
 	private BigDecimal y;
-
-	@Builder
-	public Direccion(Integer id, @NotNull int usuarioId, @NotNull @Size(max = 100) String descripcion,
-			@NotNull BigDecimal x, @NotNull BigDecimal y) {
-		super(id);
-		this.usuarioId = usuarioId;
-		this.descripcion = descripcion;
-		this.x = x;
-		this.y = y;
-	}
 }

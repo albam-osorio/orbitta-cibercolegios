@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+<h:head>
+	<title>Agregar ruta</title>
+</h:head>
+
+<h:body>
+	<b:form horizontal="true">
+		<b:panel title="Agregar ruta" look="primary">
+			<b:form horizontal="true">
+				<b:inputText value="#{rutasMBean.model.codigo}" placeholder="Código"
+					tiny-screen="full-width" required="true" label="Código" colMd="9"
+					labelColMd="2" />
+				<b:column span="6">
+					<b:commandButton value="Agregar" action="#{rutasMBean.create()}"
+						update="@form" look="primary" />
+					<b:commandButton value="Cancelar" action="rutas.xhtml" />
+				</b:column>
+			</b:form>
+		</b:panel>
+	</b:form>
+</h:body>
+</html>

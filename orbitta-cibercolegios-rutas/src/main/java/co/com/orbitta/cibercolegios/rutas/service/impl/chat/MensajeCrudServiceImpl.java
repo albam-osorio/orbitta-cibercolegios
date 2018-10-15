@@ -1,31 +1,29 @@
 package co.com.orbitta.cibercolegios.rutas.service.impl.chat;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.com.orbitta.cibercolegios.rutas.domain.chat.Mensaje;
+import co.com.orbitta.cibercolegios.rutas.dto.chat.DatosMensajeDto;
 import co.com.orbitta.cibercolegios.rutas.dto.chat.MensajeDto;
-import co.com.orbitta.cibercolegios.rutas.repository.RutaRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.chat.ConversacionRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.chat.MensajeRepository;
-import co.com.orbitta.cibercolegios.rutas.service.api.chat.MensajeCrudService;
+import co.com.orbitta.cibercolegios.rutas.service.api.chat.MensajeService;
 import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
 public class MensajeCrudServiceImpl extends CrudServiceImpl<Mensaje, MensajeDto, Integer>
-		implements MensajeCrudService {
+		implements MensajeService {
 
 	@Autowired
 	private MensajeRepository repository;
 
 	@Autowired
 	private ConversacionRepository conversacionRepository;
-
-	@Autowired
-	private RutaRepository rutaRepository;
 
 	@Override
 	protected MensajeRepository getRepository() {
@@ -34,34 +32,32 @@ public class MensajeCrudServiceImpl extends CrudServiceImpl<Mensaje, MensajeDto,
 
 	@Override
 	public MensajeDto asModel(Mensaje entity) {
+		val result = new MensajeDto();
 
-		// @formatter:off
-		val result = MensajeDto
-				.builder()
-				.id(entity.getId())
-				.conversacionId(entity.getConversacion().getId())
-				.rutaId(entity.getRuta().getId())
-				.monitorId(entity.getMonitorId())
-				.origen(entity.getOrigen())
-				.fechaHora(entity.getFechaHora())
-				.mensaje(entity.getMensaje())
-				.build();
-		// @formatter:on
+		result.setId(entity.getId());
+		result.setConversacionId(entity.getConversacion().getId());
+		result.setMonitorId(entity.getMonitorId());
+		result.setOrigen(entity.getOrigen());
+		result.setMensaje(entity.getMensaje());
+
+		result.setVersion(entity.getVersion());
+		result.setFechaCreacion(entity.getFechaCreacion());
+		result.setFechaModificacion(entity.getFechaModificacion());
+
 		return result;
 	}
 
 	@Override
 	protected Mensaje mergeEntity(MensajeDto model, Mensaje entity) {
 		val conversacion = conversacionRepository.findById(model.getConversacionId());
-		val ruta = rutaRepository.findById(model.getRutaId());
 
 		entity.setConversacion(conversacion.get());
-		entity.setRuta(ruta.get());
 		entity.setMonitorId(model.getMonitorId());
 		entity.setOrigen(model.getOrigen());
-		entity.setFechaHora(model.getFechaHora());
 		entity.setMensaje(model.getMensaje());
 		
+		entity.setVersion(model.getVersion());
+
 		return entity;
 	}
 
@@ -71,10 +67,25 @@ public class MensajeCrudServiceImpl extends CrudServiceImpl<Mensaje, MensajeDto,
 	}
 
 	@Override
-	public List<MensajeDto> findAllByConversacionId(int conversacionId) {
+	public List<DatosMensajeDto> findAllByConversacionId(int conversacionId) {
 		val entities = getRepository().findAllByConversacionId(conversacionId);
 
-		val result = asModels(entities);
+		val result = entities.stream().map(entity -> asDto(entity)).collect(Collectors.toList());
+		
+		result.sort((a, b) -> Integer.compare(a.getMensajeId(), b.getMensajeId()));
+		
+		return result;
+	}
+	
+	protected DatosMensajeDto asDto(Mensaje entity) {
+		val result = new DatosMensajeDto();
+
+		result.setMensajeId(entity.getId());
+		result.setConversacionId(entity.getConversacion().getId());
+		result.setOrigen(entity.getOrigen());
+		result.setMensaje(entity.getMensaje());
+		result.setFechaHora(entity.getFechaCreacion());
+		
 		return result;
 	}
 }

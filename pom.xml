@@ -68,11 +68,12 @@
 
 
 
-		<module>orbitta-cibercolegios-ciber</module>
-		<module>orbitta-cibercolegios-ciber-client</module>
-		<module>orbitta-cibercolegios-ciber-dto</module>
+		
+		
+		
 		<module>orbitta-cibercolegios-rutas</module>
 		<module>orbitta-cibercolegios-rutas-client</module>
 		<module>orbitta-cibercolegios-rutas-dto</module>
+		<module>orbitta-cibercolegios-rutas-administrador</module>
 	</modules>
 </project>

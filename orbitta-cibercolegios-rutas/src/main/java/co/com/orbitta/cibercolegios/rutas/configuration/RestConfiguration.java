@@ -18,7 +18,6 @@ public class RestConfiguration extends RestTemplateConfiguration {
 
 	@Override
 	public HttpComponentsClientHttpRequestFactory clientHttpRequestFactory() {
-		// TODO Auto-generated method stub
 		return super.clientHttpRequestFactory();
 	}
 	

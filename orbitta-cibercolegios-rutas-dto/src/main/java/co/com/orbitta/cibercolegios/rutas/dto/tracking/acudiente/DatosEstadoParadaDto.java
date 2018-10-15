@@ -15,6 +15,17 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DatosEstadoParadaDto {
 
+	private Integer estadoRutaId;
+
+	private String estadoRutaNombre;
+
+	private TipoEstadoRutaEnum tipoEstadoRuta;
+
+	private BigDecimal rutaX;
+
+	private BigDecimal rutaY;
+
+	
 	private Integer estadoEstudianteId;
 
 	private String estadoEstudianteNombre;
@@ -26,14 +37,7 @@ public class DatosEstadoParadaDto {
 	private BigDecimal paradaY;
 	
 	
+	private BigDecimal institucionX;
 
-	private Integer estadoRutaId;
-
-	private String estadoRutaNombre;
-
-	private TipoEstadoRutaEnum tipoEstadoRuta;
-
-	private BigDecimal rutaX;
-
-	private BigDecimal rutaY;
+	private BigDecimal institucionY;
 }

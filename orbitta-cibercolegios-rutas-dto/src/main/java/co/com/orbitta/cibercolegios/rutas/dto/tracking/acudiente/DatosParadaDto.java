@@ -17,18 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DatosParadaDto extends AbstractDatosRutaDto {
-	
-	
 
-	private Integer estudianteId;
-
-	private int secuencia;
-
-	private String estudianteNombres;
-
-	private String estudianteApellidos;
-
-	
 	private Integer estadoRutaId;
 
 	private String estadoRutaNombre;
@@ -39,26 +28,33 @@ public class DatosParadaDto extends AbstractDatosRutaDto {
 
 	private BigDecimal rutaY;
 
+	private int totalParadas;
+
+	private int paradaActual;
 	
+	private int secuencia;
+
+	private Integer estudianteId;
+
+	private String estudianteNombres;
+
+	private String estudianteApellidos;
+
 	private int estadoEstudianteId;
 
 	private String estadoEstudianteNombre;
 
 	private TipoEstadoPasajeroEnum tipoEstadoEstudiante;
 
-	public boolean isFinalizado() {
-		return (tipoEstadoEstudiante == null) ? null : tipoEstadoEstudiante.isFinalizado();
+	public Boolean isFinalizado() {
+		return (tipoEstadoEstudiante == null) ? false : tipoEstadoEstudiante.isFinalizado();
 	}
 
+	private String ciudadNombre;
+	
 	private String direccion;
 
 	private BigDecimal paradaX;
 
 	private BigDecimal paradaY;
-	
-	
-	private int totalParadas;
-
-	private int paradaActual;
-
 }

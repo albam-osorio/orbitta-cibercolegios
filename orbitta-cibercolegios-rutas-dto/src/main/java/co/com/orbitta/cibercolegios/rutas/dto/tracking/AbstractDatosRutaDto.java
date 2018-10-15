@@ -13,18 +13,6 @@ public abstract class AbstractDatosRutaDto {
 
 	private int rutaId;
 
-	private String codigo;
-
-	private String descripcion;
-
-	private String marca;
-
-	private String placa;
-
-	private String movil;
-
-	private int capacidad;
-
 	private int institucionId;
 
 	private String institucionNombre;
@@ -33,11 +21,19 @@ public abstract class AbstractDatosRutaDto {
 
 	private BigDecimal institucionY;
 
-	private int monitorId;
+	private String codigo;
 
-	private String monitorNombres;
+	private String descripcion;
 
-	private String monitorApellidos;
+	private String marca;
+
+	private String placa;
+
+	private int capacidad;
+
+	private String movil;
+
+	private String token;
 
 	private int conductorId;
 
@@ -45,5 +41,12 @@ public abstract class AbstractDatosRutaDto {
 
 	private String conductorApellidos;
 
+	private int monitorId;
+
+	private String monitorNombres;
+
+	private String monitorApellidos;
+
 	private boolean activa;
+	
 }

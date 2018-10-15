@@ -12,10 +12,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoRutaEnum;
-import co.com.orbitta.commons.domain.BaseEntity;
+import co.com.orbitta.commons.domain.AuditableEntity;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,39 +24,31 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "ESTADOS_RUTA")
+@DynamicUpdate
 @Getter
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class EstadoRuta extends BaseEntity<Integer> {
+public class EstadoRuta extends AuditableEntity<Integer> {
 
 	@Id
-    @GeneratedValue(generator="estado_ruta_gen", strategy=GenerationType.SEQUENCE)
-	@SequenceGenerator(name = "estado_ruta_gen", sequenceName = "ESTADOS_RUTA_SEQ", allocationSize = 1)
+	@GeneratedValue(generator = "default_gen", strategy = GenerationType.SEQUENCE)
+	@SequenceGenerator(name = "default_gen", sequenceName = "DEFAULT_SEQ", allocationSize = 1)
 	@Column(name = "ID_ESTADO_RUTA")
 	@Setter(value = AccessLevel.PROTECTED)
 	private Integer id;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO", length = 50, nullable = false)
-	@NotNull
-	private TipoEstadoRutaEnum tipo;
 
 	@Column(name = "DESCRIPCION", length = 50, nullable = false)
 	@NotNull
 	@Size(max = 50)
 	private String descripcion;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO", length = 50, nullable = false)
+	@NotNull
+	private TipoEstadoRutaEnum tipo;
+
 	@Column(name = "PREDETERMINADO", nullable = false)
 	private boolean predeterminado;
 
-	@Builder
-	public EstadoRuta(Integer id, @NotNull TipoEstadoRutaEnum tipo, @NotNull @Size(max = 50) String descripcion,
-			boolean predeterminado) {
-		super();
-		this.id = id;
-		this.tipo = tipo;
-		this.descripcion = descripcion;
-		this.predeterminado = predeterminado;
-	}
 }

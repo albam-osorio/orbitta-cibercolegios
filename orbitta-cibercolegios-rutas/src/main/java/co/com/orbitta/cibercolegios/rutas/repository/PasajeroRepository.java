@@ -1,14 +1,14 @@
 package co.com.orbitta.cibercolegios.rutas.repository;
 
 import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
 import co.com.orbitta.cibercolegios.rutas.domain.Pasajero;
+import co.com.orbitta.core.data.jpa.repository.IdentifiedDomainObjectRepository;
 
-public interface PasajeroRepository extends JpaRepository<Pasajero, Integer> {
+public interface PasajeroRepository extends IdentifiedDomainObjectRepository<Pasajero, Integer> {
 
-	List<Pasajero> findAllByUsuarioId(Integer usuarioId);
-	
+	Optional<Pasajero> findByUsuarioId(int usuarioId);
+
 	List<Pasajero> findAllByRutaId(Integer rutaId);
 }

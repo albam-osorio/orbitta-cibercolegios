@@ -11,13 +11,13 @@ import co.com.orbitta.cibercolegios.rutas.domain.EstadoRuta;
 import co.com.orbitta.cibercolegios.rutas.dto.EstadoRutaDto;
 import co.com.orbitta.cibercolegios.rutas.enums.TipoEstadoRutaEnum;
 import co.com.orbitta.cibercolegios.rutas.repository.EstadoRutaRepository;
-import co.com.orbitta.cibercolegios.rutas.service.api.EstadoRutaCrudService;
+import co.com.orbitta.cibercolegios.rutas.service.api.EstadoRutaService;
 import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
 public class EstadoRutaCrudServiceImpl extends CrudServiceImpl<EstadoRuta, EstadoRutaDto, Integer>
-		implements EstadoRutaCrudService {
+		implements EstadoRutaService {
 
 	@Autowired
 	private EstadoRutaRepository repository;
@@ -30,26 +30,31 @@ public class EstadoRutaCrudServiceImpl extends CrudServiceImpl<EstadoRuta, Estad
 	@Override
 	public EstadoRutaDto asModel(EstadoRuta entity) {
 
-		// @formatter:off
-		val result = EstadoRutaDto
-				.builder()
-				.id(entity.getId())
-				.tipo(entity.getTipo())
-				.descripcion(entity.getDescripcion())
-				.predeterminado(entity.isPredeterminado())
+		val result = new EstadoRutaDto();
 
-				.build();
-		// @formatter:on
+		result.setId(entity.getId());
+		
+		result.setDescripcion(entity.getDescripcion());
+		result.setTipo(entity.getTipo());
+		result.setPredeterminado(entity.isPredeterminado());
+		
+		result.setVersion(entity.getVersion());
+		result.setFechaCreacion(entity.getFechaCreacion());
+		result.setCreadoPor(entity.getCreadoPor());
+		result.setFechaModificacion(entity.getFechaModificacion());
+		result.setModificadoPor(entity.getModificadoPor());
+
 		return result;
 	}
 
 	@Override
 	protected EstadoRuta mergeEntity(EstadoRutaDto model, EstadoRuta entity) {
 
-		entity.setTipo(model.getTipo());
 		entity.setDescripcion(model.getDescripcion());
+		entity.setTipo(model.getTipo());
 		entity.setPredeterminado(model.isPredeterminado());
 
+		entity.setVersion(model.getVersion());
 		return entity;
 	}
 
@@ -65,7 +70,7 @@ public class EstadoRutaCrudServiceImpl extends CrudServiceImpl<EstadoRuta, Estad
 		val result = asModels(entities);
 		return result;
 	}
-	
+
 	@Override
 	public List<EstadoRutaDto> findAllByTipoEvento(TipoEstadoRutaEnum tipoEvento) {
 		val entities = getRepository().findAllByTipoOrderByDescripcion(tipoEvento);
@@ -81,7 +86,7 @@ public class EstadoRutaCrudServiceImpl extends CrudServiceImpl<EstadoRuta, Estad
 	}
 
 	@Override
-	public EstadoRutaDto findEstadoNormalPredeterminado() {
+	public EstadoRutaDto findEstadoRecorridoPredeterminado() {
 		val result = findEstadoPredeterminadoByTipo(TipoEstadoRutaEnum.RECORRIDO);
 		return result;
 	}

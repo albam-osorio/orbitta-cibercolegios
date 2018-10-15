@@ -7,7 +7,8 @@ import co.com.orbitta.cibercolegios.rutas.domain.chat.Conversacion;
 import co.com.orbitta.core.data.jpa.repository.IdentifiedDomainObjectRepository;
 
 public interface ConversacionRepository extends IdentifiedDomainObjectRepository<Conversacion, Integer> {
-	List<Conversacion> findAllByEstudianteId(int estudianteId);
 
-	Optional<Conversacion> findByAcudienteIdAndEstudianteId(int acudienteId,int estudianteId);
+	Optional<Conversacion> findByRutaIdAndUsuarioAcudienteIdAndUsuarioPasajeroId(int rutaId, int usuarioAcudienteId, int usuarioPasajeroId);
+
+	List<Conversacion> findByRutaId(int rutaId);
 }

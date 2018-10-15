@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+<h:head>
+	<title>Creación y administración de rutas</title>
+</h:head>
+
+<h:body>
+	<b:form horizontal="true">
+		<b:container layout="fluid">
+			<b:panel title="Creación y administración de rutas" look="primary">
+				<b:row>
+					<b:column offset="8" span="4">
+						<b:commandButton value="Agregar" action="rutas_create.xhtml" />
+						<b:commandButton value="Editar" action="rutas_edit.xhtml" />
+						<b:commandButton value="Eliminar"
+							oncomplete="PF('deleteDialog').show()" />
+						<b:commandButton value="Cancelar" action="home.xhtml" />
+					</b:column>
+				</b:row>
+				<b:row>
+					<b:dataTable value="#{rutasMBean.models}" var="model"
+						responsive="true"
+						custom-lang-url="//cdn.datatables.net/plug-ins/1.10.12/i18n/Spanish.json"
+						paginated="false" select="true" selection-mode="single"
+						searching="false">
+						<b:dataTableColumn value="#{model.codigo}" order="asc"
+							label="Código" />
+						<b:dataTableColumn value="#{model.descripcion}"
+							label="Descripción" />
+						<b:dataTableColumn value="#{model.conductorNombres}"
+							label="Conductor" />
+						<b:dataTableColumn value="#{model.monitorNombre}" label="Monitor" />
+						<b:dataTableColumn value="#{model.capacidadMaxima}"
+							label="Capacidad Max" />
+						<b:dataTableColumn label="Opciones">
+							<b:commandButton value="asignar" icon="edit">
+							</b:commandButton>
+
+							<!-- ajax="true"
+							update="@(.editableCarTable)" onclick="ajax:car.edit()" -->
+						</b:dataTableColumn>
+					</b:dataTable>
+				</b:row>
+				<b:row>
+					<b:column offset="8" span="4">
+						<b:commandButton value="Agregar" action="rutas_create.xhtml" />
+						<b:commandButton value="Editar" action="rutas_edit.xhtml" />
+						<b:commandButton value="Eliminar" action="rutas_delete.xhtml" />
+						<b:commandButton value="Cancelar" action="home.xhtml" />
+					</b:column>
+				</b:row>
+			</b:panel>
+		</b:container>
+	</b:form>
+
+	<p:dialog header="Editar" widgetVar="deleteDialog" modal="true"
+		showEffect="fade" hideEffect="fade" resizable="false">
+		<p:outputPanel id="deleteDetail" style="text-align:center;">
+			<p:panelGrid columns="2"
+				rendered="#{not empty rutasMBean.selected}"
+				columnClasses="label,value">
+
+				<h:outputText value="Codigo:" />
+				<h:outputText value="#{rutasMBean.selected.codigo}" />
+
+			</p:panelGrid>
+		</p:outputPanel>
+	</p:dialog>
+</h:body>
+</html>

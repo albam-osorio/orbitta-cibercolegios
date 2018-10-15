@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.com.orbitta.cibercolegios.rutas.constants.RutasRestConstants;
 import co.com.orbitta.cibercolegios.rutas.dto.EstadoRutaDto;
-import co.com.orbitta.cibercolegios.rutas.service.api.EstadoRutaCrudService;
+import co.com.orbitta.cibercolegios.rutas.service.api.EstadoRutaService;
 import co.com.orbitta.core.web.api.controllers.CrudRestController;
 import lombok.val;
 
@@ -20,10 +20,10 @@ import lombok.val;
 public class EstadoRutaRestCrudController extends CrudRestController<EstadoRutaDto, Integer> {
 
 	@Autowired
-	private EstadoRutaCrudService service;
+	private EstadoRutaService service;
 
 	@Override
-	protected EstadoRutaCrudService getService() {
+	protected EstadoRutaService getService() {
 		return service;
 	}
 	

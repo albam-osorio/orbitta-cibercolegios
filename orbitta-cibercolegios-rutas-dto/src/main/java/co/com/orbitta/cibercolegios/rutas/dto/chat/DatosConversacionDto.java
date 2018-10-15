@@ -1,21 +1,25 @@
 package co.com.orbitta.cibercolegios.rutas.dto.chat;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class DatosConversacionDto implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class DatosConversacionDto {
 
 	private int conversacionId;
+
+	private int rutaId;
+
+	private String rutaCodigo;
+
+	private int monitorId;
+
+	private String monitorNombres;
+
+	private String monitorApellidos;
 
 	private int acudienteId;
 
