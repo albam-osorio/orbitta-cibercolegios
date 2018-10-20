@@ -175,10 +175,12 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 
 		boolean activa = false;
 		LocalDate fechaUltimoRecorrido = ruta.getFechaUltimoRecorrido();
-		Integer sentido = null;
-		Integer estadoId = null;
-		TipoEstadoRutaEnum tipoEstado = null;
-		String estadoNombre = null;
+		Integer sentido = RutaDto.SENTIDO_IDA;
+
+		val estado = estadoRutaRepository.findFirstByTipoAndPredeterminado(TipoEstadoRutaEnum.INACTIVO, true);
+		Integer estadoId = estado.get().getId();
+		TipoEstadoRutaEnum tipoEstado = estado.get().getTipo();
+		String estadoNombre = estado.get().getDescripcion();
 		BigDecimal x = null;
 		BigDecimal y = null;
 		LogRutaDto logRuta = null;
@@ -250,7 +252,7 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 
 	private List<DatosPasajeroDto> getPasajeros(int rutaId, boolean activa, Integer sentido) {
 		val list = new ArrayList<DatosPasajeroDto>();
-
+		activa = true;
 		if (activa) {
 			val pasajeros = pasajeroRepository.findAllByRutaId(rutaId);
 
