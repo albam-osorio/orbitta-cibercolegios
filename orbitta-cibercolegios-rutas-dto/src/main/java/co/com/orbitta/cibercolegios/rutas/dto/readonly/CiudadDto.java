@@ -3,7 +3,6 @@ package co.com.orbitta.cibercolegios.rutas.dto.readonly;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import co.com.orbitta.core.dto.EntityDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,11 +12,13 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class CiudadDto extends EntityDto<Integer> {
+public class CiudadDto {
 
-	@NotNull
-	@Size(max = 20)
-	private String codigo;
+	private int paisId;
+
+	private int departamentoId;
+
+	private int ciudadId;
 
 	@NotNull
 	@Size(max = 100)

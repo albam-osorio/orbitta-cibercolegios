@@ -14,14 +14,14 @@ import co.com.orbitta.cibercolegios.rutas.service.api.PasajeroService;
 import co.com.orbitta.cibercolegios.rutas.service.api.chat.ChatService;
 import co.com.orbitta.cibercolegios.rutas.service.api.chat.ConversacionService;
 import co.com.orbitta.cibercolegios.rutas.service.api.chat.MensajeService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.UsuarioService;
+import co.com.orbitta.cibercolegios.rutas.service.api.ciber.CiberService;
 import lombok.val;
 
 @Service
 public class ChatServiceImpl implements ChatService {
 
 	@Autowired
-	private UsuarioService usuarioService;
+	private CiberService ciberService;
 
 	@Autowired
 	private AcudienteRepository acudienteRepository;
@@ -102,7 +102,7 @@ public class ChatServiceImpl implements ChatService {
 	// ---
 	// ---------------------------------------------------------------------------------------------------------------------------------------------------------
 	private void CheckUsuarioExistente(int usuarioId) {
-		val optional = usuarioService.findById(usuarioId);
+		val optional = ciberService.findUsuarioById(usuarioId);
 		if (optional.isPresent()) {
 		} else {
 			val format = "El usuario con id=%d no existe.";

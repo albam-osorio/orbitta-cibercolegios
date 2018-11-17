@@ -49,6 +49,12 @@ public class Direccion extends AuditableEntity<Integer> {
 	@NotNull
 	private EstadoDireccion estado;
 
+	@Column(name = "ID_PAISES", nullable = false)
+	private int paisId;
+	
+	@Column(name = "ID_ESTADO", nullable = false)
+	private int departamentoId;
+	
 	@Column(name = "ID_CIUDAD", nullable = false)
 	@NotNull
 	private int ciudadId;

@@ -14,7 +14,7 @@ import co.com.orbitta.cibercolegios.rutas.dto.chat.DatosConversacionDto;
 import co.com.orbitta.cibercolegios.rutas.repository.RutaRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.chat.ConversacionRepository;
 import co.com.orbitta.cibercolegios.rutas.service.api.chat.ConversacionService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.UsuarioService;
+import co.com.orbitta.cibercolegios.rutas.service.api.ciber.CiberService;
 import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
@@ -29,7 +29,7 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 	private RutaRepository rutaRepository;
 
 	@Autowired
-	private UsuarioService usuarioService;
+	private CiberService ciberService;
 
 	@Override
 	protected ConversacionRepository getRepository() {
@@ -45,7 +45,7 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 		result.setUsuarioMonitorId(entity.getRuta().getMonitorId());
 		result.setUsuarioAcudienteId(entity.getUsuarioAcudienteId());
 		result.setUsuarioPasajeroId(entity.getUsuarioPasajeroId());
-		
+
 		result.setVersion(entity.getVersion());
 		result.setFechaCreacion(entity.getFechaCreacion());
 		result.setFechaModificacion(entity.getFechaModificacion());
@@ -60,7 +60,7 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 		entity.setRuta(ruta);
 		entity.setUsuarioAcudienteId(model.getUsuarioAcudienteId());
 		entity.setUsuarioPasajeroId(model.getUsuarioPasajeroId());
-		
+
 		entity.setVersion(model.getVersion());
 
 		return entity;
@@ -72,9 +72,10 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 	}
 
 	@Override
-	public Optional<DatosConversacionDto> findByRutaIdAndUsuarioAcudienteIdAndUsuarioPasajeroId(int rutaId, int acudienteId,
-			int pasajeroId) {
-		val optional = getRepository().findByRutaIdAndUsuarioAcudienteIdAndUsuarioPasajeroId(rutaId, acudienteId, pasajeroId);
+	public Optional<DatosConversacionDto> findByRutaIdAndUsuarioAcudienteIdAndUsuarioPasajeroId(int rutaId,
+			int acudienteId, int pasajeroId) {
+		val optional = getRepository().findByRutaIdAndUsuarioAcudienteIdAndUsuarioPasajeroId(rutaId, acudienteId,
+				pasajeroId);
 
 		if (optional.isPresent()) {
 			val result = asDto(optional.get());
@@ -102,9 +103,9 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 	protected DatosConversacionDto asDto(Conversacion entity) {
 		val result = new DatosConversacionDto();
 
-		val monitor = usuarioService.findOneById(entity.getRuta().getMonitorId());
-		val acudiente = usuarioService.findOneById(entity.getUsuarioAcudienteId());
-		val pasajero = usuarioService.findOneById(entity.getUsuarioPasajeroId());
+		val monitor = ciberService.findUsuarioById(entity.getRuta().getMonitorId()).get();
+		val acudiente = ciberService.findUsuarioById(entity.getUsuarioAcudienteId()).get();
+		val pasajero = ciberService.findUsuarioById(entity.getUsuarioPasajeroId()).get();
 
 		result.setConversacionId(entity.getId());
 		result.setRutaId(entity.getRuta().getId());

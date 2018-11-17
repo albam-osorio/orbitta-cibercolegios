@@ -20,6 +20,4 @@ public class RestConfiguration extends RestTemplateConfiguration {
 	public HttpComponentsClientHttpRequestFactory clientHttpRequestFactory() {
 		return super.clientHttpRequestFactory();
 	}
-	
-	
 }

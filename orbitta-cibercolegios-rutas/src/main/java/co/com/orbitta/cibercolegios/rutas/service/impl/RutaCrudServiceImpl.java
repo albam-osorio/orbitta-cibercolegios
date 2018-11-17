@@ -24,16 +24,17 @@ import co.com.orbitta.cibercolegios.rutas.repository.DireccionRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.EstadoRutaRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.PasajeroRepository;
 import co.com.orbitta.cibercolegios.rutas.repository.RutaRepository;
-import co.com.orbitta.cibercolegios.rutas.repository.readonly.CiudadRepository;
-import co.com.orbitta.cibercolegios.rutas.repository.readonly.InstitucionRepository;
-import co.com.orbitta.cibercolegios.rutas.repository.readonly.UsuarioRepository;
 import co.com.orbitta.cibercolegios.rutas.service.api.RutaService;
+import co.com.orbitta.cibercolegios.rutas.service.api.ciber.CiberService;
 import co.com.orbitta.cibercolegios.rutas.service.api.tracking.LogRutaService;
 import co.com.orbitta.core.services.crud.impl.CrudServiceImpl;
 import lombok.val;
 
 @Service
 public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer> implements RutaService {
+
+	@Autowired
+	private CiberService ciberService;
 
 	@Autowired
 	private RutaRepository repository;
@@ -46,15 +47,6 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 
 	@Autowired
 	private EstadoRutaRepository estadoRutaRepository;
-
-	@Autowired
-	private InstitucionRepository institucionRepository;
-
-	@Autowired
-	private UsuarioRepository usuarioRepository;
-
-	@Autowired
-	private CiudadRepository ciudadRepository;
 
 	@Autowired
 	private AcudienteRepository acudienteRepository;
@@ -205,8 +197,8 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 			}
 		}
 
-		val institucion = institucionRepository.findById(ruta.getInstitucionId()).get();
-		val monitor = usuarioRepository.findById(ruta.getMonitorId()).get();
+		val institucion = ciberService.findInstitucionById(ruta.getInstitucionId()).get();
+		val monitor = ciberService.findUsuarioById(ruta.getMonitorId()).get();
 		val pasajeros = getPasajeros(ruta.getId(), activa, sentido);
 
 		val result = new MonitorDatosRutaDto();
@@ -257,7 +249,7 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 			val pasajeros = pasajeroRepository.findAllByRutaId(rutaId);
 
 			for (val pasajero : pasajeros) {
-				val usuario = usuarioRepository.findById(pasajero.getUsuarioId()).get();
+				val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
 				val secuencia = getSecuencia(pasajero, sentido);
 				val estado = pasajero.getEstado();
 				val direccion = getDireccion(pasajero, sentido);
@@ -305,7 +297,7 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 	private String getCiudadNombre(Direccion direccion) {
 		String result;
 
-		val optional = ciudadRepository.findById(direccion.getCiudadId());
+		val optional = ciberService.findCiudadByPk(direccion.getPaisId(),direccion.getDepartamentoId(), direccion.getCiudadId());
 		if (optional.isPresent()) {
 			result = optional.get().getNombre();
 		} else {
@@ -322,7 +314,7 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 			val acudientes = acudienteRepository.findAllById(ids);
 			for (val acudiente : acudientes) {
 				if (acudiente.getToken() != null) {
-					val optional = usuarioRepository.findById(acudiente.getUsuarioId());
+					val optional = ciberService.findUsuarioById(acudiente.getUsuarioId());
 					if (optional.isPresent()) {
 						val model = new DatosAcudienteDto();
 						model.setUsuarioId(acudiente.getUsuarioId());

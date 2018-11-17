@@ -19,7 +19,7 @@ import co.com.orbitta.cibercolegios.rutas.service.api.EstadoPasajeroService;
 import co.com.orbitta.cibercolegios.rutas.service.api.EstadoRutaService;
 import co.com.orbitta.cibercolegios.rutas.service.api.PasajeroService;
 import co.com.orbitta.cibercolegios.rutas.service.api.RutaService;
-import co.com.orbitta.cibercolegios.rutas.service.api.readonly.UsuarioService;
+import co.com.orbitta.cibercolegios.rutas.service.api.ciber.CiberService;
 import co.com.orbitta.cibercolegios.rutas.service.api.tracking.LogPasajeroService;
 import co.com.orbitta.cibercolegios.rutas.service.api.tracking.LogRutaService;
 import co.com.orbitta.cibercolegios.rutas.service.api.tracking.monitor.MonitorTrackingService;
@@ -35,7 +35,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	private PasajeroService pasajeroService;
 
 	@Autowired
-	private UsuarioService usuarioService;
+	private CiberService ciberService;
 
 	@Autowired
 	private EstadoRutaService estadoRutaService;
@@ -248,7 +248,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 					val sb = new StringBuilder();
 					val format = "El pasajero %s no tiene correctamente configuradas sus direcciones.";
 					for (val pasajero : list) {
-						val usuario = usuarioService.findOneById(pasajero.getUsuarioId());
+						val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
 						sb.append(String.format(format, usuario.getNombreCompleto())).append("\n");
 					}
 					msg = sb.toString();
@@ -285,7 +285,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 
 			if (pasajero.getRutaId() != ruta.getId()) {
 				val format = "El pasajero con id=%d, usuario id=%d y con nombre %s, no esta asignado a la ruta con código=%s.";
-				val usuario = usuarioService.findOneById(pasajero.getUsuarioId());
+				val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
 				val msg = String.format(format, pasajero.getId(), usuario.getId(), usuario.getNombreCompleto(),
 						ruta.getCodigo());
 				throw new RuntimeException(msg);
@@ -315,7 +315,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 			val format = "El estado actual del pasajero %s es %s.";
 			for (val pasajero : pasajeros) {
 				if (!pasajero.getTipoEstado().isFinalizado()) {
-					val usuario = usuarioService.findOneById(pasajero.getUsuarioId());
+					val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
 					sb.append(String.format(format, usuario.getNombreCompleto(), pasajero.getEstadoDescripcion()))
 							.append("\n");
 					n++;

@@ -20,6 +20,10 @@ public class DireccionDto extends AuditableEntityDto<Integer> {
 	private int institucionId;
 
 	private int estadoId;
+	
+	private int paisId;
+	
+	private int departamentoId;
 
 	private int ciudadId;
 
