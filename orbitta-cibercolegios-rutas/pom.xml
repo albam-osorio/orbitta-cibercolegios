@@ -15,6 +15,7 @@
 		<!-- lookup parent from repository -->
 	</parent>
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -23,10 +24,6 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<dependency>
-			<groupId>co.com.orbitta</groupId>
-			<artifactId>orbitta-core-web-api</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>co.com.orbitta.cibercolegios</groupId>
 			<artifactId>
@@ -49,12 +46,12 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>co.com.orbitta</groupId>
-			<artifactId>orbitta-core-web-client</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>co.com.orbitta</groupId>
+			<artifactId>orbitta-core-web-api</artifactId>
 		</dependency>
 	</dependencies>
 </project>

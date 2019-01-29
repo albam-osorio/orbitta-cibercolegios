@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://xmlns.jcp.org/jsf/html"
+		xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+		xmlns:p="http://primefaces.org/ui">
+
+		<p:dialog id="assignDialog" widgetVar="assignDialog"
+			closeOnEscape="true" modal="true" showEffect="fade" hideEffect="fade"
+			resizable="false" width="850">
+
+			<h:form id="assignForm">
+				<div class="body-container">
+					<div class="header-title-container">
+						<div class="header-title">
+							<h:outputText value="ASIGNACIÓN DE PASAJEROS A RUTAS" />
+						</div>
+					</div>
+					<div class="header-subtitle-container">
+						<h:outputText value="MIEMBROS DE LA RUTA" />
+					</div>
+					<div class="body-container">
+						<h:panelGroup rendered="#{rutasController.assigning}">
+							<p:scrollPanel style="width:800px;height:500px;">
+								<p:panel
+									style="width:780px;height:490px;overflow:auto !important">
+									<p:focus />
+									<div class="ui-g">
+										<div class="ui-g-2">
+											<h:outputText value="CÓDIGO" />
+										</div>
+										<div class="ui-g-1">
+											<h:outputText
+												value="#{rutasController.asignacionManager.model.ruta.codigo}" />
+										</div>
+										<div class="ui-g-3"></div>
+										<div class="ui-g-2">
+											<h:outputText value="MONITOR" />
+										</div>
+										<div class="ui-g-4">
+											<h:outputText
+												value="#{rutasController.asignacionManager.model.nombreMonitor}" />
+										</div>
+									</div>
+									<div class="ui-g">
+										<div class="ui-g-2">
+											<h:outputText value="DESCRIPCIÓN" />
+										</div>
+										<div class="ui-g-4">
+											<h:outputText
+												value="#{rutasController.asignacionManager.model.ruta.descripcion}" />
+										</div>
+										<div class="ui-g-2">
+											<h:outputText value="CAPACIDAD MAX" />
+										</div>
+										<div class="ui-g-1">
+											<h:outputText
+												value="#{rutasController.asignacionManager.model.ruta.capacidadMaxima}" />
+											Cupos
+										</div>
+										<div class="ui-g-2">
+											<h:outputText value="INSCRITOS" />
+										</div>
+										<div class="ui-g-1">
+											<h:outputText id="inscritos"
+												value="#{rutasController.asignacionManager.inscritos.size()}" />
+											Inscritos
+										</div>
+									</div>
+									<div class="ui-g">
+										<div class="ui-g-12"></div>
+									</div>
+									<div class="ui-g">
+										<div class="ui-g-4">
+											<p:outputLabel value="Nivel académico" />
+										</div>
+										<div class="ui-g-4">
+											<p:outputLabel value="Programa académico" />
+										</div>
+										<div class="ui-g-4">
+											<p:outputLabel value="Grado" />
+										</div>
+									</div>
+									<div class="ui-g">
+										<div class="ui-g-4">
+											<p:selectOneMenu id="niveles"
+												value="#{rutasController.asignacionManager.nivelId}"
+												filter="true" filterMatchMode="startsWith"
+												style="width:10em;">
+												<p:ajax
+													listener="#{rutasController.asignacionManager.onChangeNivelAcademico}"
+													process="@this" update="programas grados estudiantesGroup" />
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{rutasController.asignacionManager.niveles}"
+													var="nivel" itemValue="#{nivel.id}"
+													itemLabel="#{nivel.descripcion}" />
+											</p:selectOneMenu>
+										</div>
+										<div class="ui-g-4">
+											<p:selectOneMenu id="programas"
+												value="#{rutasController.asignacionManager.programaId}"
+												filter="true" filterMatchMode="startsWith"
+												style="width:10em;">
+												<p:ajax
+													listener="#{rutasController.asignacionManager.onChangePrograma}"
+													process="@this" update=" grados estudiantesGroup" />
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{rutasController.asignacionManager.programas}" />
+											</p:selectOneMenu>
+										</div>
+										<div class="ui-g-4">
+											<p:selectOneMenu id="grados"
+												value="#{rutasController.asignacionManager.gradoId}"
+												filter="true" filterMatchMode="startsWith"
+												style="width:10em;">
+												<p:ajax
+													listener="#{rutasController.asignacionManager.onChangeGrado}"
+													process="@this" update=" estudiantesGroup" />
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{rutasController.asignacionManager.grados}" />
+											</p:selectOneMenu>
+										</div>
+									</div>									
+									<div class="ui-g">
+										<div class="ui-g-12">
+											<p:separator />
+										</div>
+									</div>
+
+									<div class="ui-g">
+										<div class="ui-g-12">
+											<h:panelGroup id="estudiantesGroup">
+												<p:pickList id="pickList"
+													value="#{rutasController.asignacionManager.dualListModel}"
+													var="item" itemValue="#{item}"
+													itemLabel="#{item.nombreEstudiante}"
+													showSourceControls="true" showTargetControls="true"
+													showSourceFilter="true" showTargetFilter="true"
+													filterMatchMode="contains"
+													converter="pasajeroPickListConverter" responsive="true">
+
+													<f:facet name="sourceCaption">No inscritos</f:facet>
+													<f:facet name="targetCaption">Inscritos</f:facet>
+
+													<p:ajax event="transfer"
+														listener="#{rutasController.asignacionManager.onTransfer}"
+														update="pickList" />
+													<p:ajax event="reorder"
+														listener="#{rutasController.asignacionManager.onReorder}"
+														update="pickList" />
+
+												</p:pickList>
+											</h:panelGroup>
+										</div>
+									</div>
+								</p:panel>
+							</p:scrollPanel>
+						</h:panelGroup>
+					</div>
+					<div class="footer-commands-container">
+						<div class="footer-commands-content">
+							<p:commandButton value="Actualizar"
+								action="#{rutasController.assign}" process="@form"
+								update="@form listForm"
+								oncomplete="handleComplete(xhr, status, args, 'assignDialog')" />
+							<p:commandButton value="Cancelar" ajax="true" immediate="true"
+								oncomplete="PF('assignDialog').hide()" />
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+	</ui:composition>
+</h:body>
+</html>

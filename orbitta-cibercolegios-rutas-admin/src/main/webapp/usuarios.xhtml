@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:b="http://bootsfaces.net/ui">
+
+<h:head>
+	<title>Usuarios de rutas</title>
+</h:head>
+
+<h:body>
+	<b:container layout="fluid">
+		<p:growl id="msgs" showDetail="true" />
+
+		<b:form id="masivoForm" horizontal="true">
+			<h:panelGroup id="masivoFormGroup"
+				rendered="#{usuariosBacking.masivo}">
+				<b:panel title="USUARIOS: Edición y cargue de usuarios de rutas"
+					look="primary" title-style="text-align:center">
+
+
+					<p>
+						<b><h:outputText value="Cargue masivo" /> <a id="atrigger"
+							href="#help" data-toggle="modal"> <b:badge
+									style="margin-left:10px; background-color:#5cb85c; font-style: italic;"
+									value="i" /></a></b>
+					</p>
+
+					<p:fileUpload
+						fileUploadListener="#{usuariosBacking.handleFileUpload}"
+						required="true" mode="advanced" multiple="false" auto="true"
+						allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|doc|docx|xls|xlsx|xlsm)$/i"
+						update="msgs" label="Seleccionar archivo" fileLimit="1" />
+
+
+
+					<f:facet name="footer">
+						<b:commandButton value="Previsualizar" ajax="true"
+							action="#{masivoFormGroup.load}" update=" @form" process="@form"
+							look="primary" />
+
+						<b:commandButton value="Cancelar" ajax="true"
+							action="#{masivoFormGroup.cancel}" update=" @form"
+							process="@this" />
+					</f:facet>
+				</b:panel>
+			</h:panelGroup>
+		</b:form>
+
+		<b:modal id="help" title="Formato archivo de cargue"
+			styleClass="modalPseudoClass">
+			<div style="height: 250px; overflow-y: auto;">
+				<p>
+					<b>FORMATO DEL ARCHIVO DE CARGUE</b>
+				</p>
+				<p>El archivo a cargar con la información de las direcciones de
+					los usuarios a cargar deberá tener las siguientes características.</p>
+				<ol>
+					<li>Deberá ser un archivo Excel</li>
+					<li>Aenean lacinia bibendum nulla sed consectetur. Praesent
+						commodo cursus magna, vel scelerisque nisl consectetur et. Donec
+						sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</li>
+					<li>Los registros deberán contener los siguientes campos en
+						estricto orden.</li>
+				</ol>
+				<table style="width: 100%">
+					<tr>
+						<th>ORDEN</th>
+						<th>CAMPO</th>
+						<th>DESCRIPCIÓN</th>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>Tipo de Documento</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>Número de Documento</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>Nombres</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>Apellidos</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+					<tr>
+						<td>5</td>
+						<td>Departamento AM</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+					<tr>
+						<td>6</td>
+						<td>Ciudad AM</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+					<tr>
+						<td>7</td>
+						<td>Dirección AM</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+					<tr>
+						<td>8</td>
+						<td>Departamento PM</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+					<tr>
+						<td>9</td>
+						<td>Ciudad PM</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+					<tr>
+						<td>10</td>
+						<td>Dirección PM</td>
+						<td>Cras mattis consectetur purus sit amet fermentum. Cras
+							justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo
+							risus, porta ac consectetur ac, vestibulum at eros.</td>
+					</tr>
+				</table>
+				<p>Aenean lacinia bibendum nulla sed consectetur. Praesent
+					commodo cursus magna, vel scelerisque nisl consectetur et. Donec
+					sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+				<p>Cras mattis consectetur purus sit amet fermentum. Cras justo
+					odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus,
+					porta ac consectetur ac, vestibulum at eros.</p>
+				<p>Praesent commodo cursus magna, vel scelerisque nisl
+					consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum
+					faucibus dolor auctor.</p>
+				<p>Aenean lacinia bibendum nulla sed consectetur. Praesent
+					commodo cursus magna, vel scelerisque nisl consectetur et. Donec
+					sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+			</div>
+			<f:facet name="footer">
+				<b:button value="Cerrar" look="primary" dismiss="modal" />
+			</f:facet>
+		</b:modal>
+	</b:container>
+</h:body>
+</html>

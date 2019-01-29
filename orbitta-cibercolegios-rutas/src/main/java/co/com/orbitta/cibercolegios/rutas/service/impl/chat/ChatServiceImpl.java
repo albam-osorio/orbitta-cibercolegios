@@ -5,16 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.com.orbitta.cibercolegios.rutas.dto.AcudienteDto;
-import co.com.orbitta.cibercolegios.rutas.dto.chat.ConversacionDto;
-import co.com.orbitta.cibercolegios.rutas.dto.chat.MensajeDto;
+import co.com.orbitta.cibercolegios.rutas.dto.ConversacionDto;
+import co.com.orbitta.cibercolegios.rutas.dto.MensajeDto;
 import co.com.orbitta.cibercolegios.rutas.enums.EmisorMensajeEnum;
 import co.com.orbitta.cibercolegios.rutas.repository.AcudienteRepository;
 import co.com.orbitta.cibercolegios.rutas.service.api.AcudienteService;
+import co.com.orbitta.cibercolegios.rutas.service.api.ConversacionService;
+import co.com.orbitta.cibercolegios.rutas.service.api.MensajeService;
 import co.com.orbitta.cibercolegios.rutas.service.api.PasajeroService;
 import co.com.orbitta.cibercolegios.rutas.service.api.chat.ChatService;
-import co.com.orbitta.cibercolegios.rutas.service.api.chat.ConversacionService;
-import co.com.orbitta.cibercolegios.rutas.service.api.chat.MensajeService;
-import co.com.orbitta.cibercolegios.rutas.service.api.ciber.CiberService;
+import co.com.orbitta.cibercolegios.rutas.service.api.readonly.CiberService;
 import lombok.val;
 
 @Service

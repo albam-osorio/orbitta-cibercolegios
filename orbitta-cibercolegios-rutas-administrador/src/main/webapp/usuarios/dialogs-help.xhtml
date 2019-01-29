@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://xmlns.jcp.org/jsf/html"
+		xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+		xmlns:p="http://primefaces.org/ui">
+
+		<p:dialog id="helpDialog" widgetVar="helpDialog" closeOnEscape="true"
+			modal="true" header="Información del archivo" showEffect="fade"
+			hideEffect="fade" resizable="false" width="750">
+			<h:form>
+				<p:scrollPanel style="width:730px;height:530px;">
+					<p>El archivo "plano" para el cargue masivo de estudiantes a la
+						base de datos puede ser creado usando una herramienta de hoja de
+						cálculo como microsoft excel y luego guardando el archivo como
+						"Libro de Excel".</p>
+					<p>
+						Si lo desea puede descargar <b> <p:commandLink value="aquí"
+								ajax="false">
+								<p:fileDownload
+									value="#{usuariosController.batchManager.template}" />
+							</p:commandLink></b> la plantilla en Excel para diligenciar la información de sus
+						estudiantes.
+					</p>
+					<p>La siguiente tabla inidica los campos que debe contener el
+						archivo de cargue masivo de usuarios que utilizarán el servicio de
+						rutas.</p>
+					<table style="width: 100%" border="true">
+						<tr>
+							<th class="td-center">Orden</th>
+							<th class="td-center">Campo</th>
+							<th>Descripción</th>
+						</tr>
+						<tr>
+							<td class="td-center">1</td>
+							<td class="td-center">Tipo de Documento</td>
+							<td>Tipo de documento del estudiante</td>
+						</tr>
+						<tr>
+							<td class="td-center">2</td>
+							<td class="td-center">Número de Documento</td>
+							<td>Número de documento del estudiante</td>
+						</tr>
+						<tr>
+							<td class="td-center">3</td>
+							<td class="td-center">Nombres</td>
+							<td>Nombres completos del estudiante</td>
+						</tr>
+						<tr>
+							<td class="td-center">4</td>
+							<td class="td-center">Apellidos</td>
+							<td>Apellidos completos del estudiante</td>
+						</tr>
+						<tr>
+							<td class="td-center">5</td>
+							<td class="td-center">Departamento AM</td>
+							<td>Departamento de recogida inicial del estudiante</td>
+						</tr>
+						<tr>
+							<td class="td-center">6</td>
+							<td class="td-center">Ciudad AM</td>
+							<td>Ciudad de recogida inicial del estudiante</td>
+						</tr>
+						<tr>
+							<td class="td-center">7</td>
+							<td class="td-center">Dirección AM</td>
+							<td>Dirección de recogida inicial del estudiante</td>
+						</tr>
+						<tr>
+							<td class="td-center">8</td>
+							<td class="td-center">Departamento PM</td>
+							<td>Departamento de destino final del estudiante</td>
+						</tr>
+						<tr>
+							<td class="td-center">9</td>
+							<td class="td-center">Ciudad PM</td>
+							<td>Ciudad de destino final del estudiante</td>
+						</tr>
+						<tr>
+							<td class="td-center">10</td>
+							<td class="td-center">Dirección PM</td>
+							<td>Dirección de destino final del estudiante</td>
+						</tr>
+					</table>
+				</p:scrollPanel>
+			</h:form>
+		</p:dialog>
+
+	</ui:composition>
+</h:body>
+</html>

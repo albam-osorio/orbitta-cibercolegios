@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://xmlns.jcp.org/jsf/html"
+		xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+		xmlns:p="http://primefaces.org/ui">
+
+
+		<p:outputPanel id="panelManual">
+			<p:outputPanel rendered="#{not usuariosController.batch}">
+				<div class="ui-g">
+					<div class="ui-g-2"></div>
+					<div class="ui-g-8">
+						<h:form>
+							<div class="ui-g">
+								<div class="ui-g-4" style="text-align: right;">CONSULTA Y
+									CARGUE MANUAL</div>
+							</div>
+							<div class="ui-g">
+								<div class="ui-g-4" style="text-align: right;">
+									<p:outputLabel for="@next" value="Nivel académico" />
+								</div>
+								<div class="ui-g-4">
+									<p:selectOneMenu id="niveles"
+										value="#{usuariosController.manualManager.nivelId}"
+										filter="true" filterMatchMode="startsWith" style="width:10em;">
+										<p:ajax
+											listener="#{usuariosController.onChangeNivelAcademico}"
+											process="@this"
+											update="programas grados panelGrupos panelBatch panelSeparator panelFooter" />
+										<f:selectItem noSelectionOption="true" itemLabel="" />
+										<f:selectItems
+											value="#{usuariosController.manualManager.niveles}"
+											var="nivel" itemValue="#{nivel.id}"
+											itemLabel="#{nivel.descripcion}" />
+									</p:selectOneMenu>
+								</div>
+							</div>
+							<div class="ui-g">
+								<div class="ui-g-4" style="text-align: right;">
+									<p:outputLabel for="@next" value="Programa académico" />
+								</div>
+								<div class="ui-g-4">
+									<p:selectOneMenu id="programas"
+										value="#{usuariosController.manualManager.programaId}"
+										filter="true" filterMatchMode="startsWith" style="width:10em;">
+										<p:ajax listener="#{usuariosController.onChangePrograma}"
+											process="@this"
+											update=" grados panelGrupos panelBatch panelSeparator panelFooter" />
+										<f:selectItem noSelectionOption="true" itemLabel="" />
+										<f:selectItems
+											value="#{usuariosController.manualManager.programas}" />
+									</p:selectOneMenu>
+								</div>
+							</div>
+							<div class="ui-g">
+								<div class="ui-g-4" style="text-align: right;">
+									<p:outputLabel for="@next" value="Grado" />
+								</div>
+								<div class="ui-g-4">
+									<p:selectOneMenu id="grados"
+										value="#{usuariosController.manualManager.gradoId}"
+										filter="true" filterMatchMode="startsWith" style="width:10em;">
+										<p:ajax listener="#{usuariosController.onChangeGrado}"
+											process="@this"
+											update="panelGrupos panelBatch panelSeparator panelFooter" />
+										<f:selectItem noSelectionOption="true" itemLabel="" />
+										<f:selectItems
+											value="#{usuariosController.manualManager.grados}" />
+									</p:selectOneMenu>
+								</div>
+							</div>
+							<p:outputPanel id="panelGrupos">
+								<div class="ui-g">
+									<div class="ui-g-4" />
+									<div class="ui-g-4">
+										<p:dataList id="gruposTable" var="grupo"
+											value="#{usuariosController.manualManager.grupos}"
+											type="unordered" itemType="none" paginator="true" rows="5"
+											rendered="#{not empty usuariosController.manualManager.grupos}">
+											<f:facet name="header">
+												<h:outputText value="Cursos" />
+											</f:facet>
+											<p:commandLink value="#{grupo.descripcion}"
+												update="usersDialog" oncomplete="PF('usersDialog').show()">
+												<f:setPropertyActionListener value="#{grupo}"
+													target="#{usuariosController.manualManager.grupo}" />
+											</p:commandLink>
+										</p:dataList>
+									</div>
+								</div>
+							</p:outputPanel>
+						</h:form>
+					</div>
+				</div>
+			</p:outputPanel>
+		</p:outputPanel>
+	</ui:composition>
+</h:body>
+</html>

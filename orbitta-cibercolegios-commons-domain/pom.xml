@@ -42,8 +42,13 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>co.com.orbitta.cibercolegios</groupId>
+			<artifactId>orbitta-cibercolegios-commons-dto</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>co.com.orbitta</groupId>
-			<artifactId>orbitta-core-data-jpa</artifactId>
+			<artifactId>orbitta-core-services</artifactId>
 		</dependency>
 	</dependencies>
 </project>
