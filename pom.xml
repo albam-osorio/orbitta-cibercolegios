@@ -3,11 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>co.com.orbitta.cibercolegios</groupId>
-	<artifactId>orbitta-cibercolegios</artifactId>
+	<groupId>com.tbf.cibercolegios</groupId>
+	<artifactId>routes</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>orbitta-cibercolegios</name>
+	<name>routes</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -30,31 +30,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>co.com.orbitta</groupId>
-				<artifactId>orbitta-core-domain</artifactId>
-				<version>${orbitta.core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>co.com.orbitta</groupId>
-				<artifactId>orbitta-core-data-jpa</artifactId>
-				<version>${orbitta.core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>co.com.orbitta</groupId>
-				<artifactId>orbitta-core-services</artifactId>
-				<version>${orbitta.core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>co.com.orbitta</groupId>
-				<artifactId>orbitta-core-web-api</artifactId>
-				<version>${orbitta.core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>co.com.orbitta</groupId>
-				<artifactId>orbitta-core-web-client</artifactId>
-				<version>${orbitta.core.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc7</artifactId>
 				<version>12.1.0</version>
@@ -63,22 +38,9 @@
 	</dependencyManagement>
 	<description>Funcionalidad para los proyectos de Ciber Colegios</description>
 	<modules>
-		<module>orbitta-cibercolegios-commons-domain</module>
-		<module>orbitta-cibercolegios-commons-dto</module>
-
-
-
-		
-		
-		
-		<module>orbitta-cibercolegios-rutas</module>
-		
-		<module>orbitta-cibercolegios-rutas-dto</module>
-
-		
-		
-		
-
-		<module>orbitta-cibercolegios-rutas-administrador</module>
+		<module>routes-core</module>
+		<module>routes-commons</module>
+		<module>routes-api</module>
+		<module>routes-web</module>
 	</modules>
 </project>
