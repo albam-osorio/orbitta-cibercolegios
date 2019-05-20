@@ -19,7 +19,7 @@ import lombok.Setter;
 @Scope("view")
 @Setter
 @Getter
-public class UsuariosController implements Serializable, UsuariosConstantes {
+public class UsuariosController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

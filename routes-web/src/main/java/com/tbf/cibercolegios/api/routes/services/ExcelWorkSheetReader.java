@@ -61,10 +61,15 @@ public class ExcelWorkSheetReader {
 		int emptyRows = 0;
 		for (int rowNum = rowStart; rowNum < rowEnd + 1; rowNum++) {
 			Row row = sheet.getRow(rowNum);
-			if (row != null) {
+			boolean empty = (row == null);
+			if (!empty) {
 				if (rowNum < rowEnd) {
 					val data = getRowData(row, colStart, colEnd);
-					result.add(data);
+					empty = data.isEmpty();
+					
+					if (!empty) {
+						result.add(data);
+					}
 				} else {
 					val msg = String.format(
 							"Se ha superado el número máximo de registros a cargar por archivo.\nEl número máximo a cargar por archivo es :%d.",
@@ -72,7 +77,9 @@ public class ExcelWorkSheetReader {
 
 					throw new RuntimeException(msg);
 				}
-			} else {
+			} 
+			
+			if(empty){
 				// This whole row is empty
 				// Handle it as needed
 				emptyRows++;
@@ -86,16 +93,22 @@ public class ExcelWorkSheetReader {
 
 	private List<String> getRowData(Row row, int colStart, int colEnd) {
 		List<String> result = new ArrayList<>();
+		boolean empty = true;
 
 		for (int cellNum = colStart; cellNum < colEnd; cellNum++) {
 			String text = "";
 			Cell cell = row.getCell(cellNum);
 			if (cell != null) {
+				empty = false;
 				text = getCellText(cell);
 				result.add(text);
 			} else {
 				result.add("");
 			}
+		}
+
+		if (empty) {
+			result.clear();
 		}
 
 		return result;

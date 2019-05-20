@@ -93,6 +93,8 @@ body {
 	</ui:insert>
 </h:head>
 <h:body id="entirePage">
+	<ui:insert name="dialogs"></ui:insert>
+
 	<div class="ui-g">
 		<div class="ui-g-1"></div>
 		<div class="ui-g-10">
@@ -108,6 +110,9 @@ body {
 							<ui:insert name="subtitle"></ui:insert>
 						</div>
 					</div>
+					<div>
+						<ui:insert name="messages"></ui:insert>
+					</div>
 					<div class="body-container">
 						<ui:insert name="body"></ui:insert>
 					</div>
@@ -116,7 +121,6 @@ body {
 		</div>
 		<div class="ui-g-1"></div>
 	</div>
-	<ui:insert name="dialogs"></ui:insert>
 </h:body>
 
 </html>

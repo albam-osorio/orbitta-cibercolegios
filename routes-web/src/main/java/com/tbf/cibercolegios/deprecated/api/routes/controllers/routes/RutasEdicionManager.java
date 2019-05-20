@@ -1,4 +1,4 @@
-package com.tbf.cibercolegios.api.routes.controllers.routes.managers;
+package com.tbf.cibercolegios.deprecated.api.routes.controllers.routes;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -13,10 +13,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Paths;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -54,7 +56,7 @@ public class BatchManager implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private static final String[] HEADERS = { "TIPO DE DOCUMENTO", "NÚMERO DE DOCUMENTO", "NOMBRES", "APELLIDOS",
-			"DEPARTAMENTO AM", "CIUDAD AM", "DIRECCIÓN AM", "DEPARTAMENTO PM", "CIUDAD PM", "DIRECCIÓN PM" };
+			"DEPARTAMENTO AM", "MUNICIPIO AM", "DIRECCIÓN AM", "DEPARTAMENTO PM", "MUNICIPIO PM", "DIRECCIÓN PM" };
 
 	private static final int NUMERO_MAXIMO_FILAS_VACIAS = 10;
 
@@ -128,8 +130,8 @@ public class BatchManager implements Serializable {
 		this.setFailure(false);
 	}
 
-	
-
+	// -----------------------------------------------------------------------------------
+	// -- LOAD
 	// -----------------------------------------------------------------------------------
 	public void fileUploadListener(FileUploadEvent event) {
 		this.setSuccess(false);
@@ -145,6 +147,7 @@ public class BatchManager implements Serializable {
 			success = checkColumns(data);
 			if (success) {
 				val direcciones = asModels(data);
+
 				this.getItems().addAll(direcciones);
 
 				success = checkNotEmptyFields(direcciones);
@@ -177,9 +180,13 @@ public class BatchManager implements Serializable {
 		int maxEmptyRows = NUMERO_MAXIMO_FILAS_VACIAS;
 
 		val result = reader.read(file.getInputstream(), sheetIndex, rowStart, colStart, rowEnd, colEnd, maxEmptyRows);
+
 		return result;
 	}
 
+	// -----------------------------------------------------------------------------------
+	// -- CHECK COLUMNS REQUIRED
+	// -----------------------------------------------------------------------------------
 	private boolean checkColumns(List<List<String>> data) {
 		val errores = new ArrayList<String>();
 		boolean result = reader.checkColumns(data, HEADERS, errores);
@@ -191,6 +198,9 @@ public class BatchManager implements Serializable {
 		return result;
 	}
 
+	// -----------------------------------------------------------------------------------
+	// -- AS MODELS
+	// -----------------------------------------------------------------------------------
 	private List<DireccionPasajeroViewModel> asModels(List<List<String>> data) {
 		val result = new ArrayList<DireccionPasajeroViewModel>();
 		int n = data.size();
@@ -212,12 +222,21 @@ public class BatchManager implements Serializable {
 			model.setDireccionPm(getField(row, i++));
 			model.setErrores(new ArrayList<>());
 
-			result.add(model);
+			if (!model.isEmpty()) {
+				result.add(model);
+			}
 		}
 
 		return result;
 	}
 
+	private String getField(List<String> a, int index) {
+		return defaultString(upperCase(a.get(index))).trim();
+	}
+
+	// -----------------------------------------------------------------------------------
+	// -- CHECK EMPTY FILEDS
+	// -----------------------------------------------------------------------------------
 	private boolean checkNotEmptyFields(List<DireccionPasajeroViewModel> models) {
 		boolean result = true;
 
@@ -246,10 +265,23 @@ public class BatchManager implements Serializable {
 		return result;
 	}
 
+	private void addEmptyField(List<String> empties, String field, String value) {
+		if (isEmpty(value)) {
+			empties.add(field);
+		}
+	}
+
+	// -----------------------------------------------------------------------------------
+	// -- MAP
+	// -----------------------------------------------------------------------------------
 	private void map(List<DireccionPasajeroViewModel> models) {
 		val tiposId = ciberService.findAllTiposDocumento();
+		tiposId.stream().forEach(a -> a.setDescripcion(stripAccents(a.getDescripcion()).toUpperCase()));
+
 		val departamentos = ciberService.findAllDepartamentosByPais(getPaisId());
-		val ciudades = findCiudades(models, getPaisId());
+		departamentos.stream().forEach(a -> a.setNombre(stripAccents(a.getNombre()).toUpperCase()));
+
+		val ciudades = findCiudades(getPaisId(), departamentos, models);
 
 		for (val model : models) {
 			model.setTipoIdentificacionId(mapTipoIdentificacionId(model, tiposId));
@@ -257,16 +289,128 @@ public class BatchManager implements Serializable {
 			model.setInstitucionId(mapInstitucion(model));
 			model.setDepartamentoAmId(mapDepartamento(model.getDepartamentoAm(), departamentos));
 			model.setDepartamentoPmId(mapDepartamento(model.getDepartamentoPm(), departamentos));
-
-			if (model.getDepartamentoAmId() != null) {
-				model.setCiudadAmId(mapCiudad(model.getDepartamentoAmId(), model.getCiudadAm(), ciudades));
-			}
-			if (model.getDepartamentoPmId() != null) {
-				model.setCiudadPmId(mapCiudad(model.getDepartamentoPmId(), model.getCiudadPm(), ciudades));
-			}
+			model.setCiudadAmId(mapCiudad(model.getDepartamentoAmId(), model.getCiudadAm(), ciudades));
+			model.setCiudadPmId(mapCiudad(model.getDepartamentoPmId(), model.getCiudadPm(), ciudades));
 		}
 	}
 
+	private List<CiudadDto> findCiudades(Integer paisId, List<DepartamentoDto> departamentos,
+			List<DireccionPasajeroViewModel> pasajeros) {
+		val codigos = new HashMap<String, List<String>>();
+		for (val mode : pasajeros) {
+			asCodigoCiudad(codigos, mode.getDepartamentoAm(), mode.getCiudadAm());
+			asCodigoCiudad(codigos, mode.getDepartamentoPm(), mode.getCiudadPm());
+		}
+
+		val result = new ArrayList<CiudadDto>();
+		for (val departamento : codigos.keySet()) {
+			val list = codigos.get(departamento);
+			val optional = departamentos.stream().filter(a -> a.getNombre().equalsIgnoreCase(departamento)).findFirst();
+
+			if (optional.isPresent()) {
+				val departamentoId = optional.get().getDepartamentoId();
+				val ciudades = ciberService.findAllCiudadesByDepartamento(paisId, departamentoId);
+				ciudades.stream().forEach(a -> a.setNombre(stripAccents(a.getNombre()).toUpperCase()));
+
+				for (val ciudad : list) {
+					result.addAll(ciudades.stream().filter(a -> a.getNombre().equalsIgnoreCase(ciudad))
+							.collect(Collectors.toList()));
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private void asCodigoCiudad(Map<String, List<String>> codigos, String departamento, String ciudad) {
+		departamento = stripAccents(departamento).replaceAll("_", " ").toUpperCase();
+		ciudad = stripAccents(departamento).replaceAll("_", " ").toUpperCase();
+		List<String> list = codigos.get(departamento);
+		if (list == null) {
+			list = new ArrayList<>();
+			codigos.put(departamento, new ArrayList<>());
+		}
+		if (!list.contains(ciudad)) {
+			list.add(ciudad);
+		}
+	}
+
+	private Integer mapTipoIdentificacionId(DireccionPasajeroViewModel model, List<TipoDocumentoDto> list) {
+		Integer result = null;
+		val value = stripAccents(model.getCodigoTipoIdentificacionId());
+
+		if (isNotEmpty(value)) {
+			val optional = list.stream().filter(a -> a.getDescripcion().equalsIgnoreCase(value)).findFirst();
+			if (optional.isPresent()) {
+				result = optional.get().getId();
+			}
+		}
+		return result;
+	}
+
+	private UsuarioDto mapUsuario(DireccionPasajeroViewModel model) {
+		UsuarioDto result = null;
+		val tipoId = model.getTipoIdentificacionId();
+		val numeroId = model.getNumeroIdentificacion();
+
+		if (tipoId != null) {
+			val optional = ciberService.findUsuarioByIdentificacion(tipoId, numeroId);
+			if (optional.isPresent()) {
+				result = optional.get();
+			}
+		}
+		return result;
+	}
+
+	private Integer mapInstitucion(DireccionPasajeroViewModel model) {
+		Integer result = null;
+		if (model.getUsuario() != null) {
+			int usuarioId = model.getUsuario().getId();
+			int institucionId = getInstitucionId();
+
+			boolean pertenece = ciberService.isEstudianteBelongToInstitucion(usuarioId, institucionId);
+			if (pertenece) {
+				result = institucionId;
+			}
+		}
+		return result;
+	}
+
+	private Integer mapDepartamento(String departamento, List<DepartamentoDto> list) {
+		Integer result = null;
+		val test = stripAccents(departamento).replaceAll("_", " ");
+		if (isNotEmpty(departamento)) {
+			val optional = list.stream().filter(a -> a.getNombre().equalsIgnoreCase(test)).findFirst();
+
+			if (optional.isPresent()) {
+				result = optional.get().getDepartamentoId();
+			}
+		}
+
+		return result;
+	}
+
+	private Integer mapCiudad(Integer departamentoId, String ciudad, List<CiudadDto> list) {
+		Integer result = null;
+		if (departamentoId != null) {
+
+			if (isNotEmpty(ciudad)) {
+				val test = stripAccents(ciudad).replaceAll("_", " ");
+				val optional = list.stream().filter(
+						a -> departamentoId.equals(a.getDepartamentoId()) && a.getNombre().equalsIgnoreCase(test))
+						.findFirst();
+
+				if (optional.isPresent()) {
+					result = optional.get().getCiudadId();
+				}
+			}
+		}
+		return result;
+	}
+
+	// -----------------------------------------------------------------------------------
+	// -- CHECK
+	// -----------------------------------------------------------------------------------
 	private boolean check(List<DireccionPasajeroViewModel> models) {
 		boolean result = true;
 
@@ -309,126 +453,11 @@ public class BatchManager implements Serializable {
 		return result;
 	}
 
-	private void copy(UploadedFile file) {
-		try {
-			val stream = file.getInputstream();
-			val contentType = file.getContentType();
-			val fileName = file.getFileName();
-			this.streamedContent = new DefaultStreamedContent(stream, contentType, fileName);
-		} catch (Exception e) {
-			FacesMessages.fatal(e);
-		}
-	}
-
-	private List<CiudadDto> findCiudades(List<DireccionPasajeroViewModel> pasajeros, Integer paisId) {
-		val result = new ArrayList<CiudadDto>();
-		val codigos = new HashMap<String, List<String>>();
-		for (val mode : pasajeros) {
-			asCodigoCiudad(codigos, mode.getDepartamentoAm(), mode.getCiudadAm());
-			asCodigoCiudad(codigos, mode.getDepartamentoPm(), mode.getCiudadPm());
-		}
-
-		for (val departamento : codigos.keySet()) {
-			val list = codigos.get(departamento);
-			for (val ciudad : list) {
-				val c = ciberService.findAllCiudadesByNombres(paisId, departamento, ciudad);
-				result.addAll(c);
-			}
-		}
-
-		return result;
-	}
-
-	private void asCodigoCiudad(Map<String, List<String>> codigos, String departamento, String ciudad) {
-		List<String> list = codigos.get(departamento);
-		if (list == null) {
-			list = new ArrayList<>();
-			codigos.put(departamento, new ArrayList<>());
-		}
-		if (!list.contains(ciudad)) {
-			list.add(ciudad);
-		}
-	}
-
-	private Integer mapTipoIdentificacionId(DireccionPasajeroViewModel model, List<TipoDocumentoDto> list) {
-		Integer result = null;
-		val value = model.getCodigoTipoIdentificacionId();
-
-		if (isNotEmpty(value)) {
-			val optional = list.stream().filter(a -> a.getDescripcion().equalsIgnoreCase(value)).findFirst();
-			if (optional.isPresent()) {
-				result = optional.get().getId();
-			}
-		}
-		return result;
-	}
-
-	private UsuarioDto mapUsuario(DireccionPasajeroViewModel model) {
-		UsuarioDto result = null;
-		val tipoId = model.getTipoIdentificacionId();
-		val numeroId = model.getNumeroIdentificacion();
-
-		if (tipoId != null) {
-			val optional = ciberService.findUsuarioByIdentificacion(tipoId, numeroId);
-			if (optional.isPresent()) {
-				result = optional.get();
-			}
-		}
-		return result;
-	}
-
-	private Integer mapInstitucion(DireccionPasajeroViewModel model) {
-		Integer result = null;
-		if (model.getUsuario() != null) {
-			int usuarioId = model.getUsuario().getId();
-			int institucionId = getInstitucionId();
-
-			boolean pertenece = ciberService.isEstudianteBelongToInstitucion(usuarioId, institucionId);
-			if (pertenece) {
-				result = institucionId;
-			}
-		}
-		return result;
-	}
-
-	private Integer mapDepartamento(String departamento, List<DepartamentoDto> list) {
-		Integer result = null;
-
-		if (isNotEmpty(departamento)) {
-			val optional = list.stream().filter(a -> a.getNombre().equalsIgnoreCase(departamento)).findFirst();
-
-			if (optional.isPresent()) {
-				result = optional.get().getDepartamentoId();
-			}
-		}
-
-		return result;
-	}
-
-	private Integer mapCiudad(Integer departamentoId, String ciudad, List<CiudadDto> list) {
-		Integer result = null;
-		if (departamentoId != null) {
-
-			if (isNotEmpty(ciudad)) {
-
-				val optional = list.stream().filter(
-						a -> departamentoId.equals(a.getDepartamentoId()) && ciudad.equalsIgnoreCase(a.getNombre()))
-						.findFirst();
-
-				if (optional.isPresent()) {
-					result = optional.get().getCiudadId();
-				}
-			}
-		}
-		return result;
-
-	}
-
 	private boolean checkTipoId(DireccionPasajeroViewModel model, List<String> errores) {
 		boolean result = true;
 		if (model.getTipoIdentificacionId() == null) {
-			val msg = "Tipo de identificación desconocido";
-			errores.add(msg);
+			val msg = "Tipo de identificación desconocido: %s";
+			errores.add(String.format(msg, model.getCodigoTipoIdentificacionId()));
 			result = false;
 		}
 		return result;
@@ -437,8 +466,8 @@ public class BatchManager implements Serializable {
 	private boolean checkUsuario(DireccionPasajeroViewModel model, List<String> errores) {
 		boolean result = true;
 		if (model.getUsuario() == null) {
-			val msg = "No se encontró un usuario con este tipo y número de identificación";
-			errores.add(msg);
+			val msg = "No se encontró un usuario con este tipo y número de identificación: %s, %s";
+			errores.add(String.format(msg, model.getCodigoTipoIdentificacionId(), model.getNumeroIdentificacion()));
 			result = false;
 		}
 		return result;
@@ -456,11 +485,12 @@ public class BatchManager implements Serializable {
 
 	private void checkNombres(DireccionPasajeroViewModel model, List<String> errores) {
 		{
-			String a = model.getNombres().trim();
-			String b = model.getUsuario().getNombre().trim();
+			String a = stripAccents(model.getNombres().trim());
+			String b = stripAccents(model.getUsuario().getNombre().trim());
+			
 			if (!a.equalsIgnoreCase(b)) {
-				val fmt = "Los nombres suministrados en el archivo, no coinciden con los registrados para el usuario:%s";
-				val msg = String.format(fmt, b);
+				val fmt = "Los nombres suministrados en el archivo [%s], no coinciden con los registrados en la base de datos [%s]";
+				val msg = String.format(fmt, model.getNombres(), model.getUsuario().getNombre());
 				errores.add(msg);
 			}
 		}
@@ -468,11 +498,12 @@ public class BatchManager implements Serializable {
 
 	private void checkApellidos(DireccionPasajeroViewModel model, List<String> errores) {
 		{
-			String a = model.getApellidos().trim();
-			String b = model.getUsuario().getApellido().trim();
+			String a = stripAccents(model.getApellidos().trim());
+			String b = stripAccents(model.getUsuario().getApellido().trim());
+			
 			if (!a.equalsIgnoreCase(b)) {
-				val fmt = "Los apellidos suministrados en el archivo, no coinciden con los registrados para el usuario:%s";
-				val msg = String.format(fmt, b);
+				val fmt = "Los apellidos suministrados en el archivo [%s], no coinciden con los registrados en la base de datos [%s]";
+				val msg = String.format(fmt, model.getApellidos(), model.getUsuario().getApellido());
 				errores.add(msg);
 			}
 		}
@@ -493,6 +524,9 @@ public class BatchManager implements Serializable {
 		}
 	}
 
+	// -----------------------------------------------------------------------------------
+	// --
+	// -----------------------------------------------------------------------------------
 	private static List<ErrorViewModel> asErrors(List<DireccionPasajeroViewModel> models) {
 		val result = models.stream().filter(a -> !a.getErrores().isEmpty())
 				.map(a -> a.getErrores().stream()
@@ -501,16 +535,19 @@ public class BatchManager implements Serializable {
 		return result;
 	}
 
-	private String getField(List<String> a, int index) {
-		return defaultString(upperCase(a.get(index))).trim();
-	}
-
-	private void addEmptyField(List<String> empties, String field, String value) {
-		if (isEmpty(value)) {
-			empties.add(field);
+	private void copy(UploadedFile file) {
+		try {
+			val stream = file.getInputstream();
+			val contentType = file.getContentType();
+			val fileName = file.getFileName();
+			this.streamedContent = new DefaultStreamedContent(stream, contentType, fileName);
+		} catch (Exception e) {
+			FacesMessages.fatal(e);
 		}
 	}
-	
+
+	// -----------------------------------------------------------------------------------
+	// --
 	// -----------------------------------------------------------------------------------
 	public boolean save() {
 		boolean result = true;
@@ -519,19 +556,21 @@ public class BatchManager implements Serializable {
 
 			DireccionDto direccionIda = asNewDirecccionIda(item);
 			DireccionDto direccionRetorno = asNewDirecccionRetorno(item);
-			val usuariosAcudientesId = ciberService.findUsuariosIdDeAcudientesByUsuarioId(usuarioId);
+			val usuariosIdDeLosAcudientes = ciberService.findUsuariosIdDeAcudientesByUsuarioId(usuarioId);
 
 			val optional = pasajeroService.findByUsuarioId(usuarioId);
-			if (optional.isPresent()) {
-				PasajeroDto pasajero = optional.get();
-				direccionIda.setId(pasajero.getDireccionIdaId());
-				direccionRetorno.setId(pasajero.getDireccionRetornoId());
-				
-				pasajero = pasajeroService.update(pasajero, direccionIda, direccionRetorno, usuariosAcudientesId);
-			} else {
+
+			if (!optional.isPresent()) {
 				PasajeroDto pasajero = asNewPasajero(item);
 
-				pasajero = pasajeroService.create(pasajero, direccionIda, direccionRetorno, usuariosAcudientesId);
+				pasajero = pasajeroService.create(pasajero, direccionIda, direccionRetorno, usuariosIdDeLosAcudientes);
+			} else {
+				PasajeroDto pasajero = optional.get();
+				//Si el pasajero ya existe, e le coloca a las nuevas direcciones el id de las direcciones del pasajero para que se obligue un UPDATE 
+				direccionIda.setId(pasajero.getDireccionIdaId());
+				direccionRetorno.setId(pasajero.getDireccionRetornoId());
+
+				pasajero = pasajeroService.update(pasajero, direccionIda, direccionRetorno, usuariosIdDeLosAcudientes);
 			}
 		}
 		return result;
@@ -564,7 +603,7 @@ public class BatchManager implements Serializable {
 
 		return result;
 	}
-	
+
 	private PasajeroDto asNewPasajero(DireccionPasajeroViewModel item) {
 		val result = new PasajeroDto();
 
@@ -577,5 +616,11 @@ public class BatchManager implements Serializable {
 		result.setAcudientes(new ArrayList<>());
 
 		return result;
+	}
+
+	public static String stripAccents(String s) {
+		s = Normalizer.normalize(s, Normalizer.Form.NFD);
+		s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+		return s;
 	}
 }

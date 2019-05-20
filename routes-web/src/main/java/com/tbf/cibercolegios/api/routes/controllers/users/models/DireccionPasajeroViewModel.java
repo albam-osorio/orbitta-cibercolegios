@@ -69,4 +69,29 @@ public class DireccionPasajeroViewModel implements Serializable {
 	private Integer ciudadPmId;
 
 	private List<String> errores;
+
+	public boolean isEmpty() {
+		boolean result = true;
+
+		result &= "".equals(codigoTipoIdentificacionId);
+		result &= "".equals(numeroIdentificacion);
+		result &= "".equals(nombres);
+		result &= "".equals(apellidos);
+		result &= "".equals(departamentoAm);
+		result &= "".equals(ciudadAm);
+		result &= "".equals(direccionAm);
+		result &= "".equals(departamentoPm);
+		result &= "".equals(ciudadPm);
+		result &= "".equals(direccionPm);
+
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "[index=" + index + ", " + codigoTipoIdentificacionId + ", " + numeroIdentificacion + ", " + nombres
+				+ ", " + apellidos + ", " + departamentoAm + ", " + ciudadAm + ", " + direccionAm + ", "
+				+ departamentoPm + ", " + ciudadPm + ", " + direccionPm + "]";
+	}
+
 }

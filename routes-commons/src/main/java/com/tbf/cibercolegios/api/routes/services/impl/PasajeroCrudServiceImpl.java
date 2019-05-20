@@ -177,10 +177,8 @@ public class PasajeroCrudServiceImpl extends CrudServiceImpl<Pasajero, PasajeroD
 
 	@Override
 	public PasajeroDto create(PasajeroDto model, DireccionDto direccionIda, DireccionDto direccionRetorno,
-			List<Integer> usuariosAcudientesId) {
-		Direccion direccion;
-
-		direccion = asDireccion(direccionIda);
+			List<Integer> usuariosIdDeLosAcudientes) {
+		Direccion direccion = asDireccion(direccionIda);
 		direccion = direccionRepository.save(direccion);
 		model.setDireccionIdaId(direccion.getId());
 
@@ -188,7 +186,7 @@ public class PasajeroCrudServiceImpl extends CrudServiceImpl<Pasajero, PasajeroD
 		direccion = direccionRepository.save(direccion);
 		model.setDireccionRetornoId(direccion.getId());
 
-		val acudientes = createAcudientes(usuariosAcudientesId);
+		val acudientes = createAcudientes(usuariosIdDeLosAcudientes);
 		model.setAcudientes(acudientes);
 
 		val result = create(model);
@@ -197,15 +195,14 @@ public class PasajeroCrudServiceImpl extends CrudServiceImpl<Pasajero, PasajeroD
 
 	@Override
 	public PasajeroDto update(PasajeroDto model, DireccionDto direccionIda, DireccionDto direccionRetorno,
-			List<Integer> usuariosAcudientesId) {
-		Direccion direccion;
-		direccion = mergeDireccion(direccionIda);
+			List<Integer> usuariosIdDeLosAcudientes) {
+		Direccion direccion = mergeDireccion(direccionIda);
 		direccionRepository.save(direccion);
 
 		direccion = mergeDireccion(direccionRetorno);
 		direccionRepository.save(direccion);
 
-		val acudientes = createAcudientes(usuariosAcudientesId);
+		val acudientes = createAcudientes(usuariosIdDeLosAcudientes);
 		model.setAcudientes(acudientes);
 
 		val result = update(model);
@@ -240,15 +237,18 @@ public class PasajeroCrudServiceImpl extends CrudServiceImpl<Pasajero, PasajeroD
 		return entity;
 	}
 
-	private List<Integer> createAcudientes(List<Integer> usuariosId) {
-		val acudientes = acudienteRepository.findAllByUsuarioIdIn(usuariosId);
+	private List<Integer> createAcudientes(List<Integer> usuariosIdDeLosAcudientes) {
+		// Se buscan los acudientes existentes por su id de usuario
+		val acudientes = acudienteRepository.findAllByUsuarioIdIn(usuariosIdDeLosAcudientes);
 
 		val insert = new ArrayList<Acudiente>();
-		for (val id : usuariosId) {
-			val optional = acudientes.stream().filter(a -> id.equals(a.getUsuarioId())).findFirst();
+		for (val usuarioId : usuariosIdDeLosAcudientes) {
+			val optional = acudientes.stream().filter(a -> a.getUsuarioId() == usuarioId).findFirst();
+			
+			//Por cada id de usuario de acudiente que aun no exista en la tabla de acudientes
 			if (!optional.isPresent()) {
 				val acudiente = new Acudiente();
-				acudiente.setUsuarioId(id);
+				acudiente.setUsuarioId(usuarioId);
 				insert.add(acudiente);
 			}
 		}

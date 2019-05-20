@@ -26,7 +26,7 @@ import lombok.val;
 @Scope("view")
 @Setter
 @Getter
-public class SeguimientoController implements Serializable, SeguimientoConstantes {
+public class SeguimientoController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

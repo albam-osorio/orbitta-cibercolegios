@@ -16,4 +16,11 @@ public class ErrorViewModel implements Serializable {
 	private String numeroIdentificacion;
 
 	private String error;
+
+	@Override
+	public String toString() {
+		return "[Registro=" + index + ", Número Identificación=" + numeroIdentificacion + ", error=" + error + "]";
+	}
+	
+	
 }

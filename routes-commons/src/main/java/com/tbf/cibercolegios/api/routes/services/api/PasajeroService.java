@@ -21,9 +21,9 @@ public interface PasajeroService extends CrudService<PasajeroDto, Integer> {
 
 	@Transactional(readOnly = false)
 	PasajeroDto create(PasajeroDto model, DireccionDto direccionIda, DireccionDto direccionRetorno,
-			List<Integer> usuariosAcudientesId);
+			List<Integer> usuariosIdDeLosAcudientes);
 
 	@Transactional(readOnly = false)
 	PasajeroDto update(PasajeroDto model, DireccionDto direccionIda, DireccionDto direccionRetorno,
-			List<Integer> usuariosAcudientesId);
+			List<Integer> usuariosIdDeLosAcudientes);
 }

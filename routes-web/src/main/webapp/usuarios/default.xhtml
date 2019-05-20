@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+	<ui:define name="styles">
+		<style type="text/css">
+.error-title-container {
+	text-align: center;
+	color: black;
+}
+
+.error-title {
+	font-weight: bold;
+	font-size: 16px;
+	text-align: center;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.error-text {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.td-center {
+	text-align: center;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="title">
+		<h:outputText value="USUARIOS" />
+	</ui:define>
+
+	<ui:define name="subtitle">
+		<h:outputText value="EDICIÓN Y CARGUE USUARIOS DE RUTA" />
+	</ui:define>
+
+	<ui:define name="dialogs">
+		<ui:include src="/usuarios/dialogs-help.xhtml" />
+		<ui:include src="/usuarios/dialogs-users.xhtml" />
+		<ui:include src="/usuarios/dialogs-edit-address.xhtml" />
+
+		<p:confirmDialog global="true" closeOnEscape="true">
+			<h:form>
+				<p:commandButton value="Sí" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<ui:include src="/usuarios/body-batch.xhtml" />
+
+		<p:outputPanel id="panelSeparator">
+			<p:outputPanel
+				rendered="#{not (usuariosController.batch or usuariosController.manual)}">
+				<div class="ui-g">
+					<div class="ui-g-2"></div>
+					<div class="ui-g-8">
+						<p:separator />
+					</div>
+				</div>
+			</p:outputPanel>
+		</p:outputPanel>
+
+		<ui:include src="/usuarios/body-manual.xhtml" />
+
+		<p:outputPanel id="panelFooter">
+			<p:outputPanel>
+				<div class="footer-commands-container">
+					<div class="footer-commands-content">
+						<h:form>
+							<p:commandButton value="REINICIAR"
+								action="${usuariosController.cancel}"
+								update="panelBatch panelSeparator panelManual panelFooter"
+								rendered="${(usuariosController.batch != usuariosController.manual)}" />
+							<p:button value="CANCELAR" outcome="/home">
+								<f:param name="idSesion" value="#{userPreferences.sesionId}" />
+							</p:button>
+						</h:form>
+					</div>
+				</div>
+			</p:outputPanel>
+		</p:outputPanel>
+	</ui:define>
+</ui:composition>

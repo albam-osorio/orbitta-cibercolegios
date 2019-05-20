@@ -1,4 +1,4 @@
-package com.tbf.cibercolegios.api.routes.controllers.routes;
+package com.tbf.cibercolegios.deprecated.api.routes.controllers.routes;
 
 import static java.util.stream.Collectors.toList;
 
@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tbf.cibercolegios.api.ciber.services.api.CiberService;
+import com.tbf.cibercolegios.api.routes.controllers.WebSettings;
 import com.tbf.cibercolegios.api.routes.controllers.routes.managers.RutasAsignacionManager;
-import com.tbf.cibercolegios.api.routes.controllers.routes.managers.RutasEdicionManager;
 import com.tbf.cibercolegios.api.routes.controllers.routes.models.ItemRutaViewModel;
 import com.tbf.cibercolegios.api.routes.controllers.util.UserPreferences;
 import com.tbf.cibercolegios.api.routes.services.api.RutaService;
@@ -28,7 +28,7 @@ import lombok.val;
 @Scope("view")
 @Setter
 @Getter
-public class RutasController implements Serializable, RutasConstantes {
+public class RutasController implements Serializable, WebSettings {
 
 	private static final long serialVersionUID = 1L;
 

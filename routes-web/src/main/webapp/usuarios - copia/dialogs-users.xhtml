@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://xmlns.jcp.org/jsf/html"
+		xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+		xmlns:p="http://primefaces.org/ui">
+
+		<p:dialog id="usersDialog" widgetVar="usersDialog"
+			closeOnEscape="true" modal="true" showEffect="fade" hideEffect="fade"
+			resizable="false" width="400">
+			<h:form>
+				<div class="body-container">
+					<div class="header-title-container">
+						<div class="header-title">USUARIOS</div>
+					</div>
+					<div class="header-subtitle-container">
+						<div class="header-subtitle">
+							<h:outputText
+								value="#{usuariosController.manualManager.grupo.descripcion}" />
+						</div>
+					</div>
+					<div class="body-container">
+						<p:dataList id="estudiantesTable" var="usuario"
+							value="#{usuariosController.manualManager.usuarios}"
+							type="unordered" itemType="none" paginator="true" rows="5"
+							rendered="#{not empty usuariosController.manualManager.usuarios}">
+							<f:facet name="header">
+							</f:facet>
+							<p:commandLink
+								value="#{usuario.numeroId}, #{usuario.nombreCompleto}"
+								update="editDialog" oncomplete="PF('editDialog').show()">
+								<f:setPropertyActionListener value="#{usuario}"
+									target="#{usuariosController.manualManager.usuario}" />
+							</p:commandLink>
+						</p:dataList>
+					</div>
+					<div class="footer-commands-container">
+						<div class="footer-commands-content">
+							<p:commandButton value="CANCELAR" ajax="true" immediate="true"
+								oncomplete="PF('usersDialog').hide()" />
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+	</ui:composition>
+</h:body>
+</html>
