@@ -40,7 +40,7 @@ public class UserPreferences implements Serializable {
 		val sql = getSql();
 		val paramMap = new HashMap<String, Object>();
 		paramMap.put("idSesion", sesionId);
-		
+
 		jdbcTemplate.query(sql, paramMap, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -57,14 +57,16 @@ public class UserPreferences implements Serializable {
 				setPaisId(id_pais);
 			}
 		});
-		
-		/*
-		setSesionId("70D35609");
-		setUsuarioId(24411491);
-		setInstitucionId(277);
-		setJornadaId(1);
-		setPaisId(169);
-		*/
+
+		/**/
+		if (sesionId == null) {
+			setSesionId("70D35609");
+			setUsuarioId(24411491);
+			setInstitucionId(277);
+			setJornadaId(1);
+			setPaisId(169);
+		}
+		/**/
 		if (getSesionId() == null) {
 			throw new RuntimeException("No fue posible obtener los datos de la sesión con id=" + getSesionId());
 		}

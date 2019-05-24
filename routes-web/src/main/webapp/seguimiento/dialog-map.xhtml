@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="mapDialog" widgetVar="mapDialog" modal="true"
+		showEffect="fade" hideEffect="fade" resizable="false" closable="false"
+		width="550">
+
+		<h:form id="mapForm">
+			<h:panelGroup
+				rendered="#{seguimientoDialogMapController.initialized}">
+
+				<div class="body-container">
+					<div class="header-title-container">
+						<div class="header-title">
+							<h:outputText value="VER UBICACIÓN EN EL MAPA" />
+						</div>
+					</div>
+					<div class="header-subtitle-container"></div>
+					<div class="body-container">
+						<h:inputHidden
+							value="#{seguimientoDialogMapController.model.rutaId}" />
+
+						<p:scrollPanel mode="native">
+							<p:panel>
+								<p:gmap
+									center="#{seguimientoDialogMapController.model.y}, #{seguimientoDialogMapController.model.x}"
+									zoom="12" type="terrain" style="width:100%;height:400px"
+									model="#{seguimientoDialogMapController.mapModel}">
+								</p:gmap>
+							</p:panel>
+						</p:scrollPanel>
+					</div>
+					<div class="footer-commands-container">
+						<div class="footer-commands-content">
+							<p:commandButton value="CANCELAR"
+								actionListener="#{seguimientoDialogMapController.closeDialog()}"
+								process="@this" oncomplete="PF('bui').hide()" update=" :mapForm" />
+						</div>
+					</div>
+				</div>
+
+			</h:panelGroup>
+		</h:form>
+	</p:dialog>
+
+
+</ui:composition>

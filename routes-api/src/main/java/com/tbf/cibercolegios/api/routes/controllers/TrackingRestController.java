@@ -33,14 +33,13 @@ public class TrackingRestController {
 
 	@Autowired
 	private AcudienteTrackingService acudienteTrackingService;
-	
+
 	@PostMapping(path = "/register")
 	public ResponseEntity<?> registrar(@RequestBody MonitorRegisterDto request) {
 
 		monitorTrackingService.registrarMonitor(request.getMonitorId(), request.getToken());
 		return ResponseEntity.ok("");
 	}
-
 
 	@GetMapping("/monitor/{monitorId}/rutas")
 	public ResponseEntity<List<MonitorDatosRutaDto>> getRutasByMonitorId(@PathVariable Integer monitorId) {

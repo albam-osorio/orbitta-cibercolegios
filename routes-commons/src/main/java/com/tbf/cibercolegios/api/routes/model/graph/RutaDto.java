@@ -26,7 +26,7 @@ public class RutaDto extends AuditableEntityDto<Integer> {
 
 	public static final int SENTIDO_RETORNO = 2;
 
-	public static final int ESTADO_INACTIVA = 1;
+	public static final int ESTADO_INACTIVA = 0;
 
 	private int institucionId;
 
@@ -69,7 +69,7 @@ public class RutaDto extends AuditableEntityDto<Integer> {
 	@DateTimeFormat(style = "M-")
 	private LocalDate fechaUltimoRecorrido;
 
-	private int sentido;
+	private int sentido;	
 
 	private int estadoId;
 

@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="viewDialog" widgetVar="viewDialog" modal="true"
+		showEffect="fade" hideEffect="fade" resizable="false" closable="false"
+		width="550">
+
+		<h:form id="viewForm">
+			<h:panelGroup
+				rendered="#{seguimientoDialogViewController.initialized}">
+
+				<div class="body-container">
+					<div class="header-title-container">
+						<div class="header-title">
+							<h:outputText value="VER RUTA" />
+						</div>
+					</div>
+					<div class="header-subtitle-container"></div>
+					<div class="body-container">
+						<h:inputHidden value="#{seguimientoDialogViewController.model.rutaId}" />
+						
+						<p:scrollPanel mode="native">
+							<p:panel>
+								<p:focus />
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="CÓDIGO" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText id="codigo"
+											value="#{seguimientoDialogViewController.model.codigo}" />
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="DESCRIPCION" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText id="descripcion"
+											value="#{seguimientoDialogViewController.model.descripcion}" />
+									</div>
+
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="MARCA VEHÍCULO" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText id="marca"
+											value="#{seguimientoDialogViewController.model.marca}" />
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="PLACA VEHÍCULO" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText id="placa"
+											value="#{seguimientoDialogViewController.model.placa}" />
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="CAPACIDAD MAX" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText id="capacidadMaxima"
+											value="#{seguimientoDialogViewController.model.capacidad}" />
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="NOMBRE CONDUCTOR" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText
+											value="#{seguimientoDialogViewController.model.conductorNombres}" />
+										,
+										<h:outputText
+											value="#{seguimientoDialogViewController.model.conductorApellidos}" />
+									</div>
+								</div>
+
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="NOMBRE MONITOR" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText
+											value="#{seguimientoDialogViewController.model.monitorNombres}" />
+										,
+										<h:outputText
+											value="#{seguimientoDialogViewController.model.monitorApellidos}" />
+									</div>
+								</div>
+
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="ESTADO" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText
+											value="#{seguimientoDialogViewController.model.estadoNombre}" />
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="DESTINO" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText value="#{(seguimientoDialogViewController.model.estadoNombre =='INACTIVO')?'N/A':seguimientoDialogViewController.model.destino}" />
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="PARADA ACTUAL" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText
+											value="#{(seguimientoDialogViewController.model.estadoNombre =='INACTIVO')?'N/A':seguimientoDialogViewController.model.paradaActual}" />
+									</div>
+								</div>
+								<div class="ui-g">
+									<div class="ui-g-4">
+										<h:outputText value="ALUMNOS ABORDO" />
+									</div>
+									<div class="ui-g-7">
+										<h:outputText
+											value="#{(seguimientoDialogViewController.model.estadoNombre =='INACTIVO')?'N/A':seguimientoDialogViewController.model.pasajerosAbordo}" />
+									</div>
+								</div>
+							</p:panel>
+						</p:scrollPanel>
+					</div>
+					<div class="footer-commands-container">
+						<div class="footer-commands-content">
+						<p:commandButton value="CANCELAR"
+								actionListener="#{seguimientoDialogViewController.closeDialog()}"
+								process="@this" oncomplete="PF('bui').hide()"
+								update=" :viewForm" />
+						</div>
+					</div>
+				</div>
+
+			</h:panelGroup>
+		</h:form>
+	</p:dialog>
+
+
+</ui:composition>

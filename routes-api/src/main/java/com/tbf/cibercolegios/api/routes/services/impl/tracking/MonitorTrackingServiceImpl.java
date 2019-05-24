@@ -298,7 +298,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	}
 
 	private void checkEventoEsDeRecorrido(int estadoId) {
-		val estado = estadoRutaService.findOneById(estadoId);
+		val estado = estadoRutaService.findOneById(estadoId);	
 		if (estado.getTipo() != RouteTypeStatus.RECORRIDO) {
 			val format = "El estado %s, no corresponde a un evento de RECORRIDO.";
 			val msg = String.format(format, estado.getDescripcion());

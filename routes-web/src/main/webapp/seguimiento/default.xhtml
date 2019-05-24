@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+	<ui:define name="title">
+		<h:outputText value="SEGUIMIENTO DE RUTA" />
+	</ui:define>
+
+	<ui:define name="dialogs">
+		<ui:include src="/seguimiento/dialog-view.xhtml" />
+		<ui:include src="/seguimiento/dialog-map.xhtml" />
+
+		<p:confirmDialog global="true" closeOnEscape="true">
+			<h:form>
+				<p:commandButton value="Sí" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+
+	<ui:define name="messages">
+		<p:messages id="messages" showDetail="true" closable="true"
+			redisplay="false"  autoUpdate="true"/>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:panelGroup rendered="#{seguimientoCrudController.initialized}">
+
+			<h:form id="listForm">
+				<p:blockUI block="entirePage" widgetVar="bui" />
+				<div>
+					<p:dataTable id="listTable" var="item"
+						value="#{seguimientoCrudController.models}"
+						selection="#{seguimientoCrudController.selection}"
+						rowKey="#{item.rutaId}" reflow="true" rows="10" paginator="true"
+						sortMode="multiple">
+
+						<p:column headerText="ID" sortable="true"
+							style="text-align: right" visible="false">
+							<h:outputText value="#{item.rutaId}" />
+						</p:column>
+						<p:column headerText="CÓDIGO" sortBy="#{item.codigo}"
+							filterBy="#{item.codigo}">
+							<h:outputText value="#{item.codigo}" />
+						</p:column>
+						<p:column headerText="DESCRIPCIÓN" sortBy="#{item.descripcion}"
+							filterBy="#{item.descripcion}">
+							<h:outputText value="#{item.descripcion}" />
+						</p:column>
+						<p:column headerText="MONITOR" sortBy="#{item.monitorNombres}"
+							filterBy="#{item.monitorNombres}">
+							<h:outputText value="#{item.monitorNombres}" />
+						</p:column>
+						<p:column headerText="ESTADO" sortBy="#{item.estadoNombre}"
+							filterBy="#{item.estadoNombre}">
+							<h:outputText value="#{item.estadoNombre}" />
+						</p:column>
+						<p:column headerText="DESTINO" sortBy="#{item.ultimoSentido}"
+							filterBy="#{item.destino}">
+							<h:outputText
+								value="#{(item.estadoNombre =='INACTIVO')?'N/A': item.destino}" />
+						</p:column>
+						<p:column headerText="PARADA ACTUAL"
+							sortBy="#{item.ultimoSentido}" filterBy="#{item.destino}">
+							<h:outputText rendered="#{item.estadoNombre =='INACTIVO'}"
+								value="N/A" />
+							<h:outputText rendered="#{item.estadoNombre !='INACTIVO'}"
+								value="#{item.paradaActual} de #{item.totalParadas}" />
+						</p:column>
+						<p:column headerText="ALUMNOS ABORDO"
+							sortBy="#{item.pasajerosAbordo}"
+							filterBy="#{item.pasajerosAbordo}">
+							<h:outputText value="#{(item.estadoNombre =='INACTIVO')?'N/A': item.pasajerosAbordo}" />
+						</p:column>
+						<p:column headerText="OPCIONES" style="text-align: center">
+							<p:commandButton icon="fa fa-plus"
+								actionListener="#{seguimientoDialogViewController.openDialog('viewDialog',item)}"
+								update="viewDialog" onclick="PF('bui').show()"
+								resetValues="true" />
+							<p:commandButton rendered="#{item.estadoNombre !='INACTIVO'}" icon="fa fa-fw fa-map-marker"
+								actionListener="#{seguimientoDialogMapController.openDialog('mapDialog',item)}"
+								update="mapDialog" onclick="PF('bui').show()"
+								resetValues="true" />
+						</p:column>
+					</p:dataTable>
+				</div>
+				<div class="footer-commands-container">
+					<div class="footer-commands-content">
+						<p:button value="CANCELAR" outcome="/home">
+							<f:param name="idSesion" value="#{userPreferences.sesionId}" />
+						</p:button>
+					</div>
+				</div>
+			</h:form>
+
+		</h:panelGroup>
+	</ui:define>
+</ui:composition>

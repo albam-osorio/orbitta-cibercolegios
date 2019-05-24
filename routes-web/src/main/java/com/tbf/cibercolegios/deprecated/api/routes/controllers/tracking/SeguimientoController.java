@@ -1,4 +1,4 @@
-package com.tbf.cibercolegios.api.routes.controllers.tracking;
+package com.tbf.cibercolegios.deprecated.api.routes.controllers.tracking;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,10 +22,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 
-@RestController
-@Scope("view")
-@Setter
-@Getter
 public class SeguimientoController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -64,8 +60,8 @@ public class SeguimientoController implements Serializable {
 	}
 
 	private void resetActions() {
-		this.setDetail(false);
-		this.setMap(false);
+		//this.setDetail(false);
+		//this.setMap(false);
 	}
 
 	private List<MonitorDatosRutaDto> getData() {
@@ -86,8 +82,8 @@ public class SeguimientoController implements Serializable {
 
 		this.selected = item;
 
-		this.setDetail(true);
-		this.setMap(true);
+		//this.setDetail(true);
+		//this.setMap(true);
 	}
 
 	public void mapListener(ActionEvent event) {
@@ -96,8 +92,8 @@ public class SeguimientoController implements Serializable {
 		boolean success = true;
 
 		if (success) {
-			this.setDetail(false);
-			this.setMap(true);
+			//this.setDetail(false);
+			//this.setMap(true);
 		}
 	}
 }
