@@ -6,7 +6,7 @@ import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.tbf.cibercolegios.api.routes.controllers.util.ViewScope;
+import com.tbf.cibercolegios.api.routes.web.utils.ViewScope;
 
 
 

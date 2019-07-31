@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.val;
 
 @Getter
 @Setter
@@ -20,11 +21,13 @@ public class UsuarioDto extends EntityDto<Integer> {
 	@Size(max = 16)
 	private String login;
 
-	private int tipoId;
+	private int tipoIdentificacionId;
+
+	private String tipoIdentificacion;
 
 	@NotNull
 	@Size(max = 30)
-	private String numeroId;
+	private String numeroIdentificacion;
 
 	@NotNull
 	@Size(max = 50)
@@ -34,7 +37,10 @@ public class UsuarioDto extends EntityDto<Integer> {
 	@Size(max = 50)
 	private String apellido;
 
+	private boolean tieneFoto;
+
 	public String getNombreCompleto() {
-		return getApellido() + " " + getNombre();
+		val result = getApellido() + " " + getNombre();
+		return result;
 	}
 }

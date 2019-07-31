@@ -15,8 +15,6 @@ public class ConversacionDto extends SimpleAuditableEntityDto<Integer> {
 
 	private int rutaId;
 
-	private int usuarioMonitorId;
-	
 	private int usuarioAcudienteId;
 
 	private int usuarioPasajeroId;

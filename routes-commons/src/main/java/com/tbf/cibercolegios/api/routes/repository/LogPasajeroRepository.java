@@ -4,4 +4,5 @@ import com.tbf.cibercolegios.api.core.data.jpa.repository.IdentifiedDomainObject
 import com.tbf.cibercolegios.api.model.routes.LogPasajero;
 
 public interface LogPasajeroRepository extends IdentifiedDomainObjectRepository<LogPasajero, Integer> {
+
 }

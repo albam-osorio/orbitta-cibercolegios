@@ -1,0 +1,158 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="assignDialog" widgetVar="assignDialog" modal="true"
+		showEffect="fade" hideEffect="fade" resizable="false" closable="false">
+		<h:form id="assignForm">
+			<h:panelGroup
+				rendered="#{rutaEditDialogAssignController.initialized}">
+
+				<div class="body-container">
+					<div class="header-title-container">
+						<div class="header-title">
+							<h:outputText value="ASIGNACIÓN DE PASAJEROS A RUTAS" />
+						</div>
+					</div>
+
+					<div class="body-container">
+						<p:focus />
+						<p:panel style="width:1000px;">
+							<div class="ui-g ui-g-nopad">
+								<div class="ui-g-12 ui-g-nopad">
+									<p:scrollPanel mode="native" style="height:184px;">
+										<div class="ui-g">
+											<div class="ui-g-12" style="text-align: center;">
+												<p:messages showDetail="true" severity="warn error fatal"
+													escape="false" closable="true">
+													<p:autoUpdate />
+												</p:messages>
+											</div>
+										</div>
+										<div class="ui-g">
+											<ui:include src="/rutas/edit-ruta-dialog-assign-view.xhtml" />
+										</div>
+									</p:scrollPanel>
+
+								</div>
+							</div>
+							<div class="ui-g">
+								<div class="ui-g-12">
+									<h:panelGroup id="estudiantes">
+
+										<p:pickList id="pickList"
+											value="#{rutaEditDialogAssignController.dualListModel}"
+											var="item" itemValue="#{item}"
+											itemLabel="#{item.trayecto.pasajero.nombreCompleto}"
+											showSourceControls="false" showTargetControls="false"
+											showSourceFilter="true" showTargetFilter="true"
+											filterMatchMode="contains" responsive="true"
+											addLabel="Inscribir" addAllLabel="Insribir a todos"
+											removeLabel="Remover" removeAllLabel="Remover a todos"
+											converter="rutaEditDialogAssignViewModelPickListConverter">
+
+											<f:facet name="sourceCaption">No inscritos</f:facet>
+											<f:facet name="targetCaption">Inscritos</f:facet>
+
+											<p:ajax event="transfer"
+												listener="#{rutaEditDialogAssignController.onTransfer}"
+												update="inscritosAm inscritosPm pickList" />
+
+											<p:column style="width: 36px;">
+												<p:graphicImage value="#{userImage.image}"
+													rendered="#{item.trayecto.pasajero.tieneFoto}"
+													style="width: 32px;">
+													<f:param name="id" value="#{item.trayecto.pasajero.id}" />
+												</p:graphicImage>
+
+												<p:graphicImage value="/static/images/fotonodisp.gif"
+													rendered="#{not item.trayecto.pasajero.tieneFoto}"
+													style="width: 32px;" />
+											</p:column>
+											<p:column>
+												<div class="ui-g">
+													<div class="ui-g-12">
+														<h:outputText
+															value="#{item.trayecto.pasajero.nombreCompleto}" />
+													</div>
+													<h:panelGroup
+														rendered="#{item.trayecto.trayectoCompleto and not item.trayecto.direccionesEquivalentes}">
+														<div class="ui-g-6">
+															<h:outputLabel value="AM: " />
+															<h:outputText
+																value="#{item.trayecto.direccionAm.direccionCompleta}" />
+														</div>
+														<div class="ui-g-6">
+															<h:outputLabel value="PM: " />
+															<h:outputText
+																value="#{item.trayecto.direccionPm.direccionCompleta}" />
+														</div>
+													</h:panelGroup>
+													<h:panelGroup
+														rendered="#{item.trayecto.trayectoCompleto and item.trayecto.direccionesEquivalentes}">
+														<div class="ui-g-12">
+															<h:outputLabel value="AM/PM: " />
+															<h:outputText
+																value="#{item.trayecto.direccionAm.direccionCompleta}" />
+														</div>
+													</h:panelGroup>
+													<h:panelGroup
+														rendered="#{not item.trayecto.trayectoCompleto and item.trayecto.tieneDireccionAm}">
+														<div class="ui-g-12">
+															<h:outputLabel value="AM: " />
+															<h:outputText
+																value="#{item.trayecto.direccionAm.direccionCompleta}" />
+														</div>
+													</h:panelGroup>
+													<h:panelGroup
+														rendered="#{not item.trayecto.trayectoCompleto and item.trayecto.tieneDireccionPm}">
+														<div class="ui-g-12">
+															<h:outputLabel value="PM: " />
+															<h:outputText
+																value="#{item.trayecto.direccionPm.direccionCompleta}" />
+														</div>
+													</h:panelGroup>
+													<div class="ui-g-12">
+
+														<p:selectBooleanCheckbox value="#{item.trayecto.activo}"
+															itemLabel="Activo" disabled="#{true}" />
+													</div>
+
+												</div>
+											</p:column>
+										</p:pickList>
+									</h:panelGroup>
+								</div>
+								<div class="ui-g-12" style="text-align: center;">
+									<h:outputLabel value="Ayuda: " />
+									<h:outputText
+										value="Utilice los botones centrales para inscribir o remover miembros de la ruta." />
+								</div>
+							</div>
+						</p:panel>
+					</div>
+
+					<div class="footer-commands-container">
+						<div class="footer-commands-content">
+							<p:commandButton widgetVar="submitButton" value="Actualizar"
+								actionListener="#{rutaEditDialogAssignController.submit()}"
+								action="#{rutaEditController.reset()}"
+								update=" :assignForm form"
+								onclick="PF('submitButton').disable()"
+								oncomplete="PF('submitButton').enable()"
+								onerror="PF('submitButton').enable()">
+							</p:commandButton>
+							<p:commandButton value="Cancelar"
+								actionListener="#{rutaEditDialogAssignController.closeDialog()}"
+								process="@this" oncomplete="PF('bui').hide()"
+								update=" :assignForm form " />
+						</div>
+					</div>
+				</div>
+			</h:panelGroup>
+		</h:form>
+	</p:dialog>
+</ui:composition>

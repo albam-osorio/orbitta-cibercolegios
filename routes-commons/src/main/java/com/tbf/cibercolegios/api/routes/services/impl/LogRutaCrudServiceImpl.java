@@ -1,8 +1,5 @@
 package com.tbf.cibercolegios.api.routes.services.impl;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +8,6 @@ import com.tbf.cibercolegios.api.model.routes.LogRuta;
 import com.tbf.cibercolegios.api.routes.model.graph.LogRutaDto;
 import com.tbf.cibercolegios.api.routes.repository.EstadoRutaRepository;
 import com.tbf.cibercolegios.api.routes.repository.LogRutaRepository;
-import com.tbf.cibercolegios.api.routes.repository.RutaRepository;
 import com.tbf.cibercolegios.api.routes.services.api.LogRutaService;
 
 import lombok.val;
@@ -21,9 +17,6 @@ public class LogRutaCrudServiceImpl extends CrudServiceImpl<LogRuta, LogRutaDto,
 
 	@Autowired
 	private LogRutaRepository repository;
-
-	@Autowired
-	private RutaRepository rutaRepository;
 
 	@Autowired
 	private EstadoRutaRepository estadoRepository;
@@ -38,13 +31,11 @@ public class LogRutaCrudServiceImpl extends CrudServiceImpl<LogRuta, LogRutaDto,
 		val model = newModel();
 		mapModel(entity, model);
 		
-		model.setRutaId(entity.getRuta().getId());
+		model.setRutaId(entity.getRutaId());
+		model.setMonitorId(entity.getMonitorId());
 		model.setSentido(entity.getSentido());
-
-		model.setEstadoId(entity.getEstado().getId());
-		model.setEstadoDescripcion(entity.getEstado().getDescripcion());
-		model.setTipoEstado(entity.getEstado().getTipo());
-
+		model.setEstadoId(entity.getEstadoId());
+		
 		model.setX(entity.getX());
 		model.setY(entity.getY());
 
@@ -53,12 +44,12 @@ public class LogRutaCrudServiceImpl extends CrudServiceImpl<LogRuta, LogRutaDto,
 
 	@Override
 	protected LogRuta mergeEntity(LogRutaDto model, LogRuta entity) {
-		val ruta = rutaRepository.findById(model.getRutaId());
-		val estado = estadoRepository.findById(model.getEstadoId());
+		val estado = estadoRepository.findById(model.getEstadoId()).get();
 
-		entity.setRuta(ruta.get());
+		entity.setRutaId(model.getRutaId());
+		entity.setMonitorId(model.getMonitorId());
 		entity.setSentido(model.getSentido());
-		entity.setEstado(estado.get());
+		entity.setEstadoId(estado.getId());
 		entity.setX(model.getX());
 		entity.setY(model.getY());
 
@@ -76,15 +67,4 @@ public class LogRutaCrudServiceImpl extends CrudServiceImpl<LogRuta, LogRutaDto,
 	protected LogRuta newEntity() {
 		return new LogRuta();
 	}
-
-	@Override
-	public Optional<LogRutaDto> findUltimoLogRutaByRutaIdAndFechaUltimoRecorrido(int rutaId, LocalDate fechaUltimoRecorrido) {
-		val fechaCreacion = fechaUltimoRecorrido.atStartOfDay();
-		val optional = getRepository().findFirstByRutaIdAndFechaCreacionGreaterThanOrderByIdDesc(rutaId, fechaCreacion);
-
-		val result = asModel(optional);
-		return result;
-	}
-
-
 }

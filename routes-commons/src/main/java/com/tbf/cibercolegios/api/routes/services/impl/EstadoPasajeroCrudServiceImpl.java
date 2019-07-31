@@ -37,6 +37,7 @@ public class EstadoPasajeroCrudServiceImpl extends CrudServiceImpl<EstadoPasajer
 		model.setTipo(entity.getTipo());
 		model.setAplicaSentidoIda(entity.isAplicaSentidoIda());
 		model.setAplicaSentidoRetorno(entity.isAplicaSentidoRetorno());
+		model.setAplicaGeoCodificacion(entity.isAplicaGeoCodificacion());
 
 		return model;
 	}
@@ -48,7 +49,8 @@ public class EstadoPasajeroCrudServiceImpl extends CrudServiceImpl<EstadoPasajer
 		entity.setTipo(model.getTipo());
 		entity.setAplicaSentidoIda(model.isAplicaSentidoIda());
 		entity.setAplicaSentidoRetorno(model.isAplicaSentidoRetorno());
-
+		entity.setAplicaGeoCodificacion(model.isAplicaGeoCodificacion());
+		
 		entity.setVersion(model.getVersion());
 		return entity;
 	}

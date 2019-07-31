@@ -4,12 +4,9 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -39,24 +36,24 @@ public class LogPasajero extends SimpleAuditableEntity<Integer> {
 	@Column(name = "ID_LOG_PASAJERO")
 	@Setter(value = AccessLevel.PROTECTED)
 	private Integer id;
-	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "ID_RUTA", nullable = false)
-	@NotNull
-	private Ruta ruta;
-	
-	@Column(name = "ID_USUARIO", nullable = false, unique = true)
-	@NotNull
+
+	@Column(name = "ID_USUARIO", nullable = false)
 	private int usuarioId;
 
 	@Column(name = "SENTIDO", nullable = false)
-	@NotNull
 	private int sentido;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "ID_ESTADO_PASAJERO", nullable = false)
-	@NotNull
-	private EstadoPasajero estado;
+	@Column(name = "ID_DIRECCION", nullable = false)
+	private int direccionId;
+
+	@Column(name = "ID_RUTA", nullable = false)
+	private int rutaId;
+
+	@Column(name = "SECUENCIA", nullable = false)
+	private int secuencia;
+
+	@Column(name = "ID_ESTADO_PASAJERO", nullable = false)
+	private int estadoId;
 
 	@Column(name = "x", nullable = false, precision = 9, scale = 6)
 	@NotNull

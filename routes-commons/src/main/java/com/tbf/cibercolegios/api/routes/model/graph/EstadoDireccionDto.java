@@ -3,7 +3,7 @@ package com.tbf.cibercolegios.api.routes.model.graph;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.tbf.cibercolegios.api.core.model.graph.AuditableEntityDto;
+import com.tbf.cibercolegios.api.core.model.graph.SimpleAuditableEntityDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,11 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class EstadoDireccionDto extends AuditableEntityDto<Integer> {
+public class EstadoDireccionDto extends SimpleAuditableEntityDto<Integer> {
+
+	public static final int ESTADO_NO_GEOREFERENCIADA = 1;
+	
+	public static final int GEOREFERENCIADA = 1;
 
 	@NotNull
 	@Size(max = 50)

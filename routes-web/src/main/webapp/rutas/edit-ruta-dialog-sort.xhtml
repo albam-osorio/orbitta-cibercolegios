@@ -1,0 +1,178 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="sortDialog" widgetVar="sortDialog" modal="true"
+		showEffect="fade" hideEffect="fade" resizable="false" closable="false">
+		<h:form id="sortForm">
+			<h:panelGroup rendered="#{rutaEditDialogSortController.initialized}">
+
+				<div class="body-container">
+					<div class="header-title-container">
+						<div class="header-title">
+							<h:outputText value="DEFINICIÓN DE ORDEN DE RECOGIDA/ENTREGA" />
+						</div>
+					</div>
+
+					<div class="body-container">
+						<p:focus />
+						<p:panel style="width:800px;">
+							<div class="ui-g">
+								<div class="ui-g-12" style="text-align: center;">
+									<p:messages showDetail="true" severity="warn error fatal"
+										escape="false" closable="true">
+										<p:autoUpdate />
+									</p:messages>
+								</div>
+							</div>
+
+							<div class="ui-g">
+								<div class="ui-g-6">
+									<div class="ui-g">
+										<div class="ui-g-12">
+											<p:orderList
+												value="#{rutaEditDialogSortController.direccionesAm}"
+												var="item" itemValue="#{item}" controlsLocation="left"
+												responsive="true"
+												converter="rutaEditDialogSortOrderListConverter">
+												<p:ajax event="reorder"
+													listener="#{rutaEditDialogSortController.onReorderAm}"
+													update="@this" />
+
+												<f:facet name="caption">Orden AM</f:facet>
+												<p:column rowspan="2" style="width: 48px;">
+													<ui:include src="/templates/usuario-imagen.xhtml">
+														<ui:param name="usuarioId" value="#{item.pasajero.id}" />
+														<ui:param name="tieneFoto"
+															value="#{item.pasajero.tieneFoto}" />
+														<ui:param name="style" value="width: 32px;" />
+													</ui:include>
+												</p:column>
+												<p:column>
+													<div class="ui-g">
+														<div class="ui-g-2">
+															<h:panelGroup rendered="#{not item.modificado}">
+																<span class="w3-badge w3-deep-purple">#{item.secuencia}</span>
+															</h:panelGroup>
+															<h:panelGroup rendered="#{item.modificado}">
+																<span class="w3-badge w3-amber">#{item.secuencia}</span>
+															</h:panelGroup>
+														</div>
+														<div class="ui-g-10">
+															<h:outputText value="#{item.pasajero.nombreCompleto}" />
+														</div>
+														<div class="ui-g-12">
+															<h:outputText value="#{item.direccion.direccionCompleta}" />
+														</div>
+													</div>
+												</p:column>
+											</p:orderList>
+										</div>
+									</div>
+									<div class="ui-g">
+										<div class="ui-g-4" />
+										<div class="ui-g-6">
+											<p:commandButton widgetVar="submitButton"
+												value="Copiar el orden AM, invertido en el sentido PM"
+												actionListener="#{rutaEditDialogSortController.copyAmToPm()}"
+												update="@form" onclick="PF('submitButton').disable()"
+												oncomplete="PF('submitButton').enable()"
+												onerror="PF('submitButton').enable()">
+											</p:commandButton>
+										</div>
+										<div class="ui-g-2" />
+									</div>
+								</div>
+
+								<div class="ui-g-6">
+									<div class="ui-g">
+										<div class="ui-g-12">
+											<p:orderList
+												value="#{rutaEditDialogSortController.direccionesPm}"
+												var="item" itemValue="#{item}" controlsLocation="right"
+												responsive="true"
+												converter="rutaEditDialogSortOrderListConverter">
+												<p:ajax event="reorder"
+													listener="#{rutaEditDialogSortController.onReorderPm}"
+													update="@this" />
+
+												<f:facet name="caption">Orden PM</f:facet>
+												<p:column rowspan="2" style="width: 48px;">
+													<ui:include src="/templates/usuario-imagen.xhtml">
+														<ui:param name="usuarioId" value="#{item.pasajero.id}" />
+														<ui:param name="tieneFoto"
+															value="#{item.pasajero.tieneFoto}" />
+														<ui:param name="style" value="width: 32px;" />
+													</ui:include>
+												</p:column>
+												<p:column>
+													<div class="ui-g">
+														<div class="ui-g-2">
+															<h:panelGroup rendered="#{not item.modificado}">
+																<span class="w3-badge w3-deep-purple">#{item.secuencia}</span>
+															</h:panelGroup>
+															<h:panelGroup rendered="#{item.modificado}">
+																<span class="w3-badge w3-amber">#{item.secuencia}</span>
+															</h:panelGroup>
+														</div>
+														<div class="ui-g-10">
+															<h:outputText value="#{item.pasajero.nombreCompleto}" />
+														</div>
+														<div class="ui-g-12">
+															<h:outputText value="#{item.direccion.direccionCompleta}" />
+														</div>
+													</div>
+												</p:column>
+											</p:orderList>
+										</div>
+									</div>
+
+									<div class="ui-g">
+										<div class="ui-g-2" />
+										<div class="ui-g-6">
+											<p:commandButton widgetVar="submitButton"
+												value="Copiar el orden PM, invertido en el sentido AM"
+												actionListener="#{rutaEditDialogSortController.copyPmToAm()}"
+												update="@form" onclick="PF('submitButton').disable()"
+												oncomplete="PF('submitButton').enable()"
+												onerror="PF('submitButton').enable()">
+											</p:commandButton>
+										</div>
+										<div class="ui-g-4" />
+									</div>
+								</div>
+							</div>
+
+							<div class="ui-g">
+								<div class="ui-g-12" style="text-align: center;">
+									<h:outputLabel value="Ayuda: " />
+									<h:outputText
+										value="Utilice los botones laterales para organizar el orden de recogida/entrega de los miembros de la ruta." />
+								</div>
+							</div>
+						</p:panel>
+					</div>
+				</div>
+
+				<div class="footer-commands-container">
+					<div class="footer-commands-content">
+						<p:commandButton widgetVar="submitButton" value="Actualizar"
+							actionListener="#{rutaEditDialogSortController.submit()}"
+							action="#{rutaEditController.reset()}" update="@form form"
+							disabled="#{not rutaEditDialogSortController.enableSubmit()}"
+							onclick="PF('submitButton').disable()"
+							oncomplete="PF('submitButton').enable()"
+							onerror="PF('submitButton').enable()">
+						</p:commandButton>
+						<p:commandButton value="Cancelar"
+							actionListener="#{rutaEditDialogSortController.closeDialog()}"
+							process="@this" oncomplete="PF('bui').hide()" />
+					</div>
+				</div>
+			</h:panelGroup>
+		</h:form>
+	</p:dialog>
+</ui:composition>

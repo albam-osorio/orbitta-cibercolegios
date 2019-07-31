@@ -3,7 +3,7 @@ package com.tbf.cibercolegios.api.routes.model.graph;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.tbf.cibercolegios.api.core.model.graph.AuditableEntityDto;
+import com.tbf.cibercolegios.api.core.model.graph.SimpleAuditableEntityDto;
 import com.tbf.cibercolegios.api.model.routes.enums.RouteTypeStatus;
 
 import lombok.Getter;
@@ -15,7 +15,9 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class EstadoRutaDto extends AuditableEntityDto<Integer> {
+public class EstadoRutaDto extends SimpleAuditableEntityDto<Integer> {
+
+	public static final int ESTADO_INACTIVA = 0;
 
 	@NotNull
 	@Size(max = 50)

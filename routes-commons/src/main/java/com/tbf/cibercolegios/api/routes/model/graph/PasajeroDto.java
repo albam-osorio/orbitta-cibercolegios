@@ -1,11 +1,9 @@
 package com.tbf.cibercolegios.api.routes.model.graph;
 
-import java.util.List;
-
-import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import com.tbf.cibercolegios.api.core.model.graph.AuditableEntityDto;
-import com.tbf.cibercolegios.api.model.routes.enums.PassengerTypeStatus;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,26 +16,24 @@ import lombok.ToString;
 @NoArgsConstructor
 public class PasajeroDto extends AuditableEntityDto<Integer> {
 
-	public static final int ESTADO_INACTIVO = 0;
-	
-	private Integer rutaId;
+	private int institucionId;
 
 	private int usuarioId;
 
-	private int secuenciaIda;
+	private Integer estadoId;
 
-	private Integer direccionIdaId;
+	private LocalDateTime fechaUltimoEvento;
 
-	private int secuenciaRetorno;
+	private Integer rutaId;
 
-	private Integer direccionRetornoId;
+	private Integer secuencia;
 
-	private int estadoId;
+	private Integer sentido;
 
-	private PassengerTypeStatus tipoEstado;
+	private Integer direccionId;
 
-	@Size(max = 50)
-	private String estadoDescripcion;
+	private BigDecimal x;
 
-	private List<Integer> acudientes;
+	private BigDecimal y;
+
 }

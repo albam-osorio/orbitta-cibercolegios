@@ -1,32 +1,47 @@
 package com.tbf.cibercolegios.api.routes.services.impl;
 
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.tbf.cibercolegios.api.ciber.model.graph.CiudadDto;
+import com.tbf.cibercolegios.api.ciber.model.graph.UsuarioDto;
 import com.tbf.cibercolegios.api.ciber.services.api.CiberService;
 import com.tbf.cibercolegios.api.core.services.impl.CrudServiceImpl;
+import com.tbf.cibercolegios.api.model.routes.Acudiente;
 import com.tbf.cibercolegios.api.model.routes.Direccion;
+import com.tbf.cibercolegios.api.model.routes.EstadoPasajero;
+import com.tbf.cibercolegios.api.model.routes.EstadoRuta;
 import com.tbf.cibercolegios.api.model.routes.Pasajero;
+import com.tbf.cibercolegios.api.model.routes.PasajeroDireccion;
 import com.tbf.cibercolegios.api.model.routes.Ruta;
+import com.tbf.cibercolegios.api.model.routes.enums.CourseType;
+import com.tbf.cibercolegios.api.model.routes.enums.PassengerTypeStatus;
 import com.tbf.cibercolegios.api.model.routes.enums.RouteTypeStatus;
-import com.tbf.cibercolegios.api.routes.model.graph.LogRutaDto;
 import com.tbf.cibercolegios.api.routes.model.graph.RutaDto;
 import com.tbf.cibercolegios.api.routes.model.graph.tracking.DatosAcudienteDto;
 import com.tbf.cibercolegios.api.routes.model.graph.tracking.DatosPasajeroDto;
 import com.tbf.cibercolegios.api.routes.model.graph.tracking.MonitorDatosRutaDto;
-import com.tbf.cibercolegios.api.routes.repository.AcudienteRepository;
+import com.tbf.cibercolegios.api.routes.model.graph.web.RutaConCapacidadDto;
 import com.tbf.cibercolegios.api.routes.repository.DireccionRepository;
+import com.tbf.cibercolegios.api.routes.repository.EstadoPasajeroRepository;
 import com.tbf.cibercolegios.api.routes.repository.EstadoRutaRepository;
+import com.tbf.cibercolegios.api.routes.repository.PasajeroDireccionRepository;
 import com.tbf.cibercolegios.api.routes.repository.PasajeroRepository;
 import com.tbf.cibercolegios.api.routes.repository.RutaRepository;
-import com.tbf.cibercolegios.api.routes.services.api.LogRutaService;
+import com.tbf.cibercolegios.api.routes.services.api.PasajeroService;
 import com.tbf.cibercolegios.api.routes.services.api.RutaService;
 
 import lombok.val;
@@ -35,10 +50,22 @@ import lombok.val;
 public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer> implements RutaService {
 
 	@Autowired
+	private RutaRepository repository;
+
+	@Autowired
 	private CiberService ciberService;
 
 	@Autowired
-	private RutaRepository repository;
+	private PasajeroService pasajeroService;
+
+	@Autowired
+	private EstadoRutaRepository estadoRutaRepository;
+
+	@Autowired
+	private EstadoPasajeroRepository estadoPasajeroRepository;
+
+	@Autowired
+	private PasajeroDireccionRepository pasajeroDireccionRepository;
 
 	@Autowired
 	private PasajeroRepository pasajeroRepository;
@@ -47,13 +74,7 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 	private DireccionRepository direccionRepository;
 
 	@Autowired
-	private EstadoRutaRepository estadoRutaRepository;
-
-	@Autowired
-	private AcudienteRepository acudienteRepository;
-
-	@Autowired
-	private LogRutaService logRutaService;
+	private NamedParameterJdbcTemplate jdbcTemplate;
 
 	@Override
 	protected RutaRepository getRepository() {
@@ -65,25 +86,23 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 		val model = newModel();
 		mapModel(entity, model);
 
-		model.setInstitucionId(entity.getInstitucionId());
 		model.setCodigo(entity.getCodigo());
 		model.setDescripcion(entity.getDescripcion());
 		model.setMarca(entity.getMarca());
 		model.setPlaca(entity.getPlaca());
 		model.setCapacidadMaxima(entity.getCapacidadMaxima());
 
+		model.setInstitucionId(entity.getInstitucionId());
+		model.setDireccionSedeId(entity.getDireccionSedeId());
+
+		model.setConductorNombres(entity.getConductorNombres());
+		model.setMonitorId(entity.getMonitorId());
 		model.setMovil(entity.getMovil());
 		model.setToken(entity.getToken());
-		model.setConductorNombres(entity.getConductorNombres());
 
-		model.setMonitorId(entity.getMonitorId());
-		model.setDireccionSedeId(entity.getDireccionSede().getId());
-
-		model.setFechaUltimoRecorrido(entity.getFechaUltimoRecorrido());
+		model.setFechaUltimoEvento(entity.getFechaUltimoEvento());
 		model.setSentido(entity.getSentido());
-		model.setEstadoId(entity.getEstado().getId());
-		model.setTipoEstado(entity.getEstado().getTipo());
-		model.setEstadoDescripcion(entity.getEstado().getDescripcion());
+		model.setEstadoId(entity.getEstadoId());
 		model.setX(entity.getX());
 		model.setY(entity.getY());
 
@@ -98,34 +117,25 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 	@Override
 	protected Ruta mergeEntity(RutaDto model, Ruta entity) {
 
-		val direccion = direccionRepository.findById(model.getDireccionSedeId());
-		val estado = estadoRutaRepository.findById(model.getEstadoId());
-
-		entity.setInstitucionId(model.getInstitucionId());
 		entity.setCodigo(model.getCodigo());
 		entity.setDescripcion(model.getDescripcion());
 		entity.setMarca(model.getMarca());
 		entity.setPlaca(model.getPlaca());
 		entity.setCapacidadMaxima(model.getCapacidadMaxima());
 
+		entity.setInstitucionId(model.getInstitucionId());
+		entity.setDireccionSedeId(model.getDireccionSedeId());
+
+		entity.setConductorNombres(model.getConductorNombres());
+		entity.setMonitorId(model.getMonitorId());
 		entity.setMovil(model.getMovil());
 		entity.setToken(model.getToken());
-		entity.setConductorNombres(model.getConductorNombres());
 
-		entity.setMonitorId(model.getMonitorId());
-		entity.setDireccionSede(direccion.get());
-
-		entity.setFechaUltimoRecorrido(model.getFechaUltimoRecorrido());
+		entity.setFechaUltimoEvento(model.getFechaUltimoEvento());
 		entity.setSentido(model.getSentido());
-		entity.setEstado(estado.get());
+		entity.setEstadoId(model.getEstadoId());
 		entity.setX(model.getX());
 		entity.setY(model.getY());
-
-		entity.setVersion(model.getVersion());
-		entity.setFechaCreacion(model.getFechaCreacion());
-		entity.setCreadoPor(model.getCreadoPor());
-		entity.setFechaModificacion(model.getFechaModificacion());
-		entity.setModificadoPor(model.getModificadoPor());
 
 		return entity;
 	}
@@ -135,169 +145,286 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 		return new Ruta();
 	}
 
-	@Override
-	public List<RutaDto> findAllByMonitorId(int monitorId) {
-		val result = new ArrayList<RutaDto>();
-
-		val entities = getRepository().findAllByMonitorId(monitorId);
-
-		for (val entity : entities) {
-			result.add(asModel(entity));
-		}
-
-		return result;
-	}
-
-	
+	// -----------------------------------------------------------------------------------
+	// --
+	// -----------------------------------------------------------------------------------
 	@Override
 	public List<RutaDto> findAllByInstitucionId(int institucionId) {
-		val result = new ArrayList<RutaDto>();
-
 		val entities = getRepository().findAllByInstitucionId(institucionId);
-
-		for (val entity : entities) {
-			result.add(asModel(entity));
-		}
-
-		return result;
+		return asModels(entities);
 	}
 
 	@Override
-	public List<MonitorDatosRutaDto> findAllByMonitorIdAsMonitorDatosRuta(int monitorId) {
-		val result = new ArrayList<MonitorDatosRutaDto>();
-
-		val entities = getRepository().findAllByMonitorId(monitorId);
-
-		for (val entity : entities) {
-			result.add(asMonitorDatosRuta(entity));
-		}
-
-		return result;
+	public List<RutaDto> findAllByInstitucionIdAndMonitorId(int institucionId, int monitorId) {
+		val entities = getRepository().findAllByInstitucionIdAndMonitorId(institucionId, monitorId);
+		return asModels(entities);
 	}
 
+	@Override
+	public Optional<RutaConCapacidadDto> findRutasConCapacidadById(int rutaId) {
+		// @formatter:off
+		String sql = "" +
+				"SELECT a.ID_RUTA,\r\n" + 
+				"       a.DESCRIPCION,\r\n" + 
+				"       COUNT(DISTINCT CASE WHEN b.SENTIDO = 1 THEN b.ID_PASAJERO ELSE NULL END) AS OCUPACION_AM,\r\n" + 
+				"       COUNT(DISTINCT CASE WHEN b.SENTIDO = 2 THEN b.ID_PASAJERO ELSE NULL END) AS OCUPACION_PM,\r\n" + 
+				"       a.CAPACIDAD_MAXIMA\r\n" + 
+				"  FROM RUTAS a\r\n" + 
+				"  LEFT OUTER JOIN PASAJEROS_DIRECCIONES b\r\n" + 
+				"    ON b.ID_RUTA = a.ID_RUTA\r\n" + 
+				"   AND b.ACTIVO = 1\r\n" + 
+				" WHERE 1 = 1 \r\n" + 
+				" AND a.ID_RUTA = :ID_RUTA\r\n" + 
+				" GROUP BY a.ID_RUTA, a.DESCRIPCION, a.CAPACIDAD_MAXIMA\r\n" + 
+				" ORDER BY a.DESCRIPCION\r\n" + 
+				"";
+		
+		// @formatter:on
+
+		val paramMap = new HashMap<String, Object>();
+		paramMap.put("ID_RUTA", rutaId);
+
+		return jdbcTemplate.query(sql, paramMap, rutaConCapacidadRowMapper()).stream().findFirst();
+	}
+
+	@Override
+	public List<RutaConCapacidadDto> findAllRutasConCapacidadByInstitucionId(int institucionId, Integer pasajeroId) {
+		// @formatter:off
+		String sql = "" +
+				"SELECT a.ID_RUTA,\r\n" + 
+				"       a.DESCRIPCION,\r\n" + 
+				"       COUNT(DISTINCT CASE WHEN b.SENTIDO = 1 AND (:ID_PASAJERO IS NULL OR b.ID_PASAJERO <> :ID_PASAJERO) THEN b.ID_PASAJERO ELSE NULL END) AS OCUPACION_AM,\r\n" + 
+				"       COUNT(DISTINCT CASE WHEN b.SENTIDO = 2 AND (:ID_PASAJERO IS NULL OR b.ID_PASAJERO <> :ID_PASAJERO) THEN b.ID_PASAJERO ELSE NULL END) AS OCUPACION_PM,\r\n" + 
+				"       a.CAPACIDAD_MAXIMA\r\n" + 
+				"  FROM RUTAS a\r\n" + 
+				"  LEFT OUTER JOIN PASAJEROS_DIRECCIONES b\r\n" + 
+				"    ON b.ID_RUTA = a.ID_RUTA\r\n" + 
+				"   AND b.ACTIVO = 1\r\n" + 
+				" WHERE 1 = 1 \r\n" + 
+				" AND a.ID_INSTITUCION = :ID_INSTITUCION\r\n" + 
+				" GROUP BY a.ID_RUTA, a.DESCRIPCION, a.CAPACIDAD_MAXIMA\r\n" + 
+				" ORDER BY a.DESCRIPCION\r\n" + 
+				"";
+		
+		// @formatter:on
+
+		val paramMap = new HashMap<String, Object>();
+		paramMap.put("ID_INSTITUCION", institucionId);
+		paramMap.put("ID_PASAJERO", pasajeroId);
+
+		return jdbcTemplate.query(sql, paramMap, rutaConCapacidadRowMapper());
+	}
+
+	private RowMapper<RutaConCapacidadDto> rutaConCapacidadRowMapper() {
+		return (rs, rowNum) -> {
+			RutaConCapacidadDto r = new RutaConCapacidadDto();
+
+			r.setId(rs.getInt("ID_RUTA"));
+			r.setDescripcion(rs.getString("DESCRIPCION"));
+			r.setOcupacionAm(rs.getInt("OCUPACION_AM"));
+			r.setOcupacionPm(rs.getInt("OCUPACION_PM"));
+			r.setCapacidadMaxima(rs.getInt("CAPACIDAD_MAXIMA"));
+
+			return r;
+		};
+	}
+
+	// -----------------------------------------------------------------------------------
+	// --
+	// -----------------------------------------------------------------------------------
 	@Override
 	public Optional<MonitorDatosRutaDto> findByIdAsMonitorDatosRuta(int id) {
 		val optional = getRepository().findById(id);
 
 		if (optional.isPresent()) {
-			val result = asMonitorDatosRuta(optional.get());
-			return Optional.of(result);
+			val list = new ArrayList<Ruta>();
+			list.add(optional.get());
+			return asMonitorDatosRuta(list).stream().findFirst();
 		} else {
 			return Optional.empty();
 		}
 	}
 
-	private MonitorDatosRutaDto asMonitorDatosRuta(Ruta ruta) {
+	@Override
+	public List<MonitorDatosRutaDto> findAllByInstitucionIdAsMonitorDatosRuta(int institucionId) {
+		val entities = getRepository().findAllByInstitucionId(institucionId);
+
+		return asMonitorDatosRuta(entities);
+	}
+
+	@Override
+	public List<MonitorDatosRutaDto> findAllByInstitucionIdAndMonitorIdAsMonitorDatosRuta(int institucionId,
+			int monitorId) {
+		val entities = getRepository().findAllByInstitucionIdAndMonitorId(institucionId, monitorId);
+
+		return asMonitorDatosRuta(entities);
+	}
+
+	// -----------------------------------------------------------------------------------
+	// --
+	// -----------------------------------------------------------------------------------
+	private List<MonitorDatosRutaDto> asMonitorDatosRuta(List<Ruta> rutas) {
+		List<MonitorDatosRutaDto> result = new ArrayList<>();
+
 		val today = LocalDate.now();
+		val usuariosId = new ArrayList<Integer>();
+		val direccionesId = new ArrayList<Integer>();
 
-		boolean activa = false;
-		LocalDate fechaUltimoRecorrido = ruta.getFechaUltimoRecorrido();
-		Integer sentido = RutaDto.SENTIDO_IDA;
+		val estadosRutas = estadoRutaRepository.findAll();
+		val estadoRutaInactivo = estadosRutas.stream()
+				.filter(a -> a.getTipo().equals(RouteTypeStatus.INACTIVO) && a.isPredeterminado()).findFirst().get();
 
-		val estado = estadoRutaRepository.findFirstByTipoAndPredeterminado(RouteTypeStatus.INACTIVO, true);
-		Integer estadoId = estado.get().getId();
-		RouteTypeStatus tipoEstado = estado.get().getTipo();
-		String estadoNombre = estado.get().getDescripcion();
-		BigDecimal x = null;
-		BigDecimal y = null;
-		LogRutaDto logRuta = null;
+		val estadosPasajeros = estadoPasajeroRepository.findAll();
 
-		if (fechaUltimoRecorrido != null) {
-			if (fechaUltimoRecorrido.equals(today)) {
-				activa = ruta.getEstado().getTipo().isActiva();
-				sentido = ruta.getSentido();
+		val institucionId = rutas.stream().map(Ruta::getInstitucionId).findFirst().get();
+		val institucion = ciberService.findInstitucionById(institucionId).get();
 
-				estadoId = ruta.getEstado().getId();
-				tipoEstado = ruta.getEstado().getTipo();
-				estadoNombre = ruta.getEstado().getDescripcion();
+		val rutasId = rutas.stream().map(Ruta::getId).distinct().collect(toList());
+		val pasajerosDirecciones = pasajeroDireccionRepository.findAllByRutaIdInAndActivoTrue(rutasId);
 
-				x = ruta.getX();
-				y = ruta.getY();
+		val pasajerosId = pasajerosDirecciones.stream().map(PasajeroDireccion::getPasajeroId).collect(toList());
+		val pasajeros = pasajeroRepository.findAllById(pasajerosId);
 
-				val optional = logRutaService.findUltimoLogRutaByRutaIdAndFechaUltimoRecorrido(ruta.getId(),
-						ruta.getFechaUltimoRecorrido());
-				if (optional.isPresent()) {
-					logRuta = optional.get();
+		val acudientes = pasajeroService.findAllAcudientesIdByPasajeroIdIn(pasajerosId);
+
+		usuariosId.addAll(rutas.stream().map(Ruta::getMonitorId).distinct().collect(toList()));
+		usuariosId.addAll(pasajeros.stream().map(Pasajero::getUsuarioId).distinct().collect(toList()));
+		usuariosId.addAll(acudientes.values().stream().flatMap(a -> a.stream()).map(Acudiente::getUsuarioId).distinct()
+				.collect(toList()));
+
+		direccionesId.addAll(rutas.stream().map(Ruta::getDireccionSedeId).distinct().collect(toList()));
+		direccionesId.addAll(
+				pasajerosDirecciones.stream().map(PasajeroDireccion::getDireccionId).distinct().collect(toList()));
+
+		val usuarios = ciberService.findAllUsuariosByUsuarioIdIn(usuariosId);
+		val direcciones = direccionRepository.findAllById(direccionesId.stream().distinct().collect(toList()));
+		val ciudades = getCiudades(direcciones);
+
+		rutas.forEach(ruta -> {
+			LocalDate fechaUltimoRecorrido = ruta.getFechaUltimoEvento().toLocalDate();
+			Integer sentido = CourseType.SENTIDO_IDA.getIntValue();
+			EstadoRuta estadoRuta = estadoRutaInactivo;
+			BigDecimal x = null;
+			BigDecimal y = null;
+			boolean rutaActiva = false;
+
+			if (fechaUltimoRecorrido != null) {
+				if (fechaUltimoRecorrido.equals(today)) {
+					val optional = estadosRutas.stream().filter(a -> a.getId().equals(ruta.getEstadoId())).findFirst();
+
+					if (optional.isPresent()) {
+						sentido = ruta.getSentido();
+						estadoRuta = optional.get();
+						x = ruta.getX();
+						y = ruta.getY();
+						rutaActiva = estadoRuta.getTipo().isActiva();
+					}
 				}
 			}
-		}
 
-		val institucion = ciberService.findInstitucionById(ruta.getInstitucionId()).get();
-		val monitor = ciberService.findUsuarioById(ruta.getMonitorId()).get();
-		val pasajeros = getPasajeros(ruta.getId(), activa, sentido);
+			Direccion direccionSede = direcciones.stream().filter(a -> a.getId().equals(ruta.getDireccionSedeId()))
+					.findFirst().get();
+			UsuarioDto monitor = usuarios.stream().filter(a -> a.getId().equals(ruta.getMonitorId())).findFirst().get();
 
-		val result = new MonitorDatosRutaDto();
+			MonitorDatosRutaDto model = new MonitorDatosRutaDto();
 
-		result.setRutaId(ruta.getId());
+			model.setRutaId(ruta.getId());
 
-		result.setInstitucionId(institucion.getId());
-		result.setInstitucionNombre(institucion.getNombre());
-		result.setInstitucionX(ruta.getDireccionSede().getX());
-		result.setInstitucionY(ruta.getDireccionSede().getY());
+			model.setInstitucionId(institucion.getId());
+			model.setInstitucionNombre(institucion.getNombre());
+			model.setInstitucionX(direccionSede.getX());
+			model.setInstitucionY(direccionSede.getY());
 
-		result.setCodigo(ruta.getCodigo());
-		result.setDescripcion(ruta.getDescripcion());
-		result.setMarca(ruta.getMarca());
-		result.setPlaca(ruta.getPlaca());
-		result.setCapacidad(ruta.getCapacidadMaxima());
+			model.setCodigo(ruta.getCodigo());
+			model.setDescripcion(ruta.getDescripcion());
+			model.setMarca(ruta.getMarca());
+			model.setPlaca(ruta.getPlaca());
+			model.setCapacidad(ruta.getCapacidadMaxima());
 
-		result.setMovil(ruta.getMovil());
-		result.setToken(ruta.getToken());
+			model.setMovil(ruta.getMovil());
+			model.setToken(ruta.getToken());
 
-		result.setConductorId(0);
-		result.setConductorNombres(ruta.getConductorNombres());
-		result.setConductorApellidos("");
+			model.setConductorId(0);
+			model.setConductorNombres(ruta.getConductorNombres());
+			model.setConductorApellidos("");
 
-		result.setMonitorId(monitor.getId());
-		result.setMonitorNombres(monitor.getNombre());
-		result.setMonitorApellidos(monitor.getApellido());
+			model.setMonitorId(monitor.getId());
+			model.setMonitorNombres(monitor.getNombre());
+			model.setMonitorApellidos(monitor.getApellido());
 
-		result.setActiva(activa);
-		result.setFechaUltimoRecorrido(fechaUltimoRecorrido);
-		result.setUltimoSentido(sentido);
-		result.setEstadoId(estadoId);
-		result.setTipoEstado(tipoEstado);
-		result.setEstadoNombre(estadoNombre);
-		result.setX(x);
-		result.setY(y);
+			model.setActiva(rutaActiva);
+			model.setFechaUltimoRecorrido(fechaUltimoRecorrido);
+			model.setUltimoSentido(sentido);
+			model.setEstadoId(estadoRuta.getId());
+			model.setTipoEstado(estadoRuta.getTipo());
+			model.setEstadoNombre(estadoRuta.getDescripcion());
+			model.setX(x);
+			model.setY(y);
 
-		result.setLogRuta(logRuta);
-		result.setPasajeros(pasajeros);
+			val s = sentido;
+			val pd = pasajerosDirecciones.stream()
+					.filter(a -> a.getRutaId() == ruta.getId() && a.getSentido() == s && a.isActivo())
+					.collect(toList());
+
+			model.setPasajeros(getPasajeros(ruta.getId(), sentido, rutaActiva, pasajeros, pd, direcciones, ciudades,
+					estadosPasajeros, acudientes, usuarios));
+
+			result.add(model);
+		});
 
 		return result;
 	}
 
-	private List<DatosPasajeroDto> getPasajeros(int rutaId, boolean activa, Integer sentido) {
+	private List<DatosPasajeroDto> getPasajeros(int rutaId, int sentido, boolean rutaActiva, List<Pasajero> pasajeros,
+			List<PasajeroDireccion> pasajerosDirecciones, List<Direccion> direcciones, List<CiudadDto> ciudades,
+			List<EstadoPasajero> estadosPasajeros, Map<Integer, List<Acudiente>> acudientes,
+			List<UsuarioDto> usuarios) {
+
 		val list = new ArrayList<DatosPasajeroDto>();
-		activa = true;
-		if (activa) {
-			val pasajeros = pasajeroRepository.findAllByRutaId(rutaId);
 
-			for (val pasajero : pasajeros) {
-				val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
-				val secuencia = getSecuencia(pasajero, sentido);
-				val estado = pasajero.getEstado();
-				val direccion = getDireccion(pasajero, sentido);
-				val ciudadNombre = getCiudadNombre(direccion);
+		val estadoPasajeroInactivo = estadosPasajeros.stream()
+				.filter(a -> a.getTipo().equals(PassengerTypeStatus.INACTIVO)).findFirst().get();
 
-				val model = new DatosPasajeroDto();
+		for (val pd : pasajerosDirecciones) {
 
-				model.setUsuarioId(usuario.getId());
-				model.setNombres(usuario.getNombre());
-				model.setApellidos(usuario.getApellido());
-				model.setSecuencia(secuencia);
-				model.setEstadoId(estado.getId());
-				model.setEstadoDescripcion(estado.getDescripcion());
-				model.setTipoEstado(estado.getTipo());
-				model.setCiudadNombre(ciudadNombre);
-				model.setDireccion(direccion.getDireccion());
-				model.setX(direccion.getX());
-				model.setY(direccion.getY());
+			val pasajero = pasajeros.stream().filter(a -> a.getId() == pd.getPasajeroId()).findFirst().get();
+			val usuario = usuarios.stream().filter(a -> a.getId().equals(pasajero.getUsuarioId())).findFirst().get();
+			val direccion = direcciones.stream().filter(a -> a.getId().equals(pasajero.getDireccionId())).findFirst()
+					.get();
+			val ciudad = ciudades.stream()
+					.filter(a -> a.getPaisId() == direccion.getPaisId()
+							&& a.getDepartamentoId() == direccion.getDepartamentoId()
+							&& a.getCiudadId() == direccion.getCiudadId())
+					.findFirst().get();
 
-				model.setAcudientes(getAcudientes(pasajero));
+			val secuencia = pd.getSecuencia();
 
-				list.add(model);
+			EstadoPasajero estadoPasajero = estadoPasajeroInactivo;
+			if (rutaActiva) {
+				// if (pasajero.getEstadoId() != null) {
+				// estadoPasajero = estadosPasajeros.stream().filter(a -> a.getId() ==
+				// pasajero.getEstadoId())
+				// .findFirst().get();
+				// }
 			}
+
+			val model = new DatosPasajeroDto();
+
+			model.setUsuarioId(usuario.getId());
+			model.setNombres(usuario.getNombre());
+			model.setApellidos(usuario.getApellido());
+			model.setSecuencia(secuencia);
+			model.setEstadoId(estadoPasajero.getId());
+			model.setEstadoDescripcion(estadoPasajero.getDescripcion());
+			model.setTipoEstado(estadoPasajero.getTipo());
+			model.setCiudadNombre(ciudad.getNombre());
+			model.setDireccion(direccion.getDireccion());
+			model.setX(direccion.getX());
+			model.setY(direccion.getY());
+
+			model.setAcudientes(getAcudientes(acudientes.get(pasajero.getId()), usuarios));
+
+			list.add(model);
 		}
 
 		val result = list.stream().sorted((a, b) -> Integer.compare(a.getSecuencia(), b.getSecuencia()))
@@ -305,65 +432,45 @@ public class RutaCrudServiceImpl extends CrudServiceImpl<Ruta, RutaDto, Integer>
 		return result;
 	}
 
-	private int getSecuencia(Pasajero pasajero, int sentido) {
-		return (sentido == RutaDto.SENTIDO_IDA) ? pasajero.getSecuenciaIda() : pasajero.getSecuenciaRetorno();
-	}
+	private List<CiudadDto> getCiudades(List<Direccion> direcciones) {
+		val result = new ArrayList<CiudadDto>();
 
-	private Direccion getDireccion(Pasajero pasajero, int sentido) {
-		Direccion result;
-		if (sentido == RutaDto.SENTIDO_IDA) {
-			result = pasajero.getDireccionIda();
-		} else {
-			result = pasajero.getDireccionRetorno();
-		}
+		val paisesId = direcciones.stream().map(Direccion::getPaisId).distinct().collect(toList());
+
+		paisesId.forEach(paisId -> {
+			val departamentosId = direcciones.stream().filter(a -> a.getPaisId() == paisId)
+					.map(Direccion::getDepartamentoId).distinct().collect(toList());
+
+			departamentosId.forEach(departamentoId -> {
+				val ciudadesId = direcciones.stream()
+						.filter(a -> a.getPaisId() == paisId && a.getDepartamentoId() == departamentoId)
+						.map(Direccion::getCiudadId).distinct().collect(toList());
+
+				ciudadesId.forEach(ciudadId -> {
+					result.add(ciberService.findCiudadByCiudadId(paisId, departamentoId, ciudadId).get());
+				});
+			});
+		});
+
 		return result;
 	}
 
-	private String getCiudadNombre(Direccion direccion) {
-		String result;
-
-		val optional = ciberService.findCiudadByPk(direccion.getPaisId(), direccion.getDepartamentoId(),
-				direccion.getCiudadId());
-		if (optional.isPresent()) {
-			result = optional.get().getNombre();
-		} else {
-			result = "NO DISPONIBLE";
-		}
-		return result;
-	}
-
-	private List<DatosAcudienteDto> getAcudientes(Pasajero pasajero) {
+	private List<DatosAcudienteDto> getAcudientes(List<Acudiente> acudientes, List<UsuarioDto> usuarios) {
 		val result = new ArrayList<DatosAcudienteDto>();
 
-		val ids = pasajero.getAcudientes();
-		if (!ids.isEmpty()) {
-			val acudientes = acudienteRepository.findAllById(ids);
-			for (val acudiente : acudientes) {
-				if (acudiente.getToken() != null) {
-					val optional = ciberService.findUsuarioById(acudiente.getUsuarioId());
-					if (optional.isPresent()) {
-						val model = new DatosAcudienteDto();
-						model.setUsuarioId(acudiente.getUsuarioId());
-						model.setNombres(optional.get().getNombre());
-						model.setApellidos(optional.get().getApellido());
-						model.setToken(acudiente.getToken());
-						result.add(model);
-					}
+		for (val acudiente : acudientes) {
+			if (acudiente.getToken() != null) {
+				val optional = usuarios.stream().filter(a -> a.getId() == acudiente.getUsuarioId()).findFirst();
+
+				if (optional.isPresent()) {
+					val model = new DatosAcudienteDto();
+					model.setUsuarioId(acudiente.getUsuarioId());
+					model.setNombres(optional.get().getNombre());
+					model.setApellidos(optional.get().getApellido());
+					model.setToken(acudiente.getToken());
+					result.add(model);
 				}
 			}
-		}
-
-		return result;
-	}
-
-	@Override
-	public List<MonitorDatosRutaDto> findAllByInstitucionIdAsMonitorDatosRuta(int institucionId) {
-		val result = new ArrayList<MonitorDatosRutaDto>();
-
-		val entities = getRepository().findAllByInstitucionId(institucionId);
-
-		for (val entity : entities) {
-			result.add(asMonitorDatosRuta(entity));
 		}
 
 		return result;

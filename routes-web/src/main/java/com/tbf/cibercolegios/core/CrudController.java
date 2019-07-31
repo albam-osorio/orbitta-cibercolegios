@@ -36,7 +36,11 @@ public abstract class CrudController<T, E> extends AbstractController<E> {
 
 	protected void clearModels() {
 		models.clear();
-		selection.clear();
+		if (selection != null) {
+			selection.clear();
+		} else {
+			selection = new ArrayList<>();
+		}
 	}
 
 	// ----------------------------------------------------------------------------------------------------
@@ -47,37 +51,35 @@ public abstract class CrudController<T, E> extends AbstractController<E> {
 	}
 
 	public void find() {
-		try {
-			clearModels();
+		val command = new Command<E>() {
 
-			val errors = new ArrayList<E>();
-			testFind(errors);
-			if (errors.isEmpty()) {
+			@Override
+			protected void test(List<E> errors) {
+				testFind(errors);
+			}
+			
+			@Override
+			protected void execute() {
+				clearModels();
+
 				executeFind();
 				successFind();
 			}
+		};
 
-			if (!errors.isEmpty()) {
-				errorsFind(errors);
-			}
-		} catch (Exception e) {
-			error(e);
-		}
+		submit(command);
 	}
 
 	protected void testFind(List<E> errors) {
-		errors.clear();
-	}
 
+	}
+	
 	protected abstract void executeFind();
 
 	protected void successFind() {
 
 	}
 
-	protected void errorsFind(List<E> errors) {
-		errors(errors);
-	}
 
 	// ----------------------------------------------------------------------------------------------------
 	// -- PAGINATION

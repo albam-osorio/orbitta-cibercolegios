@@ -10,7 +10,6 @@ import com.tbf.cibercolegios.api.core.services.impl.CrudServiceImpl;
 import com.tbf.cibercolegios.api.model.routes.Mensaje;
 import com.tbf.cibercolegios.api.routes.model.graph.MensajeDto;
 import com.tbf.cibercolegios.api.routes.model.graph.chat.DatosMensajeDto;
-import com.tbf.cibercolegios.api.routes.repository.ConversacionRepository;
 import com.tbf.cibercolegios.api.routes.repository.MensajeRepository;
 import com.tbf.cibercolegios.api.routes.services.api.MensajeService;
 
@@ -22,9 +21,6 @@ public class MensajeCrudServiceImpl extends CrudServiceImpl<Mensaje, MensajeDto,
 	@Autowired
 	private MensajeRepository repository;
 
-	@Autowired
-	private ConversacionRepository conversacionRepository;
-
 	@Override
 	protected MensajeRepository getRepository() {
 		return repository;
@@ -35,7 +31,7 @@ public class MensajeCrudServiceImpl extends CrudServiceImpl<Mensaje, MensajeDto,
 		val model = newModel();
 		mapModel(entity, model);
 
-		model.setConversacionId(entity.getConversacion().getId());
+		model.setConversacionId(entity.getConversacionId());
 		model.setMonitorId(entity.getMonitorId());
 		model.setOrigen(entity.getOrigen());
 		model.setMensaje(entity.getMensaje());
@@ -45,9 +41,7 @@ public class MensajeCrudServiceImpl extends CrudServiceImpl<Mensaje, MensajeDto,
 
 	@Override
 	protected Mensaje mergeEntity(MensajeDto model, Mensaje entity) {
-		val conversacion = conversacionRepository.findById(model.getConversacionId());
-
-		entity.setConversacion(conversacion.get());
+		entity.setConversacionId(model.getConversacionId());
 		entity.setMonitorId(model.getMonitorId());
 		entity.setOrigen(model.getOrigen());
 		entity.setMensaje(model.getMensaje());
@@ -77,7 +71,7 @@ public class MensajeCrudServiceImpl extends CrudServiceImpl<Mensaje, MensajeDto,
 		val result = new DatosMensajeDto();
 
 		result.setMensajeId(entity.getId());
-		result.setConversacionId(entity.getConversacion().getId());
+		result.setConversacionId(entity.getConversacionId());
 		result.setOrigen(entity.getOrigen());
 		result.setMensaje(entity.getMensaje());
 		result.setFechaHora(entity.getFechaCreacion());

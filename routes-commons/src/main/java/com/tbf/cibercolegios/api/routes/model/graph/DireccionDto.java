@@ -18,8 +18,6 @@ import lombok.ToString;
 @NoArgsConstructor
 public class DireccionDto extends AuditableEntityDto<Integer> {
 
-	public static final int ESTADO_NO_PROCESADA = 1;
-	
 	private int institucionId;
 
 	private int estadoId;

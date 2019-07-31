@@ -1,0 +1,173 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="paramBackUrl"
+				value="#{usuariosEditController.backUrl}" />
+			<f:viewParam name="usuarioId"
+				value="#{usuariosEditController.usuarioId}" />
+			<f:viewAction action="#{usuariosEditController.reset}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="dialogs">
+		<ui:include src="/usuarios/dialog-create-direccion.xhtml" />
+		<ui:include src="/usuarios/dialog-edit-direccion.xhtml" />
+		<ui:include src="/usuarios/dialog-edit-ruta.xhtml" />
+	</ui:define>
+
+	<ui:define name="title">
+		<h:outputText value="DATOS DEL USUARIO" />
+	</ui:define>
+
+	<ui:define name="subtitle">
+		<h:outputText value="INFORMACIÓN PERSONAL" />
+	</ui:define>
+
+	<ui:define name="body">
+		<h:panelGroup rendered="#{usuariosEditController.initialized}">
+			<div class="ui-g">
+
+				<div class="ui-g-12">
+					<ui:include src="/usuarios/edit-usuario-view-pasajero.xhtml">
+						<ui:param name="bean" value="#{usuariosEditController}" />
+					</ui:include>
+				</div>
+
+				<div class="ui-g-12">
+					<p:dataTable id="tableItems" var="item"
+						value="#{usuariosEditController.models}"
+						rowKey="#{item.correlacion}" reflow="true" rows="5"
+						paginator="true" emptyMessage="No se encontraron registros" scrollable="true" scrollHeight="300">
+
+						<f:facet name="header">
+							<div style="text-align: right">
+								<p:commandButton value="Agregar" icon="fa fa-plus"
+									disabled="#{not usuariosEditController.enableAddTrayecto()}"
+									action="#{usuariosEditController.addTrayecto()}"
+									update="tableItems" onclick="PF('bui').show()"
+									oncomplete="PF('bui').hide()" onerror="PF('bui').hide()">
+								</p:commandButton>
+							</div>
+						</f:facet>
+
+						<p:column style="width:64px;text-align: center">
+							<p:commandLink title="Eliminar"
+								disabled="#{not usuariosEditController.enableDeleteTrayecto(item)}"
+								action="#{usuariosEditController.deleteTrayecto(item)}"
+								update="tableItems form:commands" onclick="PF('bui').show()"
+								oncomplete="PF('bui').hide()" onerror="PF('bui').hide()">
+								<i class="fa fa-trash fa-2x"></i>
+								<p:confirm header="Confirmación"
+									message="¿Está seguro de eliminar este registro?"
+									icon="ui-icon-alert" />
+							</p:commandLink>
+						</p:column>
+
+						<p:column headerText="Activo"
+							style="width:64px;text-align: center">
+							<p:selectBooleanCheckbox value="#{item.activo}"
+								disabled="#{not usuariosEditController.enableActivateTrayecto(item)}">
+								<p:ajax
+									listener="#{usuariosEditController.onChangeActivo(item)}"
+									update="tableItems form:commands" />
+							</p:selectBooleanCheckbox>
+						</p:column>
+
+						<p:column headerText="Ruta" width="20%"
+							style="padding:2px; height:1px;">
+							<div class="ui-g ui-g-nopad border-direccion" style="height: 98%">
+								<div class="ui-g-12">
+									<div class="ui-g-3">
+										<h:panelGroup rendered="#{item.rutaModificado}">
+											<i class="fa fa-save" style="color: FireBrick;"></i>
+										</h:panelGroup>
+									</div>
+									<div class="ui-g-9" style="text-align: right;">
+
+										<p:commandLink title="Asignar ruta"
+											disabled="#{not usuariosEditController.enableAssignRoute(item)}"
+											actionListener="#{usuariosDireccionDialogEditRutaController.openDialog('editRutaDialog',item)}"
+											update="editRutaDialog">
+											<i class="fa fa-pencil"></i>
+
+											<f:setPropertyActionListener
+												target="#{usuariosDireccionDialogEditRutaController.pasajeroId}"
+												value="#{usuariosEditController.pasajero.pasajeroId}" />
+
+											<f:setPropertyActionListener
+												target="#{usuariosDireccionDialogEditRutaController.trayectos}"
+												value="#{usuariosEditController.models}" />
+
+											<p:resetInput target="editRutaDialog" />
+										</p:commandLink>
+
+										<p:commandLink title="Organizar orden de recogida/entrega"
+											disabled="#{not usuariosEditController.enableSortRoute(item)}"
+											action="#{usuariosEditController.sortRoute(item)}"
+											onclick="PF('bui').show()" oncomplete="PF('bui').hide()"
+											onerror="PF('bui').hide()" style="text-decoration: none">
+											<i class="fa fa-sort-numeric-asc"></i>
+										</p:commandLink>
+									</div>
+								</div>
+								<div class="ui-g-12">
+									<div class="centrado">
+										<h:outputText value="#{item.rutaDescripcion}" />
+									</div>
+								</div>
+							</div>
+						</p:column>
+						<p:column headerText="Dirección AM" width="35%"
+							style="padding:2px; height:1px;">
+
+							<ui:include src="/usuarios/edit-usuario-view-direccion.xhtml">
+								<ui:param name="trayecto" value="#{item}" />
+								<ui:param name="direccion" value="#{item.direccionAm}" />
+								<ui:param name="sentido" value="#{'SENTIDO_IDA'}" />
+							</ui:include>
+						</p:column>
+						<p:column headerText="Dirección PM" width="35%"
+							style="padding:2px; height:1px;">
+
+							<ui:include src="/usuarios/edit-usuario-view-direccion.xhtml">
+								<ui:param name="trayecto" value="#{item}" />
+								<ui:param name="direccion" value="#{item.direccionPm}" />
+								<ui:param name="sentido" value="#{'SENTIDO_RETORNO'}" />
+							</ui:include>
+						</p:column>
+					</p:dataTable>
+				</div>
+
+			</div>
+		</h:panelGroup>
+	</ui:define>
+
+	<ui:define name="footer">
+		<div class="footer-commands-container">
+			<div class="footer-commands-content">
+				<p:outputPanel id="commands">
+					<div class="ui-g">
+						<div class="ui-g-6 ui-g-nopad" style="text-align: right;">
+							<p:commandButton value="ACTUALIZAR"
+								action="#{usuariosEditController.save()}"
+								update="@form"
+								disabled="#{not usuariosEditController.enableSave()}"
+								onclick="PF('bui').show()" oncomplete="PF('bui').hide()"
+								onerror="PF('bui').hide()">
+							</p:commandButton>
+						</div>
+						<div class="ui-g-6 ui-g-nopad" style="text-align: left;">
+							<p:commandButton value="CANCELAR"
+								action="#{usuariosEditController.back()}" process="@this" />
+						</div>
+					</div>
+				</p:outputPanel>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

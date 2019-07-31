@@ -1,52 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
-<h:head>
-	<title></title>
-</h:head>
-<h:body>
-	<ui:composition template="templates/template.xhtml">
-		<ui:define name="title">
-			<h:outputText value="ADMINISTRACIÓN DE RUTAS" />
-		</ui:define>
-		<ui:define name="subtitle">
-			<h:outputText value="SELECCIÓN DE CLASES A DEFINIR" />
-		</ui:define>
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
 
-		<ui:define name="body">
-			<h:form>
-				<div class="ui-g">
+	<ui:define name="title">
+		<h:outputText value="ADMINISTRACIÓN DE RUTAS" />
+	</ui:define>
+
+	<ui:define name="subtitle">
+		<h:outputText value="SELECCIÓN DE CLASES A DEFINIR" />
+	</ui:define>
+
+	<ui:define name="body">
+		<div class="ui-g">
+			<div class="ui-g-4" />
+			<div class="ui-g-4">
+				<div class="ui-g" style="text-align: center;">
 					<div class="ui-g-12">
-						<p:messages id="messages" showDetail="true" closable="true">
+						<p:messages escape="false">
 							<p:autoUpdate />
 						</p:messages>
 					</div>
-				</div>
-				<div class="ui-g" style="text-align: center">
 					<div class="ui-g-12">
 						<h:outputText
 							value="Seleccione el tipo de clase a definir o modificar" />
 					</div>
 					<div class="ui-g-12">
-						<p:selectOneMenu value="#{homeController.opcion}" required="true">
+						<p:selectOneMenu value="#{homeController.opcion}" required="true"
+							label="Opción" style="width:30em;">
+							<f:selectItem itemLabel="Seleccione una opción" />
 							<f:selectItem itemLabel="Usuarios" itemValue="1" />
-							<f:selectItem itemLabel="Administración de ruta" itemValue="2" />
-							<f:selectItem itemLabel="Seguimiento de ruta" itemValue="3" />
+							<f:selectItem itemLabel="Administración de rutas" itemValue="2" />
+							<f:selectItem itemLabel="Seguimiento de rutas" itemValue="3" />
 						</p:selectOneMenu>
 					</div>
 				</div>
-				<div class="footer-commands-container">
-					<div class="footer-commands-content">
-						<p:commandButton value="SELECCIONAR"
-							action="#{homeController.submit}" ajax="false" />
-					</div>
-				</div>
-			</h:form>
-		</ui:define>
-	</ui:composition>
-</h:body>
-</html>
+			</div>
+			<div class="ui-g-4" />
+		</div>
+	</ui:define>
+
+	<ui:define name="footer">
+		<div class="footer-commands-container">
+			<div class="footer-commands-content">
+				<p:commandButton value="SELECCIONAR"
+					action="#{homeController.submit()}" ajax="false" />
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>

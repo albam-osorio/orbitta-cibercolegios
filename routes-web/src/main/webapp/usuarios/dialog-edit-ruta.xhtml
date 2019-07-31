@@ -1,0 +1,162 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="editRutaDialog" widgetVar="editRutaDialog" modal="true"
+		showEffect="fade" hideEffect="fade" resizable="false" closable="false">
+		<h:form id="editRutaForm">
+			<h:panelGroup
+				rendered="#{usuariosDireccionDialogEditRutaController.initialized}">
+
+				<div class="body-container">
+					<div class="header-title-container">
+						<div class="header-title">
+							<h:outputText value="ASIGNAR RUTA" />
+						</div>
+					</div>
+
+					<div class="body-container">
+						<p:focus />
+						<p:panel style="width:600px;height:520px;">
+							<div class="ui-g ui-g-nopad">
+								<div class="ui-g-12 ui-g-nopad">
+
+									<p:scrollPanel mode="native" style="height:480px;">
+
+										<div class="ui-g">
+											<div class="ui-g-12" style="text-align: center;">
+												<p:messages severity="warn error fatal" escape="false"
+													closable="true">
+													<p:autoUpdate />
+												</p:messages>
+											</div>
+										</div>
+										
+										<div class="ui-g">
+											<div class="ui-g-6" style="text-align: right;">
+												<h:outputLabel value="Ruta actual:" />
+											</div>
+											<div class="ui-g-6">
+												<h:outputText
+													value="#{usuariosDireccionDialogEditRutaController.model.rutaDescripcion}" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-6" style="text-align: right;">
+												<h:outputLabel value="Activo:" />
+											</div>
+											<div class="ui-g-6">
+												<h:outputText
+													value="#{usuariosDireccionDialogEditRutaController.model.activo?'Sí':'No'}" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-3" />
+											<div class="ui-g-6">
+												<p:panelGrid columns="2"
+													style="width:100%; text-align:center;">
+													<f:facet name="header">
+														<h:outputLabel value="Cupos requeridos" />
+													</f:facet>
+
+													<h:outputLabel value="AM" />
+													<h:outputLabel value="PM" />
+
+													<h:outputText
+														value="#{usuariosDireccionDialogEditRutaController.model.tieneDireccionAm?'Sí':'No'}" />
+													<h:outputText
+														value="#{usuariosDireccionDialogEditRutaController.model.tieneDireccionPm?'Sí':'No'}" />
+												</p:panelGrid>
+											</div>
+											<div class="ui-g-3" />
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-12">
+												<p:separator></p:separator>
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-12" style="text-align: center">
+												<h:outputLabel value="Rutas disponibles" />
+											</div>
+											<div class="ui-g-12" style="text-align: center">
+												<p:focus />
+												<p:selectBooleanCheckbox
+													itemLabel="Ver solo rutas con disponibilidad"
+													value="#{usuariosDireccionDialogEditRutaController.filtrar}">
+													<p:ajax
+														listener="#{usuariosDireccionDialogEditRutaController.onChangeFiltro()}"
+														update="tableRutas" />
+
+												</p:selectBooleanCheckbox>
+											</div>
+											<div class="ui-g-12">
+												<p:dataTable id="tableRutas" var="ruta"
+													value="#{usuariosDireccionDialogEditRutaController.rutasConCapacidad}"
+													rowKey="#{ruta.id}" reflow="true" rows="10"
+													paginator="true" sortMode="multiple"
+													emptyMessage="No se encontraron registros">
+
+													<p:column style="width:48px;text-align: center">
+														<p:selectBooleanCheckbox value="#{ruta.seleccionada}"
+															disabled="#{usuariosDireccionDialogEditRutaController.model.activo and not ruta.habilitada}">
+															<p:ajax
+																listener="#{usuariosDireccionDialogEditRutaController.onChangeSeleccionado(ruta)}"
+																update="tableRutas" />
+														</p:selectBooleanCheckbox>
+													</p:column>
+
+													<p:column headerText="Ruta" width="30%">
+														<h:outputText value="#{ruta.descripcion}" />
+													</p:column>
+													<p:column headerText="Disponibilidad AM" width="20%">
+														<div style="text-align: center;">
+															<h:outputText
+																value="#{ruta.disponibilidadAm - usuariosDireccionDialogEditRutaController.ocupacionAm(ruta)}" />
+														</div>
+													</p:column>
+													<p:column headerText="Disponibilidad PM" width="20%">
+														<div style="text-align: center;">
+															<h:outputText
+																value="#{ruta.disponibilidadPm - usuariosDireccionDialogEditRutaController.ocupacionPm(ruta)}"
+																style="center" />
+														</div>
+													</p:column>
+													<p:column headerText="Capacidad Vehiculo" width="20%">
+														<div style="text-align: center;">
+															<h:outputText value="#{ruta.capacidadMaxima}"
+																style="center" />
+														</div>
+													</p:column>
+												</p:dataTable>
+											</div>
+										</div>
+									</p:scrollPanel>
+
+								</div>
+							</div>
+						</p:panel>
+					</div>
+
+					<div class="footer-commands-container">
+						<div class="footer-commands-content">
+							<p:commandButton widgetVar="submitButton" value="Actualizar"
+								actionListener="#{usuariosDireccionDialogEditRutaController.submit()}"
+								action="#{usuariosEditController.resetPrimaryBuffer()}"
+								update="@form form" onclick="PF('submitButton').disable()"
+								oncomplete="PF('submitButton').enable()"
+								onerror="PF('submitButton').enable()">
+							</p:commandButton>
+							<p:commandButton value="Cancelar"
+								actionListener="#{usuariosDireccionDialogEditRutaController.closeDialog()}"
+								process="@this" oncomplete="PF('bui').hide()" />
+						</div>
+					</div>
+				</div>
+			</h:panelGroup>
+		</h:form>
+	</p:dialog>
+</ui:composition>

@@ -1,9 +1,11 @@
 package com.tbf.cibercolegios.api.routes.services.impl;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,14 +14,16 @@ import com.tbf.cibercolegios.api.core.services.impl.CrudServiceImpl;
 import com.tbf.cibercolegios.api.model.routes.Acudiente;
 import com.tbf.cibercolegios.api.model.routes.Direccion;
 import com.tbf.cibercolegios.api.model.routes.Pasajero;
-import com.tbf.cibercolegios.api.model.routes.Ruta;
+import com.tbf.cibercolegios.api.model.routes.PasajeroAcudiente;
+import com.tbf.cibercolegios.api.model.routes.PasajeroDireccion;
+import com.tbf.cibercolegios.api.model.routes.enums.CourseType;
 import com.tbf.cibercolegios.api.routes.model.graph.DireccionDto;
 import com.tbf.cibercolegios.api.routes.model.graph.PasajeroDto;
 import com.tbf.cibercolegios.api.routes.repository.AcudienteRepository;
 import com.tbf.cibercolegios.api.routes.repository.DireccionRepository;
-import com.tbf.cibercolegios.api.routes.repository.EstadoPasajeroRepository;
+import com.tbf.cibercolegios.api.routes.repository.PasajeroAcudienteRepository;
+import com.tbf.cibercolegios.api.routes.repository.PasajeroDireccionRepository;
 import com.tbf.cibercolegios.api.routes.repository.PasajeroRepository;
-import com.tbf.cibercolegios.api.routes.repository.RutaRepository;
 import com.tbf.cibercolegios.api.routes.services.api.PasajeroService;
 
 import lombok.val;
@@ -32,16 +36,16 @@ public class PasajeroCrudServiceImpl extends CrudServiceImpl<Pasajero, PasajeroD
 	private PasajeroRepository repository;
 
 	@Autowired
-	private RutaRepository rutaRepository;
+	private PasajeroDireccionRepository pasajeroDireccionRepository;
+
+	@Autowired
+	private PasajeroAcudienteRepository pasajeroAcudienteRepository;
 
 	@Autowired
 	private DireccionRepository direccionRepository;
 
 	@Autowired
 	private AcudienteRepository acudienteRepository;
-
-	@Autowired
-	private EstadoPasajeroRepository estadoPasajeroRepository;
 
 	@Override
 	protected PasajeroRepository getRepository() {
@@ -53,19 +57,17 @@ public class PasajeroCrudServiceImpl extends CrudServiceImpl<Pasajero, PasajeroD
 		val model = newModel();
 		mapModel(entity, model);
 
-		if (entity.getRuta() != null) {
-			model.setRutaId(entity.getRuta().getId());
-		}
+		model.setInstitucionId(entity.getInstitucionId());
 		model.setUsuarioId(entity.getUsuarioId());
-		model.setSecuenciaIda(entity.getSecuenciaIda());
-		model.setDireccionIdaId(entity.getDireccionIda().getId());
-		model.setSecuenciaRetorno(entity.getSecuenciaRetorno());
-		model.setDireccionRetornoId(entity.getDireccionRetorno().getId());
-		model.setEstadoId(entity.getEstado().getId());
-		model.setTipoEstado(entity.getEstado().getTipo());
-		model.setEstadoDescripcion(entity.getEstado().getDescripcion());
 
-		model.setAcudientes(asAcudientes(entity));
+		model.setFechaUltimoEvento(entity.getFechaUltimoEvento());
+		model.setRutaId(entity.getRutaId());
+		model.setSecuencia(entity.getSecuencia());
+		model.setSentido(entity.getSentido());
+		model.setDireccionId(entity.getDireccionId());
+		model.setEstadoId(entity.getEstadoId());
+		model.setX(entity.getX());
+		model.setY(entity.getY());
 
 		return model;
 	}
@@ -75,64 +77,22 @@ public class PasajeroCrudServiceImpl extends CrudServiceImpl<Pasajero, PasajeroD
 		return new PasajeroDto();
 	}
 
-	private List<Integer> asAcudientes(Pasajero entity) {
-		val result = new ArrayList<Integer>();
-		result.addAll(entity.getAcudientes());
-		return result;
-	}
-
 	@Override
 	protected Pasajero mergeEntity(PasajeroDto model, Pasajero entity) {
-		Ruta ruta = null;
-		if (model.getRutaId() != null) {
-			ruta = rutaRepository.findById(model.getRutaId()).get();
-		}
-		val direccionIda = findDireccionById(model.getDireccionIdaId());
-		val direccionRetorno = findDireccionById(model.getDireccionRetornoId());
-		val estado = estadoPasajeroRepository.findById(model.getEstadoId());
-
-		entity.setRuta(ruta);
+		entity.setInstitucionId(model.getInstitucionId());
 		entity.setUsuarioId(model.getUsuarioId());
-		entity.setSecuenciaIda(model.getSecuenciaIda());
-		entity.setDireccionIda(direccionIda);
-		entity.setSecuenciaRetorno(model.getSecuenciaRetorno());
-		entity.setDireccionRetorno(direccionRetorno);
 
-		entity.setEstado(estado.get());
-
-		mergeItemEntities(model, entity);
+		entity.setFechaUltimoEvento(model.getFechaUltimoEvento());
+		entity.setRutaId(model.getRutaId());
+		entity.setSecuencia(model.getSecuencia());
+		entity.setSentido(model.getSentido());
+		entity.setDireccionId(model.getDireccionId());
+		entity.setEstadoId(model.getEstadoId());
+		entity.setX(model.getX());
+		entity.setY(model.getY());
 
 		entity.setVersion(model.getVersion());
 		return entity;
-	}
-
-	protected void mergeItemEntities(PasajeroDto model, Pasajero entity) {
-		val inserted = new ArrayList<Integer>();
-		val deleted = new ArrayList<Integer>();
-
-		if (model.getAcudientes() == null) {
-			model.setAcudientes(new ArrayList<>());
-		}
-
-		if (entity.getAcudientes() == null) {
-			entity.setAcudientes(new ArrayList<>());
-		}
-
-		entity.getAcudientes().stream().forEach(a -> {
-			if (!model.getAcudientes().contains(a)) {
-				deleted.add(a);
-			}
-		});
-
-		deleted.stream().forEach(a -> entity.getAcudientes().remove(a));
-
-		model.getAcudientes().stream().forEach(a -> {
-			if (!entity.getAcudientes().contains(a)) {
-				inserted.add(a);
-			}
-		});
-
-		entity.getAcudientes().addAll(inserted);
 	}
 
 	@Override
@@ -140,116 +100,135 @@ public class PasajeroCrudServiceImpl extends CrudServiceImpl<Pasajero, PasajeroD
 		return new Pasajero();
 	}
 
+	// -----------------------------------------------------------------------------------
+	// --
+	// -----------------------------------------------------------------------------------
+	@Override
+	public Optional<PasajeroDto> findByInstitucionIdAndUsuarioId(int insititucionId, int usuarioId) {
+		val optional = getRepository().findByInstitucionIdAndUsuarioId(insititucionId, usuarioId);
+		return asModel(optional);
+	}
+
 	@Override
 	public List<PasajeroDto> findAllByRutaId(int rutaId) {
-		val entities = getRepository().findAllByRutaId(rutaId);
-
-		val result = asModels(entities);
-		return result;
+		val list = this.pasajeroDireccionRepository.findAllByRutaId(rutaId);
+		val ids = list.stream().map(PasajeroDireccion::getPasajeroId).distinct().collect(toList());
+		return findAllById(ids);
 	}
 
 	@Override
-	public Optional<PasajeroDto> findByUsuarioId(int usuarioId) {
-		val optional = getRepository().findByUsuarioId(usuarioId);
-
-		val result = asModel(optional);
-		return result;
+	public List<PasajeroDireccion> findAllPasajeroDireccionByRutaId(int rutaId) {
+		return this.pasajeroDireccionRepository.findAllByRutaId(rutaId);
 	}
 
-	protected Direccion findDireccionById(Integer id) {
-		Direccion result = null;
-		if (id != null) {
-			val optional = direccionRepository.findById(id);
-			if (optional.isPresent()) {
-				result = optional.get();
-			}
+	@Override
+	public List<PasajeroDireccion> findAllPasajeroDireccionByPasajeroId(int pasajeroId) {
+		return this.pasajeroDireccionRepository.findAllByPasajeroId(pasajeroId);
+	}
+
+	@Override
+	public List<PasajeroDireccion> findAllPasajeroDireccionByPasajeroIdIn(List<Integer> pasajerosId) {
+		return this.pasajeroDireccionRepository.findAllByPasajeroIdIn(pasajerosId);
+	}
+
+	@Override
+	public Map<Integer, List<Acudiente>> findAllAcudientesIdByPasajeroIdIn(List<Integer> pasajerosId) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	// -----------------------------------------------------------------------------------
+	// --
+	// -----------------------------------------------------------------------------------
+	@Override
+	public void create(PasajeroDto model, Optional<DireccionDto> direccionIda, Optional<DireccionDto> direccionRetorno,
+			List<Integer> usuariosAcudientesId, boolean activo) {
+		val result = create(model);
+
+		int correlacion = 0;
+
+		if (direccionIda.isPresent()) {
+			createDireccion(result.getId(), correlacion, CourseType.SENTIDO_IDA.getIntValue(), direccionIda.get(),
+					activo);
 		}
 
-		return result;
+		if (direccionRetorno.isPresent()) {
+			createDireccion(result.getId(), correlacion, CourseType.SENTIDO_RETORNO.getIntValue(),
+					direccionRetorno.get(), activo);
+		}
+
+		val acudientesId = crearAcudientes(result.getId(), usuariosAcudientesId);
+		asociarAcudientes(result.getId(), acudientesId);
 	}
 
 	@Override
-	public long countByRutaId(int rutaId) {
-		val result = getRepository().countByRutaId(rutaId);
+	public void update(PasajeroDto pasajero, Optional<DireccionDto> direccionIda,
+			Optional<DireccionDto> direccionRetorno, List<Integer> usuariosAcudientesId, boolean activo) {
+		int correlacion = 0;
+		val list = findAllPasajeroDireccionByPasajeroId(pasajero.getId());
+		val max = list.stream().map(PasajeroDireccion::getCorrelacion).max(Integer::compareTo);
+		activo &= !list.stream().anyMatch(a -> a.isActivo());
 
-		return result;
+		if (max.isPresent()) {
+			correlacion = max.get() + 1;
+		}
+
+		if (direccionIda.isPresent()) {
+			createDireccion(pasajero.getId(), correlacion, CourseType.SENTIDO_IDA.getIntValue(), direccionIda.get(),
+					activo);
+		}
+
+		if (direccionRetorno.isPresent()) {
+			createDireccion(pasajero.getId(), correlacion, CourseType.SENTIDO_RETORNO.getIntValue(),
+					direccionRetorno.get(), activo);
+		}
+
+		val acudientesId = crearAcudientes(pasajero.getId(), usuariosAcudientesId);
+		asociarAcudientes(pasajero.getId(), acudientesId);
 	}
 
-	@Override
-	public PasajeroDto create(PasajeroDto model, DireccionDto direccionIda, DireccionDto direccionRetorno,
-			List<Integer> usuariosIdDeLosAcudientes) {
-		Direccion direccion = asDireccion(direccionIda);
-		direccion = direccionRepository.save(direccion);
-		model.setDireccionIdaId(direccion.getId());
+	private void createDireccion(int pasajeroId, int correlacion, int sentido, DireccionDto direccion, boolean activo) {
+		val direccionId = direccionRepository.save(asDireccion(direccion)).getId();
 
-		direccion = asDireccion(direccionRetorno);
-		direccion = direccionRepository.save(direccion);
-		model.setDireccionRetornoId(direccion.getId());
+		val entity = new PasajeroDireccion();
+		entity.setPasajeroId(pasajeroId);
+		entity.setCorrelacion(correlacion);
+		entity.setSentido(sentido);
+		entity.setDireccionId(direccionId);
+		entity.setActivo(activo);
 
-		val acudientes = createAcudientes(usuariosIdDeLosAcudientes);
-		model.setAcudientes(acudientes);
-
-		val result = create(model);
-		return result;
+		pasajeroDireccionRepository.save(entity);
 	}
 
-	@Override
-	public PasajeroDto update(PasajeroDto model, DireccionDto direccionIda, DireccionDto direccionRetorno,
-			List<Integer> usuariosIdDeLosAcudientes) {
-		Direccion direccion = mergeDireccion(direccionIda);
-		direccionRepository.save(direccion);
+	private Direccion asDireccion(DireccionDto direccion) {
+		val entity = new Direccion();
 
-		direccion = mergeDireccion(direccionRetorno);
-		direccionRepository.save(direccion);
-
-		val acudientes = createAcudientes(usuariosIdDeLosAcudientes);
-		model.setAcudientes(acudientes);
-
-		val result = update(model);
-		return result;
-	}
-
-	private Direccion asDireccion(DireccionDto direccionIda) {
-		Direccion entity = new Direccion();
-
-		entity.setInstitucionId(direccionIda.getInstitucionId());
-		entity.setEstadoId(direccionIda.getEstadoId());
-		entity.setPaisId(direccionIda.getPaisId());
-		entity.setDepartamentoId(direccionIda.getDepartamentoId());
-		entity.setCiudadId(direccionIda.getCiudadId());
-		entity.setDireccion(direccionIda.getDireccion());
+		entity.setInstitucionId(direccion.getInstitucionId());
+		entity.setEstadoId(direccion.getEstadoId());
+		entity.setPaisId(direccion.getPaisId());
+		entity.setDepartamentoId(direccion.getDepartamentoId());
+		entity.setCiudadId(direccion.getCiudadId());
+		entity.setDireccion(direccion.getDireccion());
 		entity.setX(null);
 		entity.setY(null);
+
 		return entity;
 	}
 
-	private Direccion mergeDireccion(DireccionDto direccionIda) {
-		Direccion entity;
-		entity = direccionRepository.findById(direccionIda.getId()).get();
-
-		entity.setInstitucionId(direccionIda.getInstitucionId());
-		entity.setPaisId(direccionIda.getPaisId());
-		entity.setDepartamentoId(direccionIda.getDepartamentoId());
-		entity.setCiudadId(direccionIda.getCiudadId());
-		entity.setDireccion(direccionIda.getDireccion());
-		entity.setX(null);
-		entity.setY(null);
-		return entity;
-	}
-
-	private List<Integer> createAcudientes(List<Integer> usuariosIdDeLosAcudientes) {
+	private List<Integer> crearAcudientes(int pasajeroId, List<Integer> usuariosId) {
 		// Se buscan los acudientes existentes por su id de usuario
-		val acudientes = acudienteRepository.findAllByUsuarioIdIn(usuariosIdDeLosAcudientes);
+		val acudientes = acudienteRepository.findAllByUsuarioIdIn(usuariosId);
 
 		val insert = new ArrayList<Acudiente>();
-		for (val usuarioId : usuariosIdDeLosAcudientes) {
+		for (val usuarioId : usuariosId) {
 			val optional = acudientes.stream().filter(a -> a.getUsuarioId() == usuarioId).findFirst();
-			
-			//Por cada id de usuario de acudiente que aun no exista en la tabla de acudientes
+
+			// Por cada id de usuario de acudiente que aun no exista en la tabla de
+			// acudientes
 			if (!optional.isPresent()) {
-				val acudiente = new Acudiente();
-				acudiente.setUsuarioId(usuarioId);
-				insert.add(acudiente);
+				val entity = new Acudiente();
+				entity.setUsuarioId(usuarioId);
+				insert.add(entity);
 			}
 		}
 
@@ -257,7 +236,20 @@ public class PasajeroCrudServiceImpl extends CrudServiceImpl<Pasajero, PasajeroD
 			acudientes.addAll(acudienteRepository.saveAll(insert));
 		}
 
-		val result = acudientes.stream().map(a -> a.getId()).collect(Collectors.toList());
-		return result;
+		return acudientes.stream().map(a -> a.getId()).collect(toList());
+	}
+
+	private void asociarAcudientes(int pasajeroId, List<Integer> acudientesId) {
+		val existentes = pasajeroAcudienteRepository.findAllByPasajeroId(pasajeroId);
+
+		val existentesId = existentes.stream().map(PasajeroAcudiente::getAcudienteId).distinct().collect(toList());
+
+		// Buscar los acudientesId que no estan en existentes --> INSERT
+		List<PasajeroAcudiente> insert = acudientesId.stream().filter(i -> !existentesId.contains(i))
+				.map(acudienteId -> new PasajeroAcudiente(pasajeroId, acudienteId)).collect(toList());
+		pasajeroAcudienteRepository.saveAll(insert);
+
+		val delete = existentes.stream().filter(i -> !acudientesId.contains(i.getAcudienteId())).collect(toList());
+		pasajeroAcudienteRepository.deleteAll(delete);
 	}
 }

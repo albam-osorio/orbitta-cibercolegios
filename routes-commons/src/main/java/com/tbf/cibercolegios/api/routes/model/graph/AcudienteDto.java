@@ -17,6 +17,6 @@ public class AcudienteDto extends AuditableEntityDto<Integer> {
 
 	private int usuarioId;
 
-	@Size(max = 200)
+	@Size(max = 1024)
 	private String token;
 }

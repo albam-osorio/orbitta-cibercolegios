@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import com.tbf.cibercolegios.api.core.services.impl.CrudServiceImpl;
 import com.tbf.cibercolegios.api.model.routes.LogPasajero;
 import com.tbf.cibercolegios.api.routes.model.graph.LogPasajeroDto;
-import com.tbf.cibercolegios.api.routes.repository.EstadoPasajeroRepository;
 import com.tbf.cibercolegios.api.routes.repository.LogPasajeroRepository;
-import com.tbf.cibercolegios.api.routes.repository.RutaRepository;
 import com.tbf.cibercolegios.api.routes.services.api.LogPasajeroService;
 
 import lombok.val;
@@ -20,12 +18,6 @@ public class LogPasajeroCrudServiceImpl extends CrudServiceImpl<LogPasajero, Log
 	@Autowired
 	private LogPasajeroRepository repository;
 
-	@Autowired
-	private RutaRepository rutaRepository;
-
-	@Autowired
-	private EstadoPasajeroRepository estadoRepository;
-
 	@Override
 	protected LogPasajeroRepository getRepository() {
 		return repository;
@@ -36,14 +28,14 @@ public class LogPasajeroCrudServiceImpl extends CrudServiceImpl<LogPasajero, Log
 		val model = newModel();
 		mapModel(entity, model);
 		
-		model.setRutaId(entity.getRuta().getId());
 		model.setUsuarioId(entity.getUsuarioId());
 		model.setSentido(entity.getSentido());
-
-		model.setEstadoId(entity.getEstado().getId());
-		model.setEstadoDescripcion(entity.getEstado().getDescripcion());
-		model.setTipoEstado(entity.getEstado().getTipo());
-
+		model.setDireccionId(entity.getDireccionId());
+		
+		model.setRutaId(entity.getRutaId());
+		model.setSecuencia(entity.getSecuencia());
+		
+		model.setEstadoId(entity.getEstadoId());
 		model.setX(entity.getX());
 		model.setY(entity.getY());
 		
@@ -52,13 +44,15 @@ public class LogPasajeroCrudServiceImpl extends CrudServiceImpl<LogPasajero, Log
 
 	@Override
 	protected LogPasajero mergeEntity(LogPasajeroDto model, LogPasajero entity) {
-		val ruta = rutaRepository.findById(model.getRutaId());
-		val estado = estadoRepository.findById(model.getEstadoId());
 
-		entity.setRuta(ruta.get());
 		entity.setUsuarioId(model.getUsuarioId());
-		entity.setSentido(entity.getSentido());
-		entity.setEstado(estado.get());
+		entity.setSentido(model.getSentido());
+		entity.setDireccionId(model.getDireccionId());
+		
+		entity.setRutaId(model.getRutaId());
+		entity.setSecuencia(model.getSecuencia());
+		
+		entity.setEstadoId(model.getEstadoId());
 		entity.setX(model.getX());
 		entity.setY(model.getY());
 

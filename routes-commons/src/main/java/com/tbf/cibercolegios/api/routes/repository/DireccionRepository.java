@@ -9,6 +9,6 @@ import com.tbf.cibercolegios.api.core.data.jpa.repository.IdentifiedDomainObject
 import com.tbf.cibercolegios.api.model.routes.Direccion;
 
 public interface DireccionRepository extends IdentifiedDomainObjectRepository<Direccion, Integer> {
-	@Query("SELECT DISTINCT b FROM Ruta a JOIN a.direccionSede b WHERE a.institucionId = :institucionId")
+	@Query("SELECT b FROM Direccion b WHERE b.id IN (SELECT DISTINCT a.direccionSedeId FROM Ruta a WHERE a.institucionId = :institucionId) ")
 	List<Direccion> findAllByInstitucionId(@Param(value = "institucionId") int institucionId);
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tbf.cibercolegios.api.routes.controllers.constants.RutasRestConstants;
 import com.tbf.cibercolegios.api.routes.model.graph.tracking.DatosEstadoParadaDto;
 import com.tbf.cibercolegios.api.routes.model.graph.tracking.DatosParadaDto;
+import com.tbf.cibercolegios.api.routes.model.graph.tracking.ListaAbordajeDto;
 import com.tbf.cibercolegios.api.routes.model.graph.tracking.MonitorDatosRutaDto;
 import com.tbf.cibercolegios.api.routes.model.graph.tracking.MonitorRegisterDto;
 import com.tbf.cibercolegios.api.routes.services.api.tracking.AcudienteTrackingService;
@@ -36,25 +37,17 @@ public class TrackingRestController {
 
 	@PostMapping(path = "/register")
 	public ResponseEntity<?> registrar(@RequestBody MonitorRegisterDto request) {
-
-		monitorTrackingService.registrarMonitor(request.getMonitorId(), request.getToken());
+		// TODO CAMBIO DE DATOS DE ENTRADA
+		Integer institucionId = 0;
+		monitorTrackingService.registrarMonitor(institucionId, request.getMonitorId(), request.getToken());
 		return ResponseEntity.ok("");
 	}
 
-	@GetMapping("/monitor/{monitorId}/rutas")
+	@GetMapping("{ins}/monitor/{monitorId}/rutas")
 	public ResponseEntity<List<MonitorDatosRutaDto>> getRutasByMonitorId(@PathVariable Integer monitorId) {
-
-		val result = monitorTrackingService.findRutasByMonitorId(monitorId);
-
-		return ResponseEntity.ok(result);
-	}
-
-	@PostMapping(path = "/monitor/{monitorId}/rutas/{rutaId}/track/start", params = { "x", "y", "sentido", "token" })
-	public ResponseEntity<?> iniciarRecorrido(@PathVariable int monitorId, @PathVariable int rutaId,
-			@RequestParam(required = true) BigDecimal x, @RequestParam(required = true) BigDecimal y,
-			@RequestParam(required = true) Integer sentido, @RequestParam(required = true) String token) {
-
-		val result = monitorTrackingService.iniciarRecorrido(monitorId, rutaId, x, y, sentido, token);
+		// TODO CAMBIO DE DATOS DE ENTRADA
+		Integer institucionId = 0;
+		val result = monitorTrackingService.findRutasByInstitucionIdAndMonitorId(institucionId, monitorId);
 
 		return ResponseEntity.ok(result);
 	}
@@ -68,6 +61,23 @@ public class TrackingRestController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	@PostMapping(path = "/monitor/{monitorId}/rutas/{rutaId}/track/start", params = { "x", "y", "sentido" })
+	public ResponseEntity<?> iniciarRecorrido(@PathVariable int monitorId, @PathVariable int rutaId,
+			@RequestParam(required = true) BigDecimal x, @RequestParam(required = true) BigDecimal y,
+			@RequestParam(required = true) Integer sentido) {
+
+		val result = monitorTrackingService.iniciarRecorrido(monitorId, rutaId, x, y, sentido);
+
+		return ResponseEntity.ok(result);
+	}
+
+	@PostMapping(path = "/register/boarding")
+	public ResponseEntity<?> registrarAbordaje(@RequestBody ListaAbordajeDto request) {
+		val result = monitorTrackingService.registrarAbordaje(request);
+
+		return ResponseEntity.ok(result);
 	}
 
 	@PostMapping(path = "/ruta/{rutaId}/track", params = { "type=pos", "x", "y" })

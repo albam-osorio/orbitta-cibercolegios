@@ -24,7 +24,7 @@
 
 	<ui:define name="messages">
 		<p:messages id="messages" showDetail="true" closable="true"
-			redisplay="false"  autoUpdate="true"/>
+			redisplay="false" autoUpdate="true" />
 	</ui:define>
 
 	<ui:define name="body">
@@ -35,7 +35,6 @@
 				<div>
 					<p:dataTable id="listTable" var="item"
 						value="#{seguimientoCrudController.models}"
-						selection="#{seguimientoCrudController.selection}"
 						rowKey="#{item.rutaId}" reflow="true" rows="10" paginator="true"
 						sortMode="multiple">
 
@@ -44,28 +43,28 @@
 							<h:outputText value="#{item.rutaId}" />
 						</p:column>
 						<p:column headerText="CÓDIGO" sortBy="#{item.codigo}"
-							filterBy="#{item.codigo}">
+							filterBy="#{item.codigo}" filterMatchMode="contains">
 							<h:outputText value="#{item.codigo}" />
 						</p:column>
 						<p:column headerText="DESCRIPCIÓN" sortBy="#{item.descripcion}"
-							filterBy="#{item.descripcion}">
+							filterBy="#{item.descripcion}" filterMatchMode="contains">
 							<h:outputText value="#{item.descripcion}" />
 						</p:column>
 						<p:column headerText="MONITOR" sortBy="#{item.monitorNombres}"
-							filterBy="#{item.monitorNombres}">
+							filterBy="#{item.monitorNombres}" filterMatchMode="contains">
 							<h:outputText value="#{item.monitorNombres}" />
 						</p:column>
 						<p:column headerText="ESTADO" sortBy="#{item.estadoNombre}"
-							filterBy="#{item.estadoNombre}">
+							filterBy="#{item.estadoNombre}" filterMatchMode="contains">
 							<h:outputText value="#{item.estadoNombre}" />
 						</p:column>
 						<p:column headerText="DESTINO" sortBy="#{item.ultimoSentido}"
-							filterBy="#{item.destino}">
+							filterBy="#{item.destino}" filterMatchMode="contains">
 							<h:outputText
 								value="#{(item.estadoNombre =='INACTIVO')?'N/A': item.destino}" />
 						</p:column>
 						<p:column headerText="PARADA ACTUAL"
-							sortBy="#{item.ultimoSentido}" filterBy="#{item.destino}">
+							sortBy="#{item.ultimoSentido}" filterBy="#{item.destino}" filterMatchMode="contains">
 							<h:outputText rendered="#{item.estadoNombre =='INACTIVO'}"
 								value="N/A" />
 							<h:outputText rendered="#{item.estadoNombre !='INACTIVO'}"
@@ -73,25 +72,32 @@
 						</p:column>
 						<p:column headerText="ALUMNOS ABORDO"
 							sortBy="#{item.pasajerosAbordo}"
-							filterBy="#{item.pasajerosAbordo}">
-							<h:outputText value="#{(item.estadoNombre =='INACTIVO')?'N/A': item.pasajerosAbordo}" />
+							filterBy="#{item.pasajerosAbordo}" filterMatchMode="contains">
+							<h:outputText
+								value="#{(item.estadoNombre =='INACTIVO')?'N/A': item.pasajerosAbordo}" />
 						</p:column>
 						<p:column headerText="OPCIONES" style="text-align: center">
 							<p:commandButton icon="fa fa-plus"
 								actionListener="#{seguimientoDialogViewController.openDialog('viewDialog',item)}"
 								update="viewDialog" onclick="PF('bui').show()"
 								resetValues="true" />
-							<p:commandButton rendered="#{item.estadoNombre !='INACTIVO'}" icon="fa fa-fw fa-map-marker"
+							<p:commandButton rendered="#{item.estadoNombre !='INACTIVO'}"
+								icon="fa fa-fw fa-map-marker"
 								actionListener="#{seguimientoDialogMapController.openDialog('mapDialog',item)}"
-								update="mapDialog" onclick="PF('bui').show()"
-								resetValues="true" />
+								update="mapDialog" onclick="PF('bui').show()" resetValues="true" />
 						</p:column>
 					</p:dataTable>
 				</div>
 				<div class="footer-commands-container">
 					<div class="footer-commands-content">
+						<p:commandButton value="ACTUALIZAR" ajax="true"
+							action="#{seguimientoCrudController.find}" process="listForm"
+							update="entirePage" onstart="PF('buiBatch').show()"
+							oncomplete="PF('buiBatch').hide()"
+							onerror="PF('buiBatch').hide()" />
+
 						<p:button value="CANCELAR" outcome="/home">
-							<f:param name="idSesion" value="#{userPreferences.sesionId}" />
+							<f:param name="idSesion" value="#{userProfile.sesionId}" />
 						</p:button>
 					</div>
 				</div>

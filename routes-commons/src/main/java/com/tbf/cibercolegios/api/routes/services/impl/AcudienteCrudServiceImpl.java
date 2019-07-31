@@ -55,6 +55,9 @@ public class AcudienteCrudServiceImpl extends CrudServiceImpl<Acudiente, Acudien
 		return new AcudienteDto();
 	}
 
+	// -----------------------------------------------------------------------------------
+	// --
+	// -----------------------------------------------------------------------------------
 	@Override
 	public Optional<AcudienteDto> findByUsuarioId(int usuarioId) {
 		val optional = getRepository().findByUsuarioId(usuarioId);

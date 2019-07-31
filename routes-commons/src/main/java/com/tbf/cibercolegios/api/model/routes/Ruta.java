@@ -1,14 +1,11 @@
 package com.tbf.cibercolegios.api.model.routes;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -33,13 +30,9 @@ import lombok.ToString;
 @AttributeOverride(name = "id", column = @Column(name = "ID_RUTA"))
 public class Ruta extends AuditableEntity<Integer> {
 
-	@Column(name = "ID_INSTITUCION", nullable = false)
+	@Column(name = "CODIGO", length = 3, nullable = false)
 	@NotNull
-	private int institucionId;
-
-	@Column(name = "CODIGO", length = 10, nullable = false)
-	@NotNull
-	@Size(max = 10)
+	@Size(max = 3)
 	private String codigo;
 
 	@Column(name = "DESCRIPCION", length = 100, nullable = false)
@@ -52,22 +45,19 @@ public class Ruta extends AuditableEntity<Integer> {
 	@Size(max = 100)
 	private String marca;
 
-	@Column(name = "PLACA", length = 100, nullable = false)
+	@Column(name = "PLACA", length = 20, nullable = false)
 	@NotNull
-	@Size(max = 100)
+	@Size(max = 20)
 	private String placa;
 
 	@Column(name = "CAPACIDAD_MAXIMA", nullable = false)
 	private int capacidadMaxima;
 
-	@Column(name = "MOVIL", length = 100, nullable = false)
-	@NotNull
-	@Size(max = 100)
-	private String movil;
+	@Column(name = "ID_INSTITUCION", nullable = false)
+	private int institucionId;
 
-	@Column(name = "TOKEN", length = 200, nullable = true)
-	@Size(max = 200)
-	private String token;
+	@Column(name = "ID_DIRECCION_SEDE", nullable = false)
+	private int direccionSedeId;
 
 	@Column(name = "CONDUCTOR_NOMBRES", length = 100, nullable = false)
 	@NotNull
@@ -76,23 +66,25 @@ public class Ruta extends AuditableEntity<Integer> {
 
 	@Column(name = "ID_MONITOR", nullable = false)
 	private int monitorId;
-
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "ID_DIRECCION_SEDE", nullable = false)
-	@NotNull
-	private Direccion direccionSede;
-
-	@Column(name = "FECHA_ULTIMO_RECORRIDO")
-	@DateTimeFormat(style = "M-")
-	private LocalDate fechaUltimoRecorrido;
 	
-	@Column(name = "SENTIDO", nullable = false)
-	private int sentido;
-
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "ID_ESTADO_RUTA", nullable = false)
+	@Column(name = "MOVIL", length = 100, nullable = false)
 	@NotNull
-	private EstadoRuta estado;
+	@Size(max = 100)
+	private String movil;
+
+	@Column(name = "TOKEN", length = 1024, nullable = true)
+	@Size(max = 1024)
+	private String token;
+
+	@Column(name = "FECHA_ULTIMO_EVENTO", nullable = true)
+	@DateTimeFormat(style = "M-")
+	private LocalDateTime fechaUltimoEvento;
+	
+	@Column(name = "SENTIDO", nullable = true)
+	private Integer sentido;
+
+	@Column(name = "ID_ESTADO_RUTA", nullable = true)
+	private Integer estadoId;
 
 	@Column(name = "X", nullable = true, precision = 9, scale = 6)
 	private BigDecimal x;

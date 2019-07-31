@@ -4,30 +4,31 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:p="http://primefaces.org/ui">
-
-	<f:facet name="right">
+	<div style="text-align: right">
 		<p:commandButton value="Agregar" icon="fa fa-plus"
 			actionListener="#{rutasDialogCreateController.openDialog('createDialog')}"
-			update="createDialog" onclick="PF('bui').show()">
+			update="createDialog">
 			<p:resetInput target="createDialog" />
 		</p:commandButton>
+
 		<p:commandButton value="Editar" icon="fa fa-edit"
+			disabled="#{not rutasCrudController.editable}"
 			actionListener="#{rutasDialogEditController.openDialogWithId('editDialog',rutasCrudController.selection[0].ruta.id)}"
-			update="editDialog" onclick="PF('bui').show()"
-			disabled="#{not rutasCrudController.editable}">
-			<p:resetInput target="createDialog" />
+			update="editDialog">
+			<p:resetInput target="editDialog" />
 		</p:commandButton>
+
 		<p:commandButton value="Eliminar" icon="fa fa-trash"
-			actionListener="#{rutasCrudController.delete()}" update="listForm"
+			disabled="#{not rutasCrudController.deletable}"
+			actionListener="#{rutasCrudController.delete()}" update="@form"
 			onclick="PF('bui').show()" oncomplete="PF('bui').hide()"
-			disabled="#{not rutasCrudController.deletable}">
+			onerror="PF('bui').hide()">
 			<p:confirm header="Confirmación"
 				message="#{(rutasCrudController.selectionCount == 1) ? '¿Está seguro de eliminar este registro?': '¿Está seguro de eliminar estos registros?'}"
 				icon="ui-icon-alert" />
 		</p:commandButton>
 		<p:button value="Cancelar" icon="fa fa-ban" outcome="/home">
-			<f:param name="idSesion" value="#{userPreferences.sesionId}" />
+			<f:param name="idSesion" value="#{userProfile.sesionId}" />
 		</p:button>
-	</f:facet>
-
+	</div>
 </ui:composition>

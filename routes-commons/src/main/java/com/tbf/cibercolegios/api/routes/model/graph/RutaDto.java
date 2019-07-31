@@ -1,7 +1,7 @@
 package com.tbf.cibercolegios.api.routes.model.graph;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.tbf.cibercolegios.api.core.model.graph.AuditableEntityDto;
-import com.tbf.cibercolegios.api.model.routes.enums.RouteTypeStatus;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,14 +20,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @NoArgsConstructor
 public class RutaDto extends AuditableEntityDto<Integer> {
-
-	public static final int SENTIDO_IDA = 1;
-
-	public static final int SENTIDO_RETORNO = 2;
-
-	public static final int ESTADO_INACTIVA = 0;
-
-	private int institucionId;
 
 	@NotNull
 	@Size(max = 3)
@@ -43,18 +34,14 @@ public class RutaDto extends AuditableEntityDto<Integer> {
 	private String marca;
 
 	@NotNull
-	@Size(max = 100)
+	@Size(max = 20)
 	private String placa;
 
 	private Integer capacidadMaxima;
 
-	@NotNull
-	@Size(max = 100)
-	private String movil;
+	private Integer institucionId;
 
-	@NotNull
-	@Size(max = 200)
-	private String token;
+	private Integer direccionSedeId;
 
 	@NotNull
 	@Size(max = 100)
@@ -64,21 +51,19 @@ public class RutaDto extends AuditableEntityDto<Integer> {
 	private Integer monitorId;
 
 	@NotNull
-	private Integer direccionSedeId;
+	@Size(max = 100)
+	private String movil;
+
+	@NotNull
+	@Size(max = 1024)
+	private String token;
 
 	@DateTimeFormat(style = "M-")
-	private LocalDate fechaUltimoRecorrido;
+	private LocalDateTime fechaUltimoEvento;
 
-	private int sentido;	
+	private Integer sentido;
 
-	private int estadoId;
-
-	@NotNull
-	private RouteTypeStatus tipoEstado;
-
-	@NotNull
-	@Size(max = 50)
-	private String estadoDescripcion;
+	private Integer estadoId;
 
 	private BigDecimal x;
 

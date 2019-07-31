@@ -1,9 +1,7 @@
 package com.tbf.cibercolegios.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-
-import com.tbf.cibercolegios.api.routes.controllers.util.FacesMessages;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +9,7 @@ import lombok.val;
 
 @Setter
 @Getter
-public abstract class DialogCommandController<T, E> extends DialogController<T, E> {
+public abstract class DialogCommandController<T, E> extends DialogController<T, E> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,45 +17,20 @@ public abstract class DialogCommandController<T, E> extends DialogController<T, 
 		return true;
 	}
 
-	public void submit() {
-		submit(null);
-	}
-
-	public void submit(String confirmDialogId) {
+	protected void submit(final Command<E> command, String confirmDialogId) {
 		try {
 			hideDialog(confirmDialogId);
 
 			val errors = new ArrayList<E>();
-			testSubmit(errors);
-			if (errors.isEmpty()) {
-				executeSubmit(errors);
-				if (errors.isEmpty()) {
-					successSubmit();
-				}
-			}
-
+			command.submit(errors);
 			if (!errors.isEmpty()) {
-				errorsSubmit(errors);
+				errors(errors);
+			} else {
+				closeDialog();
 			}
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			error(e);
 		}
-	}
-
-	protected void testSubmit(List<E> errors) {
-		errors.clear();
-	}
-
-	protected abstract void executeSubmit(List<E> errors);
-
-	protected void successSubmit() {
-		closeDialog();
-
-		FacesMessages.info(getSuccessMessage());
-	}
-
-	protected void errorsSubmit(List<E> errors) {
-		errors(errors);
 	}
 
 	protected String getSuccessMessage() {

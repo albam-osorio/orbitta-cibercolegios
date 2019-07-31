@@ -1,0 +1,16 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:graphicImage value="#{userImage.image}" rendered="#{tieneFoto}"
+		style="#{style}">
+		<f:param name="id" value="#{usuarioId}" />
+	</p:graphicImage>
+	<p:graphicImage value="/static/images/fotonodisp.gif"
+		rendered="#{not tieneFoto}"
+		style="#{style}" />
+
+</ui:composition>

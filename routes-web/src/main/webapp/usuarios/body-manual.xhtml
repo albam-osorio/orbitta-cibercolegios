@@ -1,109 +1,136 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
-<h:head>
-</h:head>
-<h:body>
-	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-		xmlns:f="http://java.sun.com/jsf/core"
-		xmlns:h="http://xmlns.jcp.org/jsf/html"
-		xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-		xmlns:p="http://primefaces.org/ui">
 
-
-		<p:outputPanel id="panelManual">
-			<p:outputPanel rendered="#{not usuariosController.batch}">
+	<p:outputPanel rendered="#{not usuariosBatchController.activo}">
+		<div class="ui-g">
+			<div class="ui-g-2"></div>
+			<div class="ui-g-8">
+				<div class="ui-g">
+					<div class="ui-g-4"></div>
+					<div class="ui-g-4" style="text-align: center">
+						<h:outputLabel value="CONSULTA Y CARGUE MANUAL" />
+					</div>
+					<div class="ui-g-4"></div>
+				</div>
 				<div class="ui-g">
 					<div class="ui-g-2"></div>
-					<div class="ui-g-8">
-						<h:form>
-							<div class="ui-g">
-								<div class="ui-g-4" style="text-align: right;">CONSULTA Y
-									CARGUE MANUAL</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4" style="text-align: right;">
-									<p:outputLabel for="@next" value="Nivel académico" />
-								</div>
-								<div class="ui-g-4">
-									<p:selectOneMenu id="niveles"
-										value="#{usuariosController.manualManager.nivelId}"
-										filter="true" filterMatchMode="startsWith" style="width:10em;">
-										<p:ajax
-											listener="#{usuariosController.onChangeNivelAcademico}"
-											process="@this"
-											update="programas grados panelGrupos panelBatch panelSeparator panelFooter" />
-										<f:selectItem noSelectionOption="true" itemLabel="" />
-										<f:selectItems
-											value="#{usuariosController.manualManager.niveles}"
-											var="nivel" itemValue="#{nivel.id}"
-											itemLabel="#{nivel.descripcion}" />
-									</p:selectOneMenu>
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4" style="text-align: right;">
-									<p:outputLabel for="@next" value="Programa académico" />
-								</div>
-								<div class="ui-g-4">
-									<p:selectOneMenu id="programas"
-										value="#{usuariosController.manualManager.programaId}"
-										filter="true" filterMatchMode="startsWith" style="width:10em;">
-										<p:ajax listener="#{usuariosController.onChangePrograma}"
-											process="@this"
-											update=" grados panelGrupos panelBatch panelSeparator panelFooter" />
-										<f:selectItem noSelectionOption="true" itemLabel="" />
-										<f:selectItems
-											value="#{usuariosController.manualManager.programas}" />
-									</p:selectOneMenu>
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4" style="text-align: right;">
-									<p:outputLabel for="@next" value="Grado" />
-								</div>
-								<div class="ui-g-4">
-									<p:selectOneMenu id="grados"
-										value="#{usuariosController.manualManager.gradoId}"
-										filter="true" filterMatchMode="startsWith" style="width:10em;">
-										<p:ajax listener="#{usuariosController.onChangeGrado}"
-											process="@this"
-											update="panelGrupos panelBatch panelSeparator panelFooter" />
-										<f:selectItem noSelectionOption="true" itemLabel="" />
-										<f:selectItems
-											value="#{usuariosController.manualManager.grados}" />
-									</p:selectOneMenu>
-								</div>
-							</div>
-							<p:outputPanel id="panelGrupos">
-								<div class="ui-g">
-									<div class="ui-g-4" />
-									<div class="ui-g-4">
-										<p:dataList id="gruposTable" var="grupo"
-											value="#{usuariosController.manualManager.grupos}"
-											type="unordered" itemType="none" paginator="true" rows="5"
-											rendered="#{not empty usuariosController.manualManager.grupos}">
-											<f:facet name="header">
-												<h:outputText value="Cursos" />
-											</f:facet>
-											<p:commandLink value="#{grupo.descripcion}"
-												update="usersDialog" oncomplete="PF('usersDialog').show()">
-												<f:setPropertyActionListener value="#{grupo}"
-													target="#{usuariosController.manualManager.grupo}" />
-											</p:commandLink>
-										</p:dataList>
-									</div>
-								</div>
-							</p:outputPanel>
-						</h:form>
+					<div class="ui-g-4" style="text-align: right;">
+						<p:outputLabel for="@next" value="Nivel académico" />
 					</div>
+					<div class="ui-g-4">
+						<p:selectOneMenu id="niveles"
+							value="#{usuariosManualController.nivelId}" filter="true"
+							filterMatchMode="contains" style="width:20em;">
+							<p:ajax listener="#{usuariosManualController.onChangeNivel}"
+								update="programas grados cursos panelUsuarios panelBatch panelSeparator panelFooter" />
+							<f:selectItem noSelectionOption="true" itemLabel="" />
+							<f:selectItems value="#{usuariosManualController.nivelesList}" />
+						</p:selectOneMenu>
+					</div>
+					<div class="ui-g-2"></div>
 				</div>
-			</p:outputPanel>
-		</p:outputPanel>
-	</ui:composition>
-</h:body>
-</html>
+				<div class="ui-g">
+					<div class="ui-g-2"></div>
+					<div class="ui-g-4" style="text-align: right;">
+						<p:outputLabel for="@next" value="Programa académico" />
+					</div>
+					<div class="ui-g-4">
+						<p:selectOneMenu id="programas"
+							value="#{usuariosManualController.programaId}" filter="true"
+							filterMatchMode="contains" style="width:20em;">
+							<p:ajax listener="#{usuariosManualController.onChangePrograma}"
+								update=" grados cursos panelUsuarios panelBatch panelSeparator panelFooter" />
+							<f:selectItem noSelectionOption="true" itemLabel="" />
+							<f:selectItems value="#{usuariosManualController.programasList}" />
+						</p:selectOneMenu>
+					</div>
+					<div class="ui-g-2"></div>
+				</div>
+				<div class="ui-g">
+					<div class="ui-g-2"></div>
+					<div class="ui-g-4" style="text-align: right;">
+						<p:outputLabel for="@next" value="Grado" />
+					</div>
+					<div class="ui-g-4">
+						<p:selectOneMenu id="grados"
+							value="#{usuariosManualController.gradoId}" filter="true"
+							filterMatchMode="contains" style="width:20em;">
+							<p:ajax listener="#{usuariosManualController.onChangeGrado}"
+								update="cursos panelUsuarios panelBatch panelSeparator panelFooter" />
+							<f:selectItem noSelectionOption="true" itemLabel="" />
+							<f:selectItems value="#{usuariosManualController.gradosList}" />
+						</p:selectOneMenu>
+					</div>
+					<div class="ui-g-2"></div>
+				</div>
+				<div class="ui-g">
+					<div class="ui-g-2"></div>
+					<div class="ui-g-4" style="text-align: right;">
+						<p:outputLabel for="@next" value="Curso" />
+					</div>
+					<div class="ui-g-4">
+						<p:selectOneMenu id="cursos"
+							value="#{usuariosManualController.cursoId}" filter="true"
+							filterMatchMode="contains" style="width:20em;">
+							<p:ajax listener="#{usuariosManualController.onChangeCurso}"
+								update="panelUsuarios panelBatch panelSeparator panelFooter" />
+							<f:selectItem noSelectionOption="true" itemLabel="" />
+							<f:selectItems value="#{usuariosManualController.cursosList}" />
+						</p:selectOneMenu>
+					</div>
+					<div class="ui-g-2"></div>
+				</div>
+				<div class="ui-g">
+					<div class="ui-g-3"></div>
+					<div class="ui-g-6">
+						<p:outputPanel id="panelUsuarios">
+							<p:dataTable var="item"
+								value="#{usuariosManualController.models}" rowKey="#{item.id}"
+								reflow="true" rows="10" paginator="true" sortMode="multiple"
+								emptyMessage="No se encontraron registros"
+								rendered="#{usuariosManualController.cursoId != null}">
+
+
+								<p:column headerText="Estudiante"
+									sortBy="#{item.nombreCompleto}"
+									filterBy="#{item.nombreCompleto}" filterMatchMode="contains">
+									<p:panelGrid styleClass="ui-noborder">
+										<p:row>
+											<p:column style="width: 48px;">
+												<ui:include src="/templates/usuario-imagen.xhtml">
+													<ui:param name="usuarioId" value="#{item.id}" />
+													<ui:param name="tieneFoto" value="#{item.tieneFoto}" />
+													<ui:param name="style" value="width: 32px;" />
+												</ui:include>
+											</p:column>
+											<p:column>
+												<div class="ui-g" style="text-align: center;">
+													<div class="ui-g-8">
+														<h:outputText value="#{item.nombreCompleto}" />
+													</div>
+													<div class="ui-g-4">
+														<p:button value="Editar" outcome="edit-usuario"
+															icon="fa fa-edit">
+															<f:param name="paramBackUrl"
+																value="#{usuariosManualController.paramBackUrl}" />
+															<f:param name="usuarioId" value="#{item.id}" />
+														</p:button>
+
+													</div>
+												</div>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:column>
+							</p:dataTable>
+						</p:outputPanel>
+					</div>
+					<div class="ui-g-3"></div>
+				</div>
+			</div>
+		</div>
+	</p:outputPanel>
+</ui:composition>

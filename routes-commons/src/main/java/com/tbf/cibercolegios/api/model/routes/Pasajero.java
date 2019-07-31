@@ -1,19 +1,15 @@
 package com.tbf.cibercolegios.api.model.routes;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import javax.persistence.AttributeOverride;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.tbf.cibercolegios.api.core.data.jpa.entities.AuditableEntity;
 
@@ -32,36 +28,34 @@ import lombok.ToString;
 @AttributeOverride(name = "id", column = @Column(name = "ID_PASAJERO"))
 public class Pasajero extends AuditableEntity<Integer> {
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = true)
-	@JoinColumn(name = "ID_RUTA", nullable = true)
-	private Ruta ruta;
+	@Column(name = "ID_INSTITUCION", nullable = false)
+	private int institucionId;
 
-	@Column(name = "ID_USUARIO", nullable = false, unique = true)
-	@NotNull
+	@Column(name = "ID_USUARIO", nullable = false)
 	private int usuarioId;
 
-	@Column(name = "SECUENCIA_IDA", nullable = false)
-	private int secuenciaIda;
+	@Column(name = "ID_ESTADO_PASAJERO", nullable = false)
+	private int estadoId;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "ID_DIRECCION_IDA", nullable = false)
-	@NotNull
-	private Direccion direccionIda;
+	@Column(name = "FECHA_ULTIMO_EVENTO")
+	@DateTimeFormat(style = "M-")
+	private LocalDateTime fechaUltimoEvento;
 
-	@Column(name = "SECUENCIA_RETORNO", nullable = false)
-	private int secuenciaRetorno;
+	@Column(name = "ID_RUTA", nullable = true)
+	private Integer rutaId;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "ID_DIRECCION_RETORNO", nullable = false)
-	@NotNull
-	private Direccion direccionRetorno;
+	@Column(name = "SECUENCIA", nullable = true)
+	private Integer secuencia;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = true)
-	@JoinColumn(name = "ID_ESTADO_PASAJERO", nullable = true)
-	private EstadoPasajero estado;
+	@Column(name = "SENTIDO", nullable = true)
+	private Integer sentido;
 
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "PASAJEROS_ACUDIENTES", joinColumns = @JoinColumn(name = "ID_PASAJERO", nullable = false))
-	@Column(name = "ID_ACUDIENTE")
-	private List<Integer> acudientes;
+	@Column(name = "ID_DIRECCION", nullable = true)
+	private Integer direccionId;
+
+	@Column(name = "x", nullable = true, precision = 9, scale = 6)
+	private BigDecimal x;
+
+	@Column(name = "y", nullable = true, precision = 9, scale = 6)
+	private BigDecimal y;
 }

@@ -7,7 +7,7 @@ import com.tbf.cibercolegios.api.model.routes.Ruta;
 
 public interface RutaRepository extends IdentifiedDomainObjectRepository<Ruta, Integer> {
 
-	List<Ruta> findAllByMonitorId(int monitorId);
+	List<Ruta> findAllByInstitucionIdAndMonitorId(int institucionId, int monitorId);
 
 	List<Ruta> findAllByInstitucionId(int institucionId);
 }

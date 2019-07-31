@@ -32,13 +32,13 @@ public class DireccionCrudServiceImpl extends CrudServiceImpl<Direccion, Direcci
 
 		mapModel(entity, model);
 		model.setInstitucionId(entity.getInstitucionId());
-		model.setEstadoId(entity.getEstadoId());
 		model.setPaisId(entity.getPaisId());
 		model.setDepartamentoId(entity.getDepartamentoId());
 		model.setCiudadId(entity.getCiudadId());
 		model.setDireccion(entity.getDireccion());
 		model.setX(entity.getX());
 		model.setY(entity.getY());
+		model.setEstadoId(entity.getEstadoId());
 
 		return model;
 	}
@@ -46,13 +46,13 @@ public class DireccionCrudServiceImpl extends CrudServiceImpl<Direccion, Direcci
 	@Override
 	protected Direccion mergeEntity(DireccionDto model, Direccion entity) {
 		entity.setInstitucionId(model.getInstitucionId());
-		entity.setEstadoId(model.getEstadoId());
 		entity.setPaisId(model.getPaisId());
 		entity.setDepartamentoId(model.getDepartamentoId());
 		entity.setCiudadId(model.getCiudadId());
 		entity.setDireccion(model.getDireccion());
 		entity.setX(model.getX());
 		entity.setY(model.getY());
+		entity.setEstadoId(model.getEstadoId());
 		
 		entity.setVersion(model.getVersion());
 		return entity;

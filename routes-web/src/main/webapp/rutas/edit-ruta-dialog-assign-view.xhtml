@@ -1,0 +1,94 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="ui-g-3">
+		<div class="ui-g-6">
+			<h:outputLabel value="CÓDIGO" />
+		</div>
+		<div class="ui-g-6">
+			<h:outputText value="#{rutaEditDialogAssignController.model.codigo}" />
+		</div>
+		<div class="ui-g-6">
+			<h:outputLabel value="DESCRIPCIÓN" />
+		</div>
+		<div class="ui-g-6">
+			<h:outputText
+				value="#{rutaEditDialogAssignController.model.descripcion}" />
+		</div>
+		<div class="ui-g-6">
+			<h:outputLabel value="OCUPACIÓN AM" />
+		</div>
+		<div class="ui-g-6">
+			<h:outputText id="inscritosAm"
+				value="#{rutaEditDialogAssignController.numeroDeInscritosAm}" />
+		</div>
+		<div class="ui-g-6">
+			<h:outputLabel value="OCUPACIÓN PM" />
+		</div>
+		<div class="ui-g-6">
+			<h:outputText id="inscritosPm"
+				value="#{rutaEditDialogAssignController.numeroDeInscritosPm}" />
+		</div>
+		<div class="ui-g-6">
+			<h:outputLabel value="CAPACIDAD MAX" />
+		</div>
+		<div class="ui-g-6">
+			<h:outputText
+				value="#{rutaEditDialogAssignController.model.capacidadMaxima}" />
+		</div>
+	</div>
+
+	<div class="ui-g-9">
+		<div class="ui-g">
+			<div class="ui-g-4">
+				<p:outputLabel value="Nivel académico" />
+			</div>
+			<div class="ui-g-4">
+				<p:outputLabel value="Programa académico" />
+			</div>
+			<div class="ui-g-4">
+				<p:outputLabel value="Grado" />
+			</div>
+		</div>
+		<div class="ui-g">
+			<div class="ui-g-4">
+				<p:selectOneListbox id="niveles"
+					value="#{rutaEditDialogAssignController.nivelId}"
+					style="width:16em;height:100px;">
+					<p:ajax
+						listener="#{rutaEditDialogAssignController.onChangeNivelAcademico}"
+						update="programas grados estudiantes" />
+
+					<f:selectItems value="#{rutaEditDialogAssignController.niveles}"
+						var="nivel" itemValue="#{nivel.id}"
+						itemLabel="#{nivel.descripcion}" />
+				</p:selectOneListbox>
+			</div>
+			<div class="ui-g-4">
+				<p:selectOneListbox id="programas"
+					value="#{rutaEditDialogAssignController.programaId}"
+					style="width:16em;height:100px;">
+					<p:ajax
+						listener="#{rutaEditDialogAssignController.onChangePrograma}"
+						update=" grados estudiantes" />
+
+					<f:selectItems value="#{rutaEditDialogAssignController.programas}" />
+				</p:selectOneListbox>
+			</div>
+			<div class="ui-g-4">
+				<p:selectOneListbox id="grados"
+					value="#{rutaEditDialogAssignController.gradoId}"
+					style="width:16em;height:100px;">
+					<p:ajax listener="#{rutaEditDialogAssignController.onChangeGrado}"
+						update=" estudiantes" />
+
+					<f:selectItems value="#{rutaEditDialogAssignController.grados}" />
+				</p:selectOneListbox>
+			</div>
+		</div>
+	</div>
+</ui:composition>

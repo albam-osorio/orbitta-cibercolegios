@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -29,7 +28,7 @@ import lombok.ToString;
 public abstract class SimpleAuditableEntity<ID> extends BaseEntity<ID>
 		implements VersionableObject, ObjectAuditableByTime {
 
-	@Version
+	//@Version
 	private int version;
 
 	@Column(name = "fecha_creacion", updatable = false)

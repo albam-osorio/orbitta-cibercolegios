@@ -41,7 +41,7 @@ public class ChatServiceImpl implements ChatService {
 
 	@Override
 	public void registrarAcudiente(int usuarioId, String token) {
-		CheckUsuarioExistente(usuarioId);
+		checkUsuarioAcudienteExistente(usuarioId);
 
 		val model = new AcudienteDto();
 		model.setUsuarioId(usuarioId);
@@ -91,7 +91,7 @@ public class ChatServiceImpl implements ChatService {
 		val model = new MensajeDto();
 
 		model.setConversacionId(conversacion.getId());
-		model.setMonitorId(conversacion.getUsuarioMonitorId());
+		// model.setMonitorId(conversacion.getUsuarioMonitorId());
 		model.setOrigen(origen);
 		model.setMensaje(StringUtils.left(mensaje, 200));
 
@@ -102,8 +102,8 @@ public class ChatServiceImpl implements ChatService {
 	// ---------------------------------------------------------------------------------------------------------------------------------------------------------
 	// ---
 	// ---------------------------------------------------------------------------------------------------------------------------------------------------------
-	private void CheckUsuarioExistente(int usuarioId) {
-		val optional = ciberService.findUsuarioById(usuarioId);
+	private void checkUsuarioAcudienteExistente(int usuarioId) {
+		val optional = ciberService.findUsuarioAcudienteByUsuarioId(usuarioId);
 		if (optional.isPresent()) {
 		} else {
 			val format = "El usuario con id=%d no existe.";
@@ -112,49 +112,52 @@ public class ChatServiceImpl implements ChatService {
 		}
 	}
 
-	private void CheckAcudienteIniciarConversacion(int acudienteId) {
-		CheckUsuarioExistente(acudienteId);
+	private void CheckAcudienteIniciarConversacion(int usuarioId) {
+		checkUsuarioAcudienteExistente(usuarioId);
 
-		val optional = acudienteRepository.findByUsuarioId(acudienteId);
+		val optional = acudienteRepository.findByUsuarioId(usuarioId);
 		if (!optional.isPresent()) {
 			val acudiente = optional.get();
 			if (acudiente.getToken() == null) {
 				val format = "El acudiente con usuario id=%d existe, pero no ha registrado un token. Antes de iniciar una conversación debe registrar su token";
-				val msg = String.format(format, acudienteId);
+				val msg = String.format(format, usuarioId);
 				throw new RuntimeException(msg);
 			}
 		}
 	}
 
 	private void CheckPasajeroIniciarConversacion(int rutaId, int usuarioAcudienteId, int usuarioPasajeroId) {
-		String msg = null;
-		boolean error = false;
-		val optional = pasajeroService.findByUsuarioId(usuarioPasajeroId);
-
-		if (optional.isPresent()) {
-			val pasajero = optional.get();
-			if (pasajero.getRutaId() != rutaId) {
-				val format = "El pasajero con usuario id=%d no esta asociado a la ruta con id=%d.";
-				msg = String.format(format, usuarioPasajeroId, rutaId);
-				error = true;
-			} else {
-				val acudientes = acudienteRepository.findAllById(pasajero.getAcudientes());
-				val o = acudientes.stream().filter(a -> a.getUsuarioId() == usuarioAcudienteId).findFirst();
-				if (!o.isPresent()) {
-					val format = "El pasajero con usuario id=%d no esta asociado al acudiente con id=%d.";
-					msg = String.format(format, usuarioPasajeroId, usuarioAcudienteId);
-					error = true;
-				}
-			}
-		} else {
-			val format = "El pasajero con usuario id=%d no existe.";
-			msg = String.format(format, usuarioPasajeroId);
-			error = true;
-		}
-
-		if (error) {
-			throw new RuntimeException(msg);
-		}
+		// String msg = null;
+		// boolean error = false;
+		// val optional = pasajeroService.findByUsuarioId(usuarioPasajeroId);
+		//
+		// if (optional.isPresent()) {
+		// val pasajero = optional.get();
+		// if (pasajero.getRutaId() != rutaId) {
+		// val format = "El pasajero con usuario id=%d no esta asociado a la ruta con
+		// id=%d.";
+		// msg = String.format(format, usuarioPasajeroId, rutaId);
+		// error = true;
+		// } else {
+		// val acudientes = acudienteRepository.findAllById(pasajero.getAcudientes());
+		// val o = acudientes.stream().filter(a -> a.getUsuarioId() ==
+		// usuarioAcudienteId).findFirst();
+		// if (!o.isPresent()) {
+		// val format = "El pasajero con usuario id=%d no esta asociado al acudiente con
+		// id=%d.";
+		// msg = String.format(format, usuarioPasajeroId, usuarioAcudienteId);
+		// error = true;
+		// }
+		// }
+		// } else {
+		// val format = "El pasajero con usuario id=%d no existe.";
+		// msg = String.format(format, usuarioPasajeroId);
+		// error = true;
+		// }
+		//
+		// if (error) {
+		// throw new RuntimeException(msg);
+		// }
 	}
 
 	private void CheckConversacionEnviarMensaje(int conversacionId) {

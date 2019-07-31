@@ -41,9 +41,8 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 	protected ConversacionDto asModel(Conversacion entity) {
 		val model = newModel();
 		mapModel(entity, model);
-		
-		model.setRutaId(entity.getRuta().getId());
-		model.setUsuarioMonitorId(entity.getRuta().getMonitorId());
+
+		model.setRutaId(entity.getRutaId());
 		model.setUsuarioAcudienteId(entity.getUsuarioAcudienteId());
 		model.setUsuarioPasajeroId(entity.getUsuarioPasajeroId());
 
@@ -52,9 +51,7 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 
 	@Override
 	protected Conversacion mergeEntity(ConversacionDto model, Conversacion entity) {
-		val ruta = rutaRepository.getOne(model.getRutaId());
-
-		entity.setRuta(ruta);
+		entity.setRutaId(model.getRutaId());
 		entity.setUsuarioAcudienteId(model.getUsuarioAcudienteId());
 		entity.setUsuarioPasajeroId(model.getUsuarioPasajeroId());
 
@@ -68,6 +65,14 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 		return new Conversacion();
 	}
 
+	@Override
+	protected ConversacionDto newModel() {
+		return new ConversacionDto();
+	}
+
+	// -----------------------------------------------------------------------------------
+	// --
+	// -----------------------------------------------------------------------------------
 	@Override
 	public Optional<DatosConversacionDto> findByRutaIdAndUsuarioAcudienteIdAndUsuarioPasajeroId(int rutaId,
 			int acudienteId, int pasajeroId) {
@@ -99,14 +104,16 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 
 	protected DatosConversacionDto asDto(Conversacion entity) {
 		val result = new DatosConversacionDto();
-
-		val monitor = ciberService.findUsuarioById(entity.getRuta().getMonitorId()).get();
-		val acudiente = ciberService.findUsuarioById(entity.getUsuarioAcudienteId()).get();
-		val pasajero = ciberService.findUsuarioById(entity.getUsuarioPasajeroId()).get();
+		int institucionId = 0;
+		val ruta = rutaRepository.findById(entity.getRutaId()).get();
+		val monitor = ciberService.findUsuarioMonitorByInstitucionIdAndUsuarioId(institucionId, ruta.getMonitorId())
+				.get();
+		val acudiente = ciberService.findUsuarioAcudienteByUsuarioId(entity.getUsuarioAcudienteId()).get();
+		val pasajero = ciberService.findUsuarioByUsuarioId(entity.getUsuarioPasajeroId()).get();
 
 		result.setConversacionId(entity.getId());
-		result.setRutaId(entity.getRuta().getId());
-		result.setRutaCodigo(entity.getRuta().getCodigo());
+		result.setRutaId(entity.getRutaId());
+		result.setRutaCodigo(ruta.getCodigo());
 
 		result.setMonitorId(monitor.getId());
 		result.setMonitorNombres(monitor.getNombre());
@@ -121,10 +128,5 @@ public class ConversacionCrudServiceImpl extends CrudServiceImpl<Conversacion, C
 		result.setEstudianteApellidos(pasajero.getApellido());
 
 		return result;
-	}
-
-	@Override
-	protected ConversacionDto newModel() {
-		return new ConversacionDto();
 	}
 }

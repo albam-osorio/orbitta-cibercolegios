@@ -1,0 +1,111 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="ui-g ui-g-nopad border-direccion" style="height: 98%">
+		<h:panelGroup rendered="#{direccion == null}">
+			<div class="ui-g-12 ui-g-nopad">
+				<div class="centrado">
+					<div class="ui-g">
+						<div class="ui-g-6">
+							<p:commandButton value="Agregar" icon="fa fa-plus fa-lg"
+								disabled="#{not usuariosEditController.enableAddDireccion(trayecto,sentido)}"
+								update=":createDialog" style="text-decoration: none">
+								<f:setPropertyActionListener
+									target="#{usuariosDireccionDialogCreateController.trayecto}"
+									value="#{trayecto}" />
+								<f:setPropertyActionListener
+									target="#{usuariosDireccionDialogCreateController.sentido}"
+									value="#{sentido}" />
+								<f:actionListener
+									binding="#{usuariosDireccionDialogCreateController.openDialog('createDialog')}" />
+								<p:resetInput target="createDialog" />
+							</p:commandButton>
+						</div>
+						<div class="ui-g-6">
+							<p:commandButton value="Copiar" icon="fa fa-paste"
+								disabled="#{not usuariosEditController.enableCopyDireccion(trayecto,sentido)}"
+								action="#{usuariosEditController.copyDireccion(trayecto,sentido)}"
+								update="tableItems form:commands" onclick="PF('bui').show()"
+								oncomplete="PF('bui').hide()" onerror="PF('bui').hide()"
+								style="text-decoration: none">
+							</p:commandButton>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:panelGroup>
+
+		<h:panelGroup rendered="#{direccion != null}">
+			<div class="ui-g-1">
+				<h:panelGroup rendered="#{direccion.modificado}">
+					<i class="fa fa-save" style="color: FireBrick;"></i>
+				</h:panelGroup>
+			</div>
+			<div class="ui-g-11">
+				<div style="text-align: right;">
+					<p:commandLink title="Editar"
+						disabled="#{not usuariosEditController.enableEditDireccion(trayecto, direccion)}"
+						update=":editDialog" style="text-decoration: none">
+						<i class="fa fa-pencil"></i>
+						<f:setPropertyActionListener
+							target="#{usuariosDireccionDialogEditController.trayecto}"
+							value="#{trayecto}" />
+						<f:actionListener
+							binding="#{usuariosDireccionDialogEditController.openDialog('editDialog',direccion)}" />
+						<p:resetInput target="editDialog" />
+					</p:commandLink>
+
+					<p:commandLink title="Eliminar"
+						disabled="#{not usuariosEditController.enableDeleteDireccion(trayecto, direccion)}"
+						action="#{usuariosEditController.deleteDireccion(trayecto, direccion)}"
+						update="tableItems form:commands"
+						style="text-decoration: none">
+						<i class="fa fa-remove"></i>
+						<p:confirm header="Confirmación"
+							message="¿Está seguro de eliminar la dirección #{direccion.sentido.descripcion}: #{direccion.ciudadNombre}, #{direccion.direccion}, de este trayecto?"
+							icon="ui-icon-alert">
+						</p:confirm>
+					</p:commandLink>
+				</div>
+			</div>
+			<div class="ui-g-12">
+				<div class="ui-g-3 ui-g-nopad">
+					<h:outputText value="Departamento:" style="font-weight:bold" />
+				</div>
+				<div class="ui-g-3 ui-g-nopad">
+					<h:outputText value="#{direccion.departamentoNombre}" />
+				</div>
+				<div class="ui-g-3 ui-g-nopad">
+					<h:outputText value="Ciudad:" style="font-weight:bold" />
+				</div>
+				<div class="ui-g-3 ui-g-nopad">
+					<h:outputText value="#{direccion.ciudadNombre}" />
+				</div>
+			</div>
+			<div class="ui-g-12">
+				<div class="ui-g-3 ui-g-nopad">
+					<h:outputText value="Dirección:" style="font-weight:bold" />
+				</div>
+				<div class="ui-g-9 ui-g-nopad">
+					<h:outputText value="#{direccion.direccion}" />
+				</div>
+			</div>
+			<div class="ui-g-12">
+				<p:separator></p:separator>
+			</div>
+			<div class="ui-g-12">
+				<div class="ui-g-3 ui-g-nopad">
+					<h:outputText value="Coordenadas?:" style="font-weight:bold" />
+				</div>
+				<div class="ui-g-3 ui-g-nopad">
+					<h:outputText value="#{direccion.geoCodificada?'Si':'No'}" />
+				</div>
+			</div>
+		</h:panelGroup>
+	</div>
+
+</ui:composition>

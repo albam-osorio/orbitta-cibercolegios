@@ -6,13 +6,14 @@ import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tbf.cibercolegios.api.routes.model.graph.tracking.ListaAbordajeDto;
 import com.tbf.cibercolegios.api.routes.model.graph.tracking.MonitorDatosRutaDto;
 
 public interface MonitorTrackingService {
 
 	@Transactional(readOnly = false)
-	void registrarMonitor(int monitorId, String token);
-	
+	void registrarMonitor(int institucionId, int monitorId, String token);
+
 	/**
 	 * Un monitor invoca este servicio como prerrequisito para poder iniciar su
 	 * recorrido. Un monitor puede estar asociado a más de una ruta. Este listado le
@@ -23,14 +24,16 @@ public interface MonitorTrackingService {
 	 *         requerida por la app de un usuario monitor
 	 */
 	@Transactional(readOnly = true)
-	List<MonitorDatosRutaDto> findRutasByMonitorId(int monitorId);
+	List<MonitorDatosRutaDto> findRutasByInstitucionIdAndMonitorId(int institucionId, int monitorId);
 
 	@Transactional(readOnly = true)
 	Optional<MonitorDatosRutaDto> findRutaByRutaId(int rutaId);
 
 	@Transactional(readOnly = false)
-	MonitorDatosRutaDto iniciarRecorrido(int monitorId, int rutaId, BigDecimal x, BigDecimal y, int sentido,
-			String token);
+	MonitorDatosRutaDto iniciarRecorrido(int monitorId, int rutaId, BigDecimal x, BigDecimal y, int sentido);
+
+	@Transactional(readOnly = false)
+	MonitorDatosRutaDto registrarAbordaje(ListaAbordajeDto lista);
 
 	@Transactional(readOnly = false)
 	int registrarPosicion(int rutaId, BigDecimal x, BigDecimal y);

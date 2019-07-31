@@ -4,52 +4,34 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
 
+	<ui:define name="dialogs">
+		<ui:include src="/rutas/dialog-create.xhtml" />
+		<ui:include src="/rutas/dialog-edit.xhtml" />
+	</ui:define>
+
 	<ui:define name="title">
 		<h:outputText value="CREACIÓN Y ADMINISTRACIÓN DE RUTAS" />
 	</ui:define>
 
-	<ui:define name="dialogs">
-		<ui:include src="/rutas/dialog-create.xhtml" />
-		<ui:include src="/rutas/dialog-edit.xhtml" />
-		<ui:include src="/rutas/dialog-assign.xhtml" />
-
-		<p:confirmDialog global="true" closeOnEscape="true">
-			<h:form>
-				<p:commandButton value="Sí" type="button"
-					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-				<p:commandButton value="No" type="button"
-					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-			</h:form>
-		</p:confirmDialog>
-	</ui:define>
-
-	<ui:define name="messages">
-		<p:messages id="messages" showDetail="true" closable="true"
-			redisplay="false" />
-	</ui:define>
-
 	<ui:define name="body">
 		<h:panelGroup rendered="#{rutasCrudController.initialized}">
-
-			<h:form id="listForm">
-				<p:blockUI block="entirePage" widgetVar="bui" />
-				<div>
-					<p:dataTable id="listTable" var="item"
-						value="#{rutasCrudController.models}"
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<p:dataTable var="item" value="#{rutasCrudController.models}"
 						selection="#{rutasCrudController.selection}"
-						rowKey="#{item.ruta.id}" reflow="true" rows="5" paginator="true"
-						sortMode="multiple">
+						rowKey="#{item.ruta.id}" reflow="true" rows="10" paginator="true"
+						emptyMessage="No se encontraron registros">
 
 						<f:facet name="header">
-							<p:toolbar id="toolbarHeader">
+							<h:panelGroup id="toolbarHeader">
 								<ui:include src="/rutas/default-toolbar.xhtml" />
-							</p:toolbar>
+							</h:panelGroup>
 						</f:facet>
 
 						<f:facet name="footer">
-							<p:toolbar id="toolbarFooter">
+							<h:panelGroup id="toolbarFooter">
 								<ui:include src="/rutas/default-toolbar.xhtml" />
-							</p:toolbar>
+							</h:panelGroup>
 						</f:facet>
 
 						<p:ajax event="rowSelect" update="toolbarHeader toolbarFooter" />
@@ -60,51 +42,51 @@
 							update="toolbarHeader toolbarFooter" />
 
 						<p:column selectionMode="multiple"
-							style="width:16px;text-align:center" />
+							style="width:48px;text-align:center;" />
 
-						<p:column headerText="ID" sortable="true"
-							style="text-align: right" visible="false">
-							<h:outputText value="#{item.ruta.id}" />
-						</p:column>
 						<p:column headerText="CÓDIGO" sortBy="#{item.ruta.codigo}"
-							filterBy="#{item.ruta.codigo}">
+							filterBy="#{item.ruta.codigo}" filterMatchMode="contains" style="width:10%;text-align:center;">
 							<h:outputText value="#{item.ruta.codigo}" />
 						</p:column>
 						<p:column headerText="DESCRIPCIÓN"
 							sortBy="#{item.ruta.descripcion}"
-							filterBy="#{item.ruta.descripcion}">
+							filterBy="#{item.ruta.descripcion}" filterMatchMode="contains" style="width:15%;">
 							<h:outputText value="#{item.ruta.descripcion}" />
 						</p:column>
 						<p:column headerText="CONDUCTOR"
 							sortBy="#{item.ruta.conductorNombres}"
-							filterBy="#{item.ruta.conductorNombres}">
+							filterBy="#{item.ruta.conductorNombres}"
+							filterMatchMode="contains" style="width:15%;">
 							<h:outputText value="#{item.ruta.conductorNombres}" />
 						</p:column>
 						<p:column headerText="MONITOR" sortBy="#{item.nombreMonitor}"
-							filterBy="#{item.nombreMonitor}">
+							filterBy="#{item.nombreMonitor}" filterMatchMode="contains" style="width:15%;">
 							<h:outputText value="#{item.nombreMonitor}" />
+						</p:column>
+						<p:column headerText="OCUPACION AM" sortBy="#{item.ocupacionAm}"
+							filterBy="#{item.ocupacionAm}" filterMatchMode="contains" style="width:10%;text-align:center;">
+							<h:outputText value="#{item.ocupacionAm}" />
+						</p:column>
+						<p:column headerText="OCUPACION PM" sortBy="#{item.ocupacionPm}"
+							filterBy="#{item.ocupacionPm}" filterMatchMode="contains" style="width:10%;text-align:center;">
+							<h:outputText value="#{item.ocupacionPm}" />
 						</p:column>
 						<p:column headerText="CAPACIDAD MAX"
 							sortBy="#{item.ruta.capacidadMaxima}"
-							filterBy="#{item.ruta.capacidadMaxima}">
+							filterBy="#{item.ruta.capacidadMaxima}"
+							filterMatchMode="contains" style="width:10%;text-align:center;">
 							<h:outputText value="#{item.ruta.capacidadMaxima}" />
 						</p:column>
-						<p:column headerText="INSCRITOS" sortBy="#{item.inscritos}"
-							filterBy="#{item.inscritos}">
-							<h:outputText value="#{item.inscritos}" />
-						</p:column>
-						<p:column headerText="OPCIONES" style="text-align: center">
-							<p:commandButton value="Asignar" icon="fa fa-users"
-								actionListener="#{rutasDialogAssignController.openDialog('assignDialog',item)}"
-								update="assignDialog" onclick="PF('bui').show()"
-								resetValues="true" />
+						<p:column style="text-align: center">
+							<p:button value="OPCIONES" outcome="edit-ruta" icon="fa fa-gear">
+								<f:param name="paramBackUrl"
+									value="#{rutasCrudController.paramBackUrl}" />
+								<f:param name="rutaId" value="#{item.ruta.id}" />
+							</p:button>
 						</p:column>
 					</p:dataTable>
 				</div>
-				<div class="footer-commands-container">
-					<div class="footer-commands-content" />
-				</div>
-			</h:form>
+			</div>
 
 		</h:panelGroup>
 	</ui:define>

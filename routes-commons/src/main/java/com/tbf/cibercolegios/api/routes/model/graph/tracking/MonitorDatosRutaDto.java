@@ -4,9 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.tbf.cibercolegios.api.model.routes.enums.CourseType;
 import com.tbf.cibercolegios.api.model.routes.enums.RouteTypeStatus;
-import com.tbf.cibercolegios.api.routes.model.graph.LogRutaDto;
-import com.tbf.cibercolegios.api.routes.model.graph.RutaDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -76,23 +75,24 @@ public class MonitorDatosRutaDto extends AbstractDatosRutaDto {
 		}
 		return result;
 	}
-	
+
 	public String getDestino() {
-		if(this.getUltimoSentido() != null) {
-			switch (this.getUltimoSentido()) {
-			case RutaDto.SENTIDO_IDA:
+		val sentido = CourseType.asEnum(this.getUltimoSentido());
+		if (sentido != null) {
+			switch (sentido) {
+			case SENTIDO_IDA:
 				return "CAMINO AL COLEGIO";
-			case RutaDto.SENTIDO_RETORNO:
+			case SENTIDO_RETORNO:
 				return "CAMINO A CASA";
 			default:
 				return "DESCONOCIDO";
 			}
-		}else {
+		} else {
 			return "";
 		}
 	}
 
-	private LogRutaDto logRuta;
+	// private LogRutaDto logRuta;
 
 	private List<DatosPasajeroDto> pasajeros;
 }

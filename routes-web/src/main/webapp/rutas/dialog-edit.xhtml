@@ -16,258 +16,280 @@
 							<h:outputText value="#{rutasDialogEditController.title}" />
 						</div>
 					</div>
+
 					<div class="body-container">
-						<h:inputHidden
-							value="#{rutasDialogEditController.model.ruta.id}" />
+						<h:inputHidden value="#{rutasDialogEditController.model.ruta.id}" />
 
-						<p:scrollPanel mode="native" style="width:600px;height:420px;">
-							<p:focus />
-							<div class="ui-g">
-								<p:messages id="editDialogMensajes" showDetail="false"
-									closable="true" globalOnly="true" />
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Código" />
-								</div>
-								<div class="ui-g-8">
-									<p:inputText id="codigo"
-										value="#{rutasDialogEditController.model.ruta.codigo}"
-										required="true" maxlength="3" label="Código" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Descripción" />
-								</div>
-								<div class="ui-g-8">
-									<p:inputText id="descripcion"
-										value="#{rutasDialogEditController.model.ruta.descripcion}"
-										required="true" maxlength="100" label="Descripción" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Marca vehículo" />
-								</div>
-								<div class="ui-g-8">
-									<p:inputText id="marca"
-										value="#{rutasDialogEditController.model.ruta.marca}"
-										required="true" maxlength="100" label="Marca vehículo" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Placa vehículo" />
-								</div>
-								<div class="ui-g-8">
-									<p:inputText id="placa"
-										value="#{rutasDialogEditController.model.ruta.placa}"
-										required="true" maxlength="100" label="Placa vehículo" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Capacidad máxima" />
-								</div>
-								<div class="ui-g-8">
-									<p:inputText id="capacidadMaxima"
-										value="#{rutasDialogEditController.model.ruta.capacidadMaxima}"
-										required="true" maxlength="3" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-12">
-									<h:outputLabel value="Conductor" style="font-weight: bold;" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Nombre conductor" />
-								</div>
-								<div class="ui-g-8">
-									<p:inputText id="conductorNombres"
-										value="#{rutasDialogEditController.model.ruta.conductorNombres}"
-										required="true" maxlength="100" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-12">
-									<h:outputLabel value="Monitor" style="font-weight: bold;" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Tipo documento" />
-								</div>
-								<div class="ui-g-8">
-									<p:selectOneMenu id="tipoIdentificacionId"
-										value="#{rutasDialogEditController.model.tipoIdentificacionId}"
-										filter="true" filterMatchMode="startsWith" required="true">
-										<p:ajax
-											listener="#{rutasDialogEditController.onChangeIdentificacion}"
-											process="@this numeroIdentificacion" update="nombreMonitor" />
-										<f:selectItem noSelectionOption="true" itemLabel="" />
-										<f:selectItems
-											value="#{rutasDialogEditController.listaTipoDocumento}" />
-									</p:selectOneMenu>
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Número documento" />
-								</div>
-								<div class="ui-g-8">
-									<p:inputText id="numeroIdentificacion"
-										value="#{rutasDialogEditController.model.numeroIdentificacion}" required="true">
-										<p:ajax
-											listener="#{rutasDialogEditController.onChangeIdentificacion}"
-											process="@this tipoIdentificacionId" update="nombreMonitor" />
-									</p:inputText>
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4"></div>
-								<div class="ui-g-8">
-									<h:outputText id="nombreMonitor"
-										value="#{rutasDialogEditController.model.nombreMonitor}">
-									</h:outputText>
-								</div>
-								<div class="ui-g-1"></div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Móvil" />
-								</div>
-								<div class="ui-g-8">
-									<p:inputText id="movil"
-										value="#{rutasDialogEditController.model.ruta.movil}"
-										required="true" maxlength="10" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-12">
-									<h:outputLabel value="Dirección sede"
-										style="font-weight: bold;" />
-								</div>
-							</div>
-							<div class="ui-g">
-								<div class="ui-g-4">
-									<h:outputLabel value="Tipo" />
-								</div>
-								<div class="ui-g-8">
-									<p:selectOneRadio id="usarDireccionExistente"
-										value="#{rutasDialogEditController.model.usarDireccionExistente}">
-										<p:ajax
-											listener="#{rutasDialogEditController.onChangeUsarDireccionExistente}"
-											process="@this" update="direccionNueva direccionExistente" />
-										<f:selectItem itemLabel="Existente" itemValue="#{true}" />
-										<f:selectItem itemLabel="Nueva" itemValue="#{false}" />
-									</p:selectOneRadio>
-								</div>
-							</div>
+						<p:focus />
+						<p:panel style="width:680px;height:480px;">
+							<div class="ui-g ui-g-nopad">
+								<div class="ui-g-12 ui-g-nopad">
 
-							<h:panelGroup id="direccionNueva">
-								<h:panelGroup
-									rendered="#{!rutasDialogEditController.model.usarDireccionExistente}">
-									<div class="ui-g">
-										<div class="ui-g-4">
-											<h:outputLabel value="Departamento" />
-										</div>
-										<div class="ui-g-8">
-											<p:selectOneMenu id="departamento"
-												value="#{rutasDialogEditController.model.departamentoId}"
-												filter="true" filterMatchMode="contains" style="width:10em;" required="#{not rutasDialogEditController.model.usarDireccionExistente}">
-												<p:ajax
-													listener="#{rutasDialogEditController.onChangeDepartamento}"
-													process="@this" update="ciudad" />
-												<f:selectItem noSelectionOption="true" itemLabel="" />
-												<f:selectItems
-													value="#{rutasDialogEditController.listaDepartamento}" />
-											</p:selectOneMenu>
-										</div>
-									</div>
-									<div class="ui-g">
-										<div class="ui-g-4">
-											<h:outputLabel value="Ciudad" />
-										</div>
-										<div class="ui-g-8">
-											<p:selectOneMenu id="ciudad"
-												value="#{rutasDialogEditController.model.ciudadId}"
-												filter="true" filterMatchMode="contains" style="width:10em;" required="#{not rutasDialogEditController.model.usarDireccionExistente}">
-												<f:selectItem noSelectionOption="true" itemLabel="" />
-												<f:selectItems
-													value="#{rutasDialogEditController.listaCiudad}" />
-											</p:selectOneMenu>
-										</div>
-									</div>
-									<div class="ui-g">
-										<div class="ui-g-4">
-											<h:outputLabel value="Dirección nueva" />
-										</div>
-										<div class="ui-g-8">
-											<p:inputText id="direccion"
-												value="#{rutasDialogEditController.model.direccionNueva}"
-												maxlength="100" required="#{not rutasDialogEditController.model.usarDireccionExistente}"/>
-										</div>
-									</div>
-								</h:panelGroup>
-							</h:panelGroup>
-							<h:panelGroup id="direccionExistente">
-								<h:panelGroup
-									rendered="#{rutasDialogEditController.model.usarDireccionExistente}">
+									<p:scrollPanel mode="native" style="height:440px;">
 
-									<div class="ui-g">
-										<div class="ui-g-4">
-											<h:outputLabel value="Dirección" />
+										<div class="ui-g">
+											<div class="ui-g-12">
+												<p:messages severity="warn error fatal" escape="false"
+													closable="true">
+													<p:autoUpdate />
+												</p:messages>
+											</div>
 										</div>
-										<div class="ui-g-8">
-											<p:selectOneMenu
-												value="#{rutasDialogEditController.model.ruta.direccionSedeId}"
-												filter="true" filterMatchMode="contains" style="width:10em;"
-												label="Dirección" required="#{rutasDialogEditController.model.usarDireccionExistente}">
-												<p:ajax
-													listener="#{rutasDialogEditController.onChangeDireccionExistente}"
-													process="@this" update="direccionExistenteCompleta" />
-												<f:selectItem noSelectionOption="true" itemLabel="" />
-												<f:selectItems
-													value="#{rutasDialogEditController.listaDireccion}" />
-											</p:selectOneMenu>
-										</div>
-									</div>
-									<div class="ui-g">
-										<div class="ui-g-4"></div>
-										<div class="ui-g-8">
-											<h:outputText id="direccionExistenteCompleta"
-												value="#{rutasDialogEditController.model.direccionExistente}" />
-										</div>
-										<div class="ui-g-1"></div>
-									</div>
-								</h:panelGroup>
-							</h:panelGroup>
 
-						</p:scrollPanel>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Código *" />
+											</div>
+											<div class="ui-g-8">
+												<h:outputText id="codigo"
+													value="#{rutasDialogEditController.model.ruta.codigo}" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Descripción *" />
+											</div>
+											<div class="ui-g-8">
+												<p:inputText id="descripcion"
+													value="#{rutasDialogEditController.model.ruta.descripcion}"
+													required="true" maxlength="100" label="Descripción" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Marca vehículo *" />
+											</div>
+											<div class="ui-g-8">
+												<p:inputText id="marca"
+													value="#{rutasDialogEditController.model.ruta.marca}"
+													required="true" maxlength="100" label="Marca vehículo" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Placa vehículo *" />
+											</div>
+											<div class="ui-g-8">
+												<p:inputText id="placa"
+													value="#{rutasDialogEditController.model.ruta.placa}"
+													required="true" maxlength="100" label="Placa vehículo" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Capacidad máxima *" />
+											</div>
+											<div class="ui-g-8">
+												<p:inputText id="capacidadMaxima"
+													value="#{rutasDialogEditController.model.ruta.capacidadMaxima}"
+													required="true" maxlength="3" label="Capacidad máxima" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-12">
+												<h:outputLabel value="CONDUCTOR" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Nombre conductor *" />
+											</div>
+											<div class="ui-g-8">
+												<p:inputText id="conductorNombres"
+													value="#{rutasDialogEditController.model.ruta.conductorNombres}"
+													required="true" maxlength="100" label="Nombre conductor" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-12">
+												<h:outputLabel value="MONITOR" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Tipo documento *" />
+											</div>
+											<div class="ui-g-8">
+												<p:selectOneMenu id="tipoIdentificacionId"
+													value="#{rutasDialogEditController.model.tipoIdentificacionId}"
+													filter="true" filterMatchMode="contains"
+													label="Tipo documento">
+													<p:ajax
+														listener="#{rutasDialogEditController.onChangeIdentificacion}"
+														process="@this numeroIdentificacion"
+														update="nombreMonitor" />
+													<f:selectItem noSelectionOption="true" itemLabel="" />
+													<f:selectItems
+														value="#{rutasDialogEditController.listaTipoIdentificacion}" />
+												</p:selectOneMenu>
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Número documento *" />
+											</div>
+											<div class="ui-g-8">
+												<p:inputText id="numeroIdentificacion"
+													value="#{rutasDialogEditController.model.numeroIdentificacion}"
+													label="Número documento">
 
+													<p:ajax
+														listener="#{rutasDialogEditController.onChangeIdentificacion}"
+														process="@this tipoIdentificacionId"
+														update="nombreMonitor" />
+												</p:inputText>
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4"></div>
+											<div class="ui-g-8">
+												<h:outputText id="nombreMonitor"
+													value="#{rutasDialogEditController.model.nombreMonitor}">
+												</h:outputText>
+											</div>
+											<div class="ui-g-1"></div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Móvil *" />
+											</div>
+											<div class="ui-g-8">
+												<p:inputText id="movil"
+													value="#{rutasDialogEditController.model.ruta.movil}"
+													required="true" maxlength="10" label="Móvil" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-12">
+												<h:outputLabel value="DIRECCIÓN SEDE" />
+											</div>
+										</div>
+										<div class="ui-g">
+											<div class="ui-g-4">
+												<h:outputLabel value="Tipo *" />
+											</div>
+											<div class="ui-g-8">
+												<p:selectOneRadio id="usarDireccionExistente"
+													value="#{rutasDialogEditController.model.usarDireccionExistente}">
+													<p:ajax
+														listener="#{rutasDialogEditController.onChangeUsarDireccionExistente}"
+														process="@this" update="direccionNueva direccionExistente" />
+													<f:selectItem itemLabel="Existente" itemValue="#{true}" />
+													<f:selectItem itemLabel="Nueva" itemValue="#{false}" />
+												</p:selectOneRadio>
+											</div>
+										</div>
+
+										<h:panelGroup id="direccionNueva">
+											<h:panelGroup
+												rendered="#{!rutasDialogEditController.model.usarDireccionExistente}">
+												<div class="ui-g">
+													<div class="ui-g-4">
+														<h:outputLabel value="Departamento *" />
+													</div>
+													<div class="ui-g-8">
+														<p:selectOneMenu id="departamento"
+															value="#{rutasDialogEditController.model.departamentoId}"
+															filter="true" filterMatchMode="contains"
+															style="width:20em;"
+															required="#{not rutasDialogEditController.model.usarDireccionExistente}"
+															label="Departamento">
+															<p:ajax
+																listener="#{rutasDialogEditController.onChangeDepartamento}"
+																process="@this" update="ciudad" />
+															<f:selectItem noSelectionOption="true" itemLabel="" />
+															<f:selectItems
+																value="#{rutasDialogEditController.listaDepartamento}" />
+														</p:selectOneMenu>
+													</div>
+												</div>
+												<div class="ui-g">
+													<div class="ui-g-4">
+														<h:outputLabel value="Municipio *" />
+													</div>
+													<div class="ui-g-8">
+														<p:selectOneMenu id="ciudad"
+															value="#{rutasDialogEditController.model.ciudadId}"
+															filter="true" filterMatchMode="contains"
+															style="width:20em;"
+															required="#{not rutasDialogEditController.model.usarDireccionExistente}"
+															label="Municipio">
+															<f:selectItem noSelectionOption="true" itemLabel="" />
+															<f:selectItems
+																value="#{rutasDialogEditController.listaCiudad}" />
+														</p:selectOneMenu>
+													</div>
+												</div>
+												<div class="ui-g">
+													<div class="ui-g-4">
+														<h:outputLabel value="Dirección nueva *" />
+													</div>
+													<div class="ui-g-8">
+														<p:inputText id="direccion"
+															value="#{rutasDialogEditController.model.direccionNueva}"
+															maxlength="100" size="50"
+															required="#{not rutasDialogEditController.model.usarDireccionExistente}"
+															label="Dirección" />
+													</div>
+												</div>
+											</h:panelGroup>
+										</h:panelGroup>
+										<h:panelGroup id="direccionExistente">
+											<h:panelGroup
+												rendered="#{rutasDialogEditController.model.usarDireccionExistente}">
+
+												<div class="ui-g">
+													<div class="ui-g-4">
+														<h:outputLabel value="Dirección *" />
+													</div>
+													<div class="ui-g-8">
+														<p:selectOneMenu
+															value="#{rutasDialogEditController.model.ruta.direccionSedeId}"
+															filter="true" filterMatchMode="contains"
+															style="width:20em;" label="Dirección"
+															required="#{rutasDialogEditController.model.usarDireccionExistente}">
+															<p:ajax
+																listener="#{rutasDialogEditController.onChangeDireccionExistente}"
+																process="@this" update="direccionExistenteCompleta" />
+															<f:selectItems
+																value="#{rutasDialogEditController.listaDireccion}" />
+														</p:selectOneMenu>
+													</div>
+												</div>
+												<div class="ui-g">
+													<div class="ui-g-4"></div>
+													<div class="ui-g-8">
+														<h:outputText id="direccionExistenteCompleta"
+															value="#{rutasDialogEditController.model.direccionExistente}" />
+													</div>
+													<div class="ui-g-1"></div>
+												</div>
+											</h:panelGroup>
+										</h:panelGroup>
+
+									</p:scrollPanel>
+								</div>
+							</div>
+						</p:panel>
 					</div>
+
 					<div class="footer-commands-container">
 						<div class="footer-commands-content">
-							<p:commandButton
+							<p:commandButton widgetVar="submitButton"
 								value="#{rutasDialogEditController.actionLabel}"
 								actionListener="#{rutasDialogEditController.submit()}"
-								process="@form"
-								action="#{rutasCrudController.find()}"
-								update=" :editForm :editForm:editDialogMensajes listForm">
+								action="#{rutasCrudController.find()}" update=" @form form"
+								onclick="PF('submitButton').disable()"
+								oncomplete="PF('submitButton').enable()"
+								onerror="PF('submitButton').enable()">
 							</p:commandButton>
 							<p:commandButton value="Cancelar"
 								actionListener="#{rutasDialogEditController.closeDialog()}"
-								process="@this" oncomplete="PF('bui').hide()"
-								update=" :editForm" />
-
+								process="@this" oncomplete="PF('bui').hide()"></p:commandButton>
 						</div>
 					</div>
 				</div>
 
-				<p:keyFilter for="codigo" mask="pint" preventPaste="false" />
 				<p:keyFilter for="capacidadMaxima" mask="pint" preventPaste="false" />
 				<p:keyFilter for="numeroIdentificacion" mask="pint"
 					preventPaste="false" />

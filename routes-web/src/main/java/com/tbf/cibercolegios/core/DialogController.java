@@ -12,7 +12,7 @@ public abstract class DialogController<T, E> extends AbstractController<E> {
 
 	private static final long serialVersionUID = 1L;
 
-	protected static final String DEFAULT_SUCCESS_MESSAGE = "El registro se grabó exitosamente";
+	protected static final String DEFAULT_SUCCESS_MESSAGE = "La información se registró correctamente";
 
 	private T model;
 

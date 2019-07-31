@@ -2,6 +2,7 @@ package com.tbf.cibercolegios.api.routes.services.impl.tracking;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,12 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tbf.cibercolegios.api.ciber.services.api.CiberService;
+import com.tbf.cibercolegios.api.model.routes.enums.CourseType;
 import com.tbf.cibercolegios.api.model.routes.enums.RouteTypeStatus;
 import com.tbf.cibercolegios.api.routes.model.graph.LogPasajeroDto;
 import com.tbf.cibercolegios.api.routes.model.graph.LogRutaDto;
 import com.tbf.cibercolegios.api.routes.model.graph.PasajeroDto;
 import com.tbf.cibercolegios.api.routes.model.graph.RutaDto;
+import com.tbf.cibercolegios.api.routes.model.graph.tracking.ListaAbordajeDto;
 import com.tbf.cibercolegios.api.routes.model.graph.tracking.MonitorDatosRutaDto;
+import com.tbf.cibercolegios.api.routes.services.api.DireccionService;
 import com.tbf.cibercolegios.api.routes.services.api.EstadoPasajeroService;
 import com.tbf.cibercolegios.api.routes.services.api.EstadoRutaService;
 import com.tbf.cibercolegios.api.routes.services.api.LogPasajeroService;
@@ -39,6 +43,9 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	private CiberService ciberService;
 
 	@Autowired
+	private DireccionService direccionService;
+
+	@Autowired
 	private EstadoRutaService estadoRutaService;
 
 	@Autowired
@@ -55,10 +62,10 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public void registrarMonitor(int monitorId, String token) {
-		CheckUsuarioExistente(monitorId);
+	public void registrarMonitor(int institucionId, int monitorId, String token) {
+		CheckMonitorUsuarioExistente(institucionId, monitorId);
 
-		val rutas = rutaService.findAllByMonitorId(monitorId);
+		val rutas = rutaService.findAllByInstitucionIdAndMonitorId(institucionId, monitorId);
 		if (!rutas.isEmpty()) {
 			for (val ruta : rutas) {
 				ruta.setToken(token);
@@ -72,8 +79,8 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	}
 
 	@Override
-	public List<MonitorDatosRutaDto> findRutasByMonitorId(int monitorId) {
-		val result = rutaService.findAllByMonitorIdAsMonitorDatosRuta(monitorId);
+	public List<MonitorDatosRutaDto> findRutasByInstitucionIdAndMonitorId(int institucionId, int monitorId) {
+		val result = rutaService.findAllByInstitucionIdAndMonitorIdAsMonitorDatosRuta(institucionId, monitorId);
 		return result;
 	}
 
@@ -84,11 +91,10 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	}
 
 	@Override
-	public MonitorDatosRutaDto iniciarRecorrido(int monitorId, int rutaId, BigDecimal x, BigDecimal y, int sentido,
-			String token) {
+	public MonitorDatosRutaDto iniciarRecorrido(int monitorId, int rutaId, BigDecimal x, BigDecimal y, int sentido) {
 
 		val ruta = rutaService.findOneById(rutaId);
-		val pasajeros = pasajeroService.findAllByRutaId(rutaId);
+		val pasajeros = new ArrayList<PasajeroDto>();// pasajeroService.findAllPasajeroDireccionByRutaId(rutaId);
 
 		checkMonitorParaIniciarRecorrido(monitorId, ruta);
 		checkRutaParaIniciarRecorrido(ruta, sentido);
@@ -100,17 +106,64 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 
 		createLogRuta(rutaId, sentido, estadoRutaInicio.getId(), x, y);
 
-		//ruta.setToken(token);
-		ruta.setFechaUltimoRecorrido(LocalDate.now());
+		ruta.setFechaUltimoEvento(LocalDateTime.now());
 		ruta.setSentido(sentido);
 		ruta.setEstadoId(estadoRutaPredeterminado.getId());
 		createLogRuta(ruta, x, y);
+
+		// TODO
+		if (sentido == CourseType.SENTIDO_RETORNO.getIntValue()) {
+			val direccion = direccionService.findOneById(ruta.getDireccionSedeId());
+			if (direccion.getX() == null && direccion.getY() == null) {
+				direccion.setX(x);
+				direccion.setY(y);
+				direccionService.update(direccion);
+			}
+		}
 
 		for (val pasajero : pasajeros) {
 			createLogPasajero(pasajero, sentido, estadoPasajeroInicio.getId(), x, y);
 		}
 
 		val result = rutaService.findByIdAsMonitorDatosRuta(rutaId);
+		return result.get();
+	}
+
+	@Override
+	public MonitorDatosRutaDto registrarAbordaje(ListaAbordajeDto lista) {
+		val ruta = rutaService.findOneById(lista.getRutaId());
+
+		checkRutaIsActiva(ruta);
+
+		if (ruta.getSentido() != CourseType.SENTIDO_RETORNO.getIntValue()) {
+			val format = "La ruta con id=%d y código %s debe estar en un recorrido de retorno para poder inicializar el abordaje.";
+			String msg = String.format(format, ruta.getId(), ruta.getCodigo());
+			throw new RuntimeException(msg);
+		}
+
+		val pasajeros = new ArrayList<PasajeroDto>();// pasajeroService.findAllPasajeroDireccionByRutaId(ruta.getId());
+		// Por ahora confio en que l llama cuando toca
+
+		// val estados = estadoPasajeroService.findAll().stream().filter(a -> a.getId()
+		// == 3 || a.getId() == 6).collect(Collectors.toList());
+
+		// val estadoAbordo = estados.stream().filter(a-> a.getId() ==
+		// 6).findFirst().get();
+		// val estadoNoAbordo = estados.stream().filter(a-> a.getId() ==
+		// 3).findFirst().get();
+
+		// Toca revisar que hacer si no envian todos los que son
+
+		for (val status : lista.getPasajeros()) {
+			val optional = pasajeros.stream().filter(a -> a.getUsuarioId() == status.getUsuarioId()).findFirst();
+
+			if (optional.isPresent()) {
+				val pasajero = optional.get();
+				createLogPasajero(pasajero, ruta.getSentido(), status.getEstado(), ruta.getX(), ruta.getY());
+			}
+		}
+
+		val result = rutaService.findByIdAsMonitorDatosRuta(ruta.getId());
 		return result.get();
 	}
 
@@ -139,12 +192,12 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	@Override
 	public int registrarParadaPasajero(int rutaId, BigDecimal x, BigDecimal y, int usuarioId, int estadoPasajeroId) {
 		val ruta = rutaService.findOneById(rutaId);
-		val pasajero = pasajeroService.findByUsuarioId(usuarioId);
-
-		checkRutaIsActiva(ruta);
-		checkPasajeroParaRegistrarParada(ruta, pasajero);
-
-		createLogPasajero(pasajero.get(), ruta.getSentido(), estadoPasajeroId, x, y);
+		// val pasajero = pasajeroService.findByRutaIdAndUsuarioId(rutaId,usuarioId);
+		//
+		// checkRutaIsActiva(ruta);
+		// checkPasajeroParaRegistrarParada(ruta, pasajero);
+		//
+		// createLogPasajero(pasajero.get(), ruta.getSentido(), estadoPasajeroId, x, y);
 
 		val result = createLogRuta(ruta, x, y);
 		return result.getId();
@@ -204,45 +257,54 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 		String msg = "";
 		boolean error = false;
 
-		if (ruta.getFechaUltimoRecorrido() != null) {
+		if (ruta.getFechaUltimoEvento() != null) {
 			val now = LocalDate.now();
-			int compareTo = ruta.getFechaUltimoRecorrido().compareTo(now);
+			int compareTo = ruta.getFechaUltimoEvento().toLocalDate().compareTo(now);
 
-			if (compareTo == 0) {
-				if (ruta.getSentido() == sentido) {
-					if (ruta.getTipoEstado().isActiva()) {
-						val format = "La ruta con id=%d y código %s ha iniciado el recorrido en sentido %s. No es posible iniciar el mismo tipo de recorrido el mismo día.";
-						msg = String.format(format, ruta.getId(), ruta.getCodigo(), getDescripcionSentido(sentido));
-						error = true;
-					}
-
-					if (ruta.getTipoEstado().isFinalizado()) {
-						val format = "La ruta con id=%d y código %s ya ha finalizado su recorrido en sentido %s. No es posible iniciar el mismo tipo de recorrido el mismo día.";
-						msg = String.format(format, ruta.getId(), ruta.getCodigo(), getDescripcionSentido(sentido));
-						error = true;
-					}
-				} else {
-					if (ruta.getSentido() == RutaDto.SENTIDO_RETORNO && ruta.getTipoEstado().isFinalizado()) {
-						val format = "La ruta con id=%d y código %s ya ha finalizado su recorrido en sentido %s. No es posible iniciar un nuevo recorrido el mismo día.";
-						msg = String.format(format, ruta.getId(), ruta.getCodigo(),
-								getDescripcionSentido(RutaDto.SENTIDO_RETORNO));
-						error = true;
-					}
-				}
-			} else {
-				if (compareTo < 0) {
-//					if (ruta.getTipoEstado().isActiva()) {
-//						val format = "La ruta con id=%d y código %s ya se encuentra activa. No es posible iniciar un nuevo recorrido hasta no haber finalizado el actual.";
-//						msg = String.format(format, ruta.getId(), ruta.getCodigo());
-//						error = true;
-//					}
-				} else {
-					val format = "La ruta con id=%d y código %s se encuentra en un estado inconsistente. Tiene una fecha de último recorrido igual a %s y la fecha del sistema es igual a %s. CONTACTAR A SOPORTE TÉCNICO.";
-					msg = String.format(format, ruta.getId(), ruta.getCodigo(),
-							ruta.getFechaUltimoRecorrido().toString(), now.toString());
-					error = true;
-				}
-			}
+			// if (compareTo == 0) {
+			// if (ruta.getSentido() == sentido) {
+			// if (ruta.getTipoEstado().isActiva()) {
+			// val format = "La ruta con id=%d y código %s ha iniciado el recorrido en
+			// sentido %s. No es posible iniciar el mismo tipo de recorrido el mismo día.";
+			// msg = String.format(format, ruta.getId(), ruta.getCodigo(),
+			// getDescripcionSentido(sentido));
+			// error = true;
+			// }
+			//
+			// if (ruta.getTipoEstado().isFinalizado()) {
+			// val format = "La ruta con id=%d y código %s ya ha finalizado su recorrido en
+			// sentido %s. No es posible iniciar el mismo tipo de recorrido el mismo día.";
+			// msg = String.format(format, ruta.getId(), ruta.getCodigo(),
+			// getDescripcionSentido(sentido));
+			// error = true;
+			// }
+			// } else {
+			// if (ruta.getSentido() == RutaDto.SENTIDO_RETORNO &&
+			// ruta.getTipoEstado().isFinalizado()) {
+			// val format = "La ruta con id=%d y código %s ya ha finalizado su recorrido en
+			// sentido %s. No es posible iniciar un nuevo recorrido el mismo día.";
+			// msg = String.format(format, ruta.getId(), ruta.getCodigo(),
+			// getDescripcionSentido(RutaDto.SENTIDO_RETORNO));
+			// error = true;
+			// }
+			// }
+			// } else {
+			// if (compareTo < 0) {
+			// // if (ruta.getTipoEstado().isActiva()) {
+			// // val format = "La ruta con id=%d y código %s ya se encuentra activa. No es
+			// // posible iniciar un nuevo recorrido hasta no haber finalizado el actual.";
+			// // msg = String.format(format, ruta.getId(), ruta.getCodigo());
+			// // error = true;
+			// // }
+			// } else {
+			// val format = "La ruta con id=%d y código %s se encuentra en un estado
+			// inconsistente. Tiene una fecha de último recorrido igual a %s y la fecha del
+			// sistema es igual a %s. CONTACTAR A SOPORTE TÉCNICO.";
+			// msg = String.format(format, ruta.getId(), ruta.getCodigo(),
+			// ruta.getFechaUltimoRecorrido().toString(), now.toString());
+			// error = true;
+			// }
+			// }
 		}
 
 		if (error) {
@@ -254,35 +316,39 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 		String msg = "";
 		boolean error = false;
 
-		if (pasajeros.isEmpty()) {
-			val format = "La ruta con id=%d y código %s no tiene pasajeros.";
-			msg = String.format(format, ruta.getId(), ruta.getCodigo());
-			error = true;
-		} else {
-			val list = new ArrayList<PasajeroDto>();
-			for (val pasajero : pasajeros) {
-				if (pasajero.getDireccionIdaId() == null || pasajero.getDireccionRetornoId() == null) {
-					list.add(pasajero);
-				}
-			}
-
-			if (!list.isEmpty()) {
-				if (list.size() > 3) {
-					val format = "La ruta con id=%d y código %s tiene %d pasajeros sin una de sus direcciones.Todos los pasajeros de la ruta deben tener configuradas correctamente sus direcciones.";
-					msg = String.format(format, ruta.getId(), ruta.getCodigo());
-					error = true;
-				} else {
-					val sb = new StringBuilder();
-					val format = "El pasajero %s no tiene correctamente configuradas sus direcciones.";
-					for (val pasajero : list) {
-						val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
-						sb.append(String.format(format, usuario.getNombreCompleto())).append("\n");
-					}
-					msg = sb.toString();
-					error = true;
-				}
-			}
-		}
+		// if (pasajeros.isEmpty()) {
+		// val format = "La ruta con id=%d y código %s no tiene pasajeros.";
+		// msg = String.format(format, ruta.getId(), ruta.getCodigo());
+		// error = true;
+		// } else {
+		// val list = new ArrayList<PasajeroDto>();
+		// for (val pasajero : pasajeros) {
+		// if (pasajero.getDireccionIdaId() == null || pasajero.getDireccionRetornoId()
+		// == null) {
+		// list.add(pasajero);
+		// }
+		// }
+		//
+		// if (!list.isEmpty()) {
+		// if (list.size() > 3) {
+		// val format = "La ruta con id=%d y código %s tiene %d pasajeros sin una de sus
+		// direcciones.Todos los pasajeros de la ruta deben tener configuradas
+		// correctamente sus direcciones.";
+		// msg = String.format(format, ruta.getId(), ruta.getCodigo());
+		// error = true;
+		// } else {
+		// val sb = new StringBuilder();
+		// val format = "El pasajero %s no tiene correctamente configuradas sus
+		// direcciones.";
+		// for (val pasajero : list) {
+		// val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
+		// sb.append(String.format(format, usuario.getNombreCompleto())).append("\n");
+		// }
+		// msg = sb.toString();
+		// error = true;
+		// }
+		// }
+		// }
 
 		if (error) {
 			throw new RuntimeException(msg);
@@ -290,15 +356,15 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	}
 
 	private void checkRutaIsActiva(RutaDto ruta) {
-		if (!ruta.getTipoEstado().isActiva()) {
-			val format = "La ruta con id=%d y código %s no se encuentra activa.";
-			val msg = String.format(format, ruta.getId(), ruta.getCodigo());
-			throw new RuntimeException(msg);
-		}
+		// if (!ruta.getTipoEstado().isActiva()) {
+		// val format = "La ruta con id=%d y código %s no se encuentra activa.";
+		// val msg = String.format(format, ruta.getId(), ruta.getCodigo());
+		// throw new RuntimeException(msg);
+		// }
 	}
 
 	private void checkEventoEsDeRecorrido(int estadoId) {
-		val estado = estadoRutaService.findOneById(estadoId);	
+		val estado = estadoRutaService.findOneById(estadoId);
 		if (estado.getTipo() != RouteTypeStatus.RECORRIDO) {
 			val format = "El estado %s, no corresponde a un evento de RECORRIDO.";
 			val msg = String.format(format, estado.getDescripcion());
@@ -307,47 +373,52 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	}
 
 	private void checkPasajeroParaRegistrarParada(RutaDto ruta, Optional<PasajeroDto> optional) {
-		if (optional.isPresent()) {
-			val pasajero = optional.get();
-
-			if (pasajero.getRutaId() != ruta.getId()) {
-				val format = "El pasajero con id=%d, usuario id=%d y con nombre %s, no esta asignado a la ruta con código=%s.";
-				val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
-				val msg = String.format(format, pasajero.getId(), usuario.getId(), usuario.getNombreCompleto(),
-						ruta.getCodigo());
-				throw new RuntimeException(msg);
-			} else {
-				if (pasajero.getTipoEstado().isFinalizado()) {
-					// TODO Por lo pronto no se ha definido una regla que impida la corrección del
-					// estado de un pasajero.
-					// val format = "El estado actual del pasajero es %s, no se puede registrar un
-					// nuevo cambio de estado de este pasajero.";
-					// val msg = String.format(format, pasajero.getEstadoDescripcion());
-					// throw new RuntimeException(msg);
-				}
-			}
-		} else {
-			val msg = "No se encontró el pasajero.";
-			throw new RuntimeException(msg);
-		}
+		// if (optional.isPresent()) {
+		// val pasajero = optional.get();
+		//
+		// if (pasajero.getRutaId() != ruta.getId()) {
+		// val format = "El pasajero con id=%d, usuario id=%d y con nombre %s, no esta
+		// asignado a la ruta con código=%s.";
+		// val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
+		// val msg = String.format(format, pasajero.getId(), usuario.getId(),
+		// usuario.getNombreCompleto(),
+		// ruta.getCodigo());
+		// throw new RuntimeException(msg);
+		// } else {
+		// if (pasajero.getTipoEstado().isFinalizado()) {
+		// // TODO Por lo pronto no se ha definido una regla que impida la corrección
+		// del
+		// // estado de un pasajero.
+		// // val format = "El estado actual del pasajero es %s, no se puede registrar
+		// un
+		// // nuevo cambio de estado de este pasajero.";
+		// // val msg = String.format(format, pasajero.getEstadoDescripcion());
+		// // throw new RuntimeException(msg);
+		// }
+		// }
+		// } else {
+		// val msg = "No se encontró el pasajero.";
+		// throw new RuntimeException(msg);
+		// }
 	}
 
 	private void checkRutaParaFinalizarRecorrido(RutaDto ruta) {
-		val pasajeros = pasajeroService.findAllByRutaId(ruta.getId());
+		val pasajeros = pasajeroService.findAllPasajeroDireccionByRutaId(ruta.getId());
 
 		val sb = new StringBuilder();
 		int n = 0;
 
 		{
-			val format = "El estado actual del pasajero %s es %s.";
-			for (val pasajero : pasajeros) {
-				if (!pasajero.getTipoEstado().isFinalizado()) {
-					val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
-					sb.append(String.format(format, usuario.getNombreCompleto(), pasajero.getEstadoDescripcion()))
-							.append("\n");
-					n++;
-				}
-			}
+			// val format = "El estado actual del pasajero %s es %s.";
+			// for (val pasajero : pasajeros) {
+			// if (!pasajero.getTipoEstado().isFinalizado()) {
+			// val usuario = ciberService.findUsuarioById(pasajero.getUsuarioId()).get();
+			// sb.append(String.format(format, usuario.getNombreCompleto(),
+			// pasajero.getEstadoDescripcion()))
+			// .append("\n");
+			// n++;
+			// }
+			// }
 		}
 
 		if (n > 3) {
@@ -381,6 +452,7 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	}
 
 	private LogRutaDto createLogRuta(RutaDto ruta, BigDecimal x, BigDecimal y) {
+		/// TODO
 		ruta.setX(x);
 		ruta.setY(y);
 		rutaService.update(ruta);
@@ -409,6 +481,31 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 		pasajero.setEstadoId(estadoPasajeroId);
 		pasajeroService.update(pasajero);
 
+		// TODO
+		// val estado = estadoPasajeroService.findOneById(estadoPasajeroId);
+		// if (estado.isAplicaGeoCodificacion()) {
+		// Integer id = null;
+		// if (estado.isAplicaSentidoIda()) {
+		// id = pasajero.getDireccionIdaId();
+		// } else {
+		// if (estado.isAplicaSentidoRetorno()) {
+		// id = pasajero.getDireccionRetornoId();
+		// }
+		// }
+		//
+		// if (id != null) {
+		// val optional = direccionService.findById(id);
+		// if (optional.isPresent()) {
+		// val direccion = optional.get();
+		// if (direccion.getX() == null && direccion.getY() == null) {
+		// direccion.setX(x);
+		// direccion.setY(y);
+		// direccionService.update(direccion);
+		// }
+		// }
+		// }
+		// }
+
 		model.setRutaId(pasajero.getRutaId());
 		model.setUsuarioId(pasajero.getUsuarioId());
 		model.setSentido(sentido);
@@ -421,18 +518,18 @@ public class MonitorTrackingServiceImpl implements MonitorTrackingService {
 	}
 
 	protected String getDescripcionSentido(int sentido) {
-		switch (sentido) {
-		case RutaDto.SENTIDO_IDA:
+		switch (CourseType.asEnum(sentido)) {
+		case SENTIDO_IDA:
 			return "CAMINO AL COLEGIO";
-		case RutaDto.SENTIDO_RETORNO:
+		case SENTIDO_RETORNO:
 			return "CAMINO A CASA";
 		default:
 			return "DESCONOCIDO";
 		}
 	}
 
-	private void CheckUsuarioExistente(int usuarioId) {
-		val optional = ciberService.findUsuarioById(usuarioId);
+	private void CheckMonitorUsuarioExistente(int institucionId, int usuarioId) {
+		val optional = ciberService.findUsuarioMonitorByInstitucionIdAndUsuarioId(institucionId, usuarioId);
 		if (optional.isPresent()) {
 		} else {
 			val format = "El usuario con id=%d no existe.";

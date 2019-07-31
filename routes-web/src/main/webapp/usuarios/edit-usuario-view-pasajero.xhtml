@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="ui-g">
+		<div class="ui-g-1"></div>
+		<div class="ui-g-2" style="text-align: center">
+			<div class="centrado">
+				<ui:include src="/templates/usuario-imagen.xhtml">
+					<ui:param name="usuarioId" value="#{bean.pasajero.id}" />
+					<ui:param name="tieneFoto" value="#{bean.pasajero.tieneFoto}" />
+					<ui:param name="style" value="border-width: 1px;border-style: solid;padding: 5px;" />
+				</ui:include>
+			</div>
+		</div>
+		<div class="ui-g-9">
+			<div class="ui-g">
+				<div class="ui-g-3">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:outputLabel value="APELLIDOS" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputText value="#{bean.pasajero.apellido}" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputLabel value="NOMBRES" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputText value="#{bean.pasajero.nombre}" />
+						</div>
+					</div>
+				</div>
+				<div class="ui-g-3">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:outputLabel value="DOCUMENTO DE IDENTIDAD" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputText
+								value="#{bean.pasajero.tipoIdentificacion}" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputLabel value="NÚMERO DEL DOCUMENTO" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputText
+								value="#{bean.pasajero.numeroIdentificacion}" />
+						</div>
+					</div>
+				</div>
+				<div class="ui-g-3">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:outputLabel value="TELÉFONO DEL DOMICILIO" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputText
+								value="#{bean.pasajero.telefonoDomicilio}" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputLabel value="CORREO ELECTRÓNICO" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputText value="#{bean.pasajero.email}" />
+						</div>
+					</div>
+				</div>
+				<div class="ui-g-3">
+					<div class="ui-g">
+						<div class="ui-g-12">
+							<h:outputLabel value="DIRECCIÓN DEL DOMICILIO" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputText
+								value="#{bean.pasajero.direccionDomicilio}" />
+						</div>
+						<div class="ui-g-12">
+							<h:outputLabel value="ACUDIENTES" />
+						</div>
+						<div class="ui-g-12">
+							<ui:repeat var="acudiente"
+								value="#{bean.acudientes}">
+								<div>
+									<h:outputText value="${acudiente.nombreCompleto}" />
+								</div>
+							</ui:repeat>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</ui:composition>

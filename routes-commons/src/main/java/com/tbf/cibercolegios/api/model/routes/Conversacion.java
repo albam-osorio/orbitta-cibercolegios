@@ -2,15 +2,11 @@ package com.tbf.cibercolegios.api.model.routes;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -38,16 +34,12 @@ public class Conversacion extends SimpleAuditableEntity<Integer> {
 	@Setter(value = AccessLevel.PROTECTED)
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "ID_RUTA", nullable = false)
-	@NotNull
-	private Ruta ruta;
+	@Column(name = "ID_RUTA", nullable = false)
+	private int rutaId;
 
 	@Column(name = "ID_USUARIO_ACUDIENTE", nullable = false)
-	@NotNull
 	private int usuarioAcudienteId;
 
 	@Column(name = "ID_USUARIO_PASAJERO", nullable = false)
-	@NotNull
 	private int usuarioPasajeroId;
 }
